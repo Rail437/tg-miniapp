@@ -8,9 +8,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "framer-motion": "^11.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "framer-motion": "^11.0.0"
+    "telegraf": "^4.16.3"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",
@@ -19,5 +20,19 @@
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.10",
     "vite": "^5.2.0"
-  }
+  },
+  "description": "",
+  "main": "postcss.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rail437/tg-miniapp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Rail437/tg-miniapp/issues"
+  },
+  "homepage": "https://github.com/Rail437/tg-miniapp#readme"
 }
