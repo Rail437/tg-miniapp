@@ -7,7 +7,7 @@ import React from "react";
 
 export function Header({ onProfileClick }) {
     return (
-        <header className="h-16 flex items-center justify-end px-4">
+        <header className="h-16 flex items-center justify-end px-4 mb-2">
             <button
                 onClick={onProfileClick}
                 className="px-4 py-2 bg-white rounded-2xl shadow-lg flex items-center gap-2 hover:scale-105 transition-transform"
