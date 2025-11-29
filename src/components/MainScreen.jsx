@@ -70,7 +70,7 @@ export function MainScreen({ onStartTests }) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.1 }}
                 >
-                    ПсихоТесты
+                    INNER CODE
                 </motion.h1>
 
                 <motion.p
@@ -79,7 +79,7 @@ export function MainScreen({ onStartTests }) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
                 >
-                    Откройте новые грани своей личности с помощью психологических тестов
+                    Твоя психика. Твоя история. Твой путь
                 </motion.p>
 
                 {/* Кнопка "Начать тестирование" */}
