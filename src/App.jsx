@@ -30,21 +30,16 @@ export default function App() {
     return (
         <div
             className="
-                relative w-full h-screen
-                bg-gradient-to-br from-blue-50 to-purple-50
-                overflow-hidden flex flex-col
-            "
-            style={{
-                paddingTop: "calc(env(safe-area-inset-top, 0px) + 20px)",
-            }}
+      relative w-full h-screen
+      bg-gradient-to-br from-blue-50 to-purple-50
+      overflow-hidden flex flex-col
+      pt-24
+    "
         >
-            {/* Хедер с кнопкой профиля — уже ниже за счёт pt-16 */}
-            <Header onProfileClick={() => setShowProfile(true)}/>
+            <Header onProfileClick={() => setShowProfile(true)} />
 
-            {/* Главный экран */}
-            <MainScreen onStartTests={() => setShowTests(true)}/>
+            <MainScreen onStartTests={() => setShowTests(true)} />
 
-            {/* Выбор теста */}
             {showTests && (
                 <TestSelectionModal
                     tests={availableTests}
@@ -53,7 +48,6 @@ export default function App() {
                 />
             )}
 
-            {/* Прохождение теста */}
             {currentTest && !showResults && (
                 <TestQuestionModal
                     test={currentTest}
@@ -63,7 +57,6 @@ export default function App() {
                 />
             )}
 
-            {/* Результат теста */}
             {showResults && (
                 <TestResultModal
                     resultText={getTestResult()}
@@ -74,9 +67,8 @@ export default function App() {
                 />
             )}
 
-            {/* Профиль */}
             {showProfile && (
-                <ProfileModal onClose={() => setShowProfile(false)}/>
+                <ProfileModal onClose={() => setShowProfile(false)} />
             )}
         </div>
     );
