@@ -33,7 +33,12 @@ export default function App() {
     ];
 
     return (
-        <div className="relative w-full min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+        <div
+            className="relative w-full min-h-screen bg-gradient-to-br from-blue-50 to-purple-50"
+            style={{
+                paddingTop: "calc(env(safe-area-inset-top, 0px) + 18px)",
+            }}
+        >
             {/* Header — стал ниже */}
             <header
                 className="h-12 flex items-center justify-between px-4 sticky top-0 bg-white/80 backdrop-blur-sm shadow-sm z-40">
