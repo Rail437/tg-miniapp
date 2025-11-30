@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { availableTests } from "./data/availableTests";
-import { useTestEngine } from "./hooks/useTestEngine";
-import { TestSelectionModal } from "./components/test/TestSelectionModal";
-import { TestQuestionModal } from "./components/test/TestQuestionModal";
-import { TestResultModal } from "./components/test/TestResultModal";
-import { ProfileSection } from "./components/ProfileSection";
-import { StoriesSection } from "./components/StoriesSection";
-import { PsychologistSection } from "./components/PsychologistSection";
+import React, {useState} from "react";
+import {AnimatePresence, motion} from "framer-motion";
+import {availableTests} from "./data/availableTests";
+import {useTestEngine} from "./hooks/useTestEngine";
+import {TestSelectionModal} from "./components/test/TestSelectionModal";
+import {TestQuestionModal} from "./components/test/TestQuestionModal";
+import {TestResultModal} from "./components/test/TestResultModal";
+import {ProfileSection} from "./components/ProfileSection";
+import {StoriesSection} from "./components/StoriesSection";
+import {PsychologistSection} from "./components/PsychologistSection";
 
 export default function App() {
     const {
@@ -26,18 +26,20 @@ export default function App() {
     const [showProfile, setShowProfile] = useState(false);
 
     const tabs = [
-        { id: "tests", name: "Тесты", icon: "🧠" },
-        { id: "profile", name: "Кабинет", icon: "👤" },
-        { id: "stories", name: "Истории", icon: "📖" },
-        { id: "about", name: "О психологе", icon: "👩‍⚕️" },
+        {id: "tests", name: "Тесты", icon: "🧠"},
+        {id: "profile", name: "Кабинет", icon: "👤"},
+        {id: "stories", name: "Истории", icon: "📖"},
+        {id: "about", name: "О психологе", icon: "👩‍⚕️"},
     ];
 
     return (
         <div className="relative w-full min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
             {/* Header — стал ниже */}
-            <header className="h-12 flex items-center justify-between px-4 sticky top-0 bg-white/80 backdrop-blur-sm shadow-sm z-40">
+            <header
+                className="h-12 flex items-center justify-between px-4 sticky top-0 bg-white/80 backdrop-blur-sm shadow-sm z-40">
                 <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center text-white text-xs font-bold">
+                    <div
+                        className="w-7 h-7 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center text-white text-xs font-bold">
                         IC
                     </div>
                     <h1 className="text-lg font-bold text-gray-800">INNER CODE</h1>
@@ -76,10 +78,10 @@ export default function App() {
                     {activeTab === "tests" && (
                         <motion.div
                             key="tests"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ duration: 0.3 }}
+                            initial={{opacity: 0, y: 20}}
+                            animate={{opacity: 1, y: 0}}
+                            exit={{opacity: 0, y: -20}}
+                            transition={{duration: 0.3}}
                             className="max-w-2xl mx-auto"
                         >
                             <div className="text-center mb-8">
@@ -112,43 +114,44 @@ export default function App() {
                     {activeTab === "profile" && (
                         <motion.div
                             key="profile"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ duration: 0.3 }}
+                            initial={{opacity: 0, y: 20}}
+                            animate={{opacity: 1, y: 0}}
+                            exit={{opacity: 0, y: -20}}
+                            transition={{duration: 0.3}}
                         >
-                            <ProfileSection />
+                            <ProfileSection/>
                         </motion.div>
                     )}
 
                     {activeTab === "stories" && (
                         <motion.div
                             key="stories"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ duration: 0.3 }}
+                            initial={{opacity: 0, y: 20}}
+                            animate={{opacity: 1, y: 0}}
+                            exit={{opacity: 0, y: -20}}
+                            transition={{duration: 0.3}}
                         >
-                            <StoriesSection />
+                            <StoriesSection/>
                         </motion.div>
                     )}
 
                     {activeTab === "about" && (
                         <motion.div
                             key="about"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ duration: 0.3 }}
+                            initial={{opacity: 0, y: 20}}
+                            animate={{opacity: 1, y: 0}}
+                            exit={{opacity: 0, y: -20}}
+                            transition={{duration: 0.3}}
                         >
-                            <PsychologistSection />
+                            <PsychologistSection/>
                         </motion.div>
                     )}
                 </AnimatePresence>
             </main>
 
             {/* Footer */}
-            <div className="h-16 bg-white/50 backdrop-blur-sm fixed bottom-0 left-0 right-0 flex items-center justify-center border-t border-gray-200">
+            <div
+                className="h-16 bg-white/50 backdrop-blur-sm sticky bottom-0 left-0 right-0 flex items-center justify-center border-t border-gray-200">
                 <p className="text-sm text-gray-500">© {new Date().getFullYear()} INNER CODE</p>
             </div>
 
@@ -183,15 +186,15 @@ export default function App() {
 
                 {showProfile && (
                     <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
+                        initial={{opacity: 0}}
+                        animate={{opacity: 1}}
+                        exit={{opacity: 0}}
                         className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
                     >
                         <motion.div
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.9, opacity: 0 }}
+                            initial={{scale: 0.9, opacity: 0}}
+                            animate={{scale: 1, opacity: 1}}
+                            exit={{scale: 0.9, opacity: 0}}
                             className="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl"
                         >
                             <div className="flex justify-between items-center mb-4">
@@ -203,7 +206,7 @@ export default function App() {
                                     &times;
                                 </button>
                             </div>
-                            <ProfileSection />
+                            <ProfileSection/>
                             <button
                                 onClick={() => setShowProfile(false)}
                                 className="w-full mt-6 py-2.5 rounded-2xl bg-gray-100 text-gray-700 font-medium"
