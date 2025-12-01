@@ -72,6 +72,36 @@ const translations = {
                 close: "Закрыть",
             },
         },
+        psychologist: {
+            name: "Мария Юнусова",
+            title: "Психолог и коуч",
+            intro:
+                "Практикующий психолог и коуч. Помогаю находить внутренние ресурсы, проживать сложные состояния и строить более устойчивую, гармоничную жизнь.",
+            block1Title: "О подходе",
+            block1Text:
+                "В работе опираюсь на бережность, экологичность и глубокое уважение к вашим границам. Для меня важно не просто «убрать симптом», а помочь вам выстроить опору на себя и свою систему ценностей.",
+            block2Title: "С чем могу помочь",
+            block2Item1: "Переживание кризисов, потерь и изменений в жизни.",
+            block2Item2: "Тема самооценки, самоценности и уверенности в себе.",
+            block2Item3: "Отношения: партнёрские, семейные, рабочие конфликты.",
+            block3Title: "Формат работы",
+            block3Text:
+                "Сессии проходят онлайн, в комфортном для вас темпе. Мы вместе формулируем запрос и двигаемся маленькими шагами, чтобы изменения были устойчивыми и экологичными.",
+            contactsTitle: "Как со мной связаться",
+            contactsSubtitle:
+                "Если вы чувствуете, что пришло время обратиться за поддержкой — можно написать в мессенджер и задать свой вопрос.",
+            telegramCta: "Telegram",
+            vkCta: "VK",
+        },
+        storiesSection: {
+            title: "Поделиться своей историей",
+            subtitle:
+                "Расскажите, через какие состояния, отношения или кризисы вы проходили. Это анонимно и может помочь другим людям почувствовать, что они не одни.",
+            placeholder:
+                "Опишите вашу историю, что вы проживали, что было самым сложным и что помогло вам справиться...",
+            button: "Отправить анонимно",
+            success: "Спасибо! История отправлена. Это правда важно.",
+        },
     },
     en: {
         header: {
@@ -144,6 +174,37 @@ const translations = {
                 close: "Close",
             },
         },
+        psychologist: {
+            name: "Maria Yunusova",
+            title: "Psychologist and coach",
+            intro:
+                "Practicing psychologist and coach. I help people reconnect with their inner resources, live through difficult states and build a more stable, fulfilling life.",
+            block1Title: "My approach",
+            block1Text:
+                "My work is based on gentleness, ecological attitude and deep respect for your boundaries. I’m not focused on “fixing a symptom”, but on helping you rely on yourself and your own values.",
+            block2Title: "What I can help with",
+            block2Item1: "Life crises, transitions and losses.",
+            block2Item2: "Self-esteem, self-worth and confidence issues.",
+            block2Item3: "Relationships: romantic, family and work conflicts.",
+            block3Title: "Format of work",
+            block3Text:
+                "Sessions are held online, at a pace that feels comfortable for you. Together we clarify your request and move in small, sustainable steps.",
+            contactsTitle: "How to contact me",
+            contactsSubtitle:
+                "If you feel it’s time to ask for support, you can write a short message and describe your request.",
+            telegramCta: "Telegram",
+            vkCta: "VK.com",
+        },
+        storiesSection: {
+            title: "Share your story",
+            subtitle:
+                "Tell about states, relationships or crises you have been through. It’s anonymous and may help others feel less alone.",
+            placeholder:
+                "Describe your story, what you went through, what was the hardest part and what helped you cope...",
+            button: "Send anonymously",
+            success: "Thank you! Your story has been sent. It really matters.",
+        },
+
     },
 };
 

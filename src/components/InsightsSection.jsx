@@ -1,7 +1,9 @@
+// src/components/InsightsSection.jsx
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "../i18n";
 import { PsychologistSection } from "./PsychologistSection";
+import { StoriesSection } from "./StoriesSection";
 
 export default function InsightsSection({ lastResult }) {
     const { t, lang } = useTranslation();
@@ -9,9 +11,6 @@ export default function InsightsSection({ lastResult }) {
     const [showCompatibilityModal, setShowCompatibilityModal] = useState(false);
     const [showStoryModal, setShowStoryModal] = useState(false);
     const [showAuthorModal, setShowAuthorModal] = useState(false);
-
-    const [story, setStory] = useState("");
-    const [sent, setSent] = useState(false);
 
     const locale = lang === "ru" ? "ru-RU" : "en-US";
 
@@ -148,7 +147,7 @@ export default function InsightsSection({ lastResult }) {
                 )}
             </AnimatePresence>
 
-            {/* === МОДАЛКА ИСТОРИЙ === */}
+            {/* === МОДАЛКА ИСТОРИЙ: ИСПОЛЬЗУЕМ StoriesSection === */}
             <AnimatePresence>
                 {showStoryModal && (
                     <motion.div
@@ -158,43 +157,26 @@ export default function InsightsSection({ lastResult }) {
                         exit={{ opacity: 0 }}
                     >
                         <motion.div
-                            className="bg-white rounded-2xl p-5 shadow-lg w-full max-w-sm"
+                            className="bg-white rounded-2xl p-4 shadow-lg w-full max-w-lg max-h-[80vh] flex flex-col"
                             initial={{ y: 40, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
                             exit={{ y: 40, opacity: 0 }}
                         >
-                            <h3 className="text-lg font-bold text-gray-900 mb-3">
-                                {t("insights.stories.title")}
-                            </h3>
+                            <div className="flex justify-between items-center mb-2">
+                                <h3 className="text-lg font-bold text-gray-900">
+                                    {t("insights.stories.title")}
+                                </h3>
+                                <button
+                                    onClick={() => setShowStoryModal(false)}
+                                    className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+                                >
+                                    &times;
+                                </button>
+                            </div>
 
-                            {!sent ? (
-                                <>
-                                    <textarea
-                                        value={story}
-                                        onChange={(e) => setStory(e.target.value)}
-                                        placeholder="..."
-                                        className="w-full border rounded-xl p-2 text-sm h-32"
-                                    />
-
-                                    <button
-                                        onClick={() => {
-                                            setSent(true);
-                                            setTimeout(() => {
-                                                setSent(false);
-                                                setShowStoryModal(false);
-                                                setStory("");
-                                            }, 1500);
-                                        }}
-                                        className="w-full mt-3 py-2 rounded-xl bg-blue-600 text-white font-semibold"
-                                    >
-                                        {t("insights.stories.send")}
-                                    </button>
-                                </>
-                            ) : (
-                                <div className="text-center text-green-600 font-semibold">
-                                    {t("insights.stories.success")}
-                                </div>
-                            )}
+                            <div className="flex-1 overflow-y-auto pt-2">
+                                <StoriesSection />
+                            </div>
 
                             <button
                                 onClick={() => setShowStoryModal(false)}
@@ -207,7 +189,7 @@ export default function InsightsSection({ lastResult }) {
                 )}
             </AnimatePresence>
 
-            {/* === МОДАЛКА ОБ АВТОРЕ (СТАРАЯ “СТРАНИЦА” ВНУТРИ МОДАЛКИ) === */}
+            {/* === МОДАЛКА ОБ АВТОРЕ (PsychologistSection) === */}
             <AnimatePresence>
                 {showAuthorModal && (
                     <motion.div
@@ -235,7 +217,6 @@ export default function InsightsSection({ lastResult }) {
                             </div>
 
                             <div className="flex-1 overflow-y-auto pt-2">
-                                {/* Здесь полностью рендерится прежняя “страница об авторе” */}
                                 <PsychologistSection />
                             </div>
 
