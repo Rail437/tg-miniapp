@@ -1,17 +1,16 @@
 // src/App.jsx
-import React, { useState, useEffect } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { availableTests }       from "./data/availableTests";
-import { useTestEngine }        from "./hooks/useTestEngine";
-import { TestSelectionModal }   from "./components/test/TestSelectionModal";
-import { TestQuestionModal }    from "./components/test/TestQuestionModal";
-import { TestResultModal }      from "./components/test/TestResultModal";
-import { ProfileSection }       from "./components/ProfileSection";
-import { StoriesSection }       from "./components/StoriesSection";
-import { PsychologistSection }  from "./components/PsychologistSection";
-import { TopHeader }            from "./components/layout/TopHeader";
-import { TabNavigation }        from "./components/layout/TabNavigation";
-import { apiClient }            from "./api/apiClient";
+import React, {useEffect, useState} from "react";
+import {AnimatePresence, motion} from "framer-motion";
+import {availableTests} from "./data/availableTests";
+import {useTestEngine} from "./hooks/useTestEngine";
+import {TestSelectionModal} from "./components/test/TestSelectionModal";
+import {TestQuestionModal} from "./components/test/TestQuestionModal";
+import {TestResultModal} from "./components/test/TestResultModal";
+import {ProfileSection} from "./components/ProfileSection";
+import {TopHeader} from "./components/layout/TopHeader";
+import {TabNavigation} from "./components/layout/TabNavigation";
+import {InsightsSection} from "./components/InsightsSection";
+import {apiClient} from "./api/apiClient";
 
 export default function App() {
     const [activeTab, setActiveTab] = useState("tests");
@@ -31,10 +30,10 @@ export default function App() {
     } = useTestEngine(user?.userId);
 
     const tabs = [
-        { id: "tests", name: "Тесты", icon: "🧠" },
-        { id: "profile", name: "Кабинет", icon: "👤" },
-        { id: "stories", name: "Истории", icon: "📖" },
-        { id: "about", name: "О психологе", icon: "👩‍⚕️" },
+        {id: "tests", name: "Тесты", icon: "🧠"},
+        {id: "profile", name: "Кабинет", icon: "👤"},
+        {id: "stories", name: "Истории", icon: "📖"},
+        {id: "about", name: "О психологе", icon: "👩‍⚕️"},
     ];
     useEffect(() => {
         async function init() {
@@ -43,6 +42,7 @@ export default function App() {
             const res = await apiClient.authTelegram(initDataMock);
             setUser(res); // { userId, lastResult }
         }
+
         init();
     }, []);
 
@@ -51,23 +51,28 @@ export default function App() {
             {/* Центрируем всё приложение и задаём “рамку” максимальной ширины */}
             <div className="max-w-3xl mx-auto min-h-screen flex flex-col py-4 px-3">
                 {/* HEADER — стеклянная шапка */}
-                <TopHeader onOpenProfile={() => setShowProfile(true)} />
+                <TopHeader onOpenProfile={() => setShowProfile(true)}/>
 
                 {/* Навигация */}
-                <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
+                <TabNavigation
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
+                    hasMore={!!user?.lastResult}
+                />
 
                 {/* MAIN SHELL — общая стеклянная карточка для контента табов */}
                 <main className="flex-1 mb-4">
-                    <div className="bg-white/65 backdrop-blur-2xl border border-white/70 rounded-3xl shadow-xl p-5 sm:p-6">
+                    <div
+                        className="bg-white/65 backdrop-blur-2xl border border-white/70 rounded-3xl shadow-xl p-5 sm:p-6">
                         <AnimatePresence mode="wait">
                             {/* ТАБ: ТЕСТЫ */}
                             {activeTab === "tests" && (
                                 <motion.div
                                     key="tests"
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -20 }}
-                                    transition={{ duration: 0.3 }}
+                                    initial={{opacity: 0, y: 20}}
+                                    animate={{opacity: 1, y: 0}}
+                                    exit={{opacity: 0, y: -20}}
+                                    transition={{duration: 0.3}}
                                     className="space-y-6"
                                 >
                                     {/* Hero-секция с мозгом */}
@@ -126,8 +131,8 @@ export default function App() {
                                             <motion.button
                                                 key={test.id}
                                                 onClick={() => startTest(test)}
-                                                whileHover={{ y: -4, scale: 1.01 }}
-                                                whileTap={{ scale: 0.98, y: 0 }}
+                                                whileHover={{y: -4, scale: 1.01}}
+                                                whileTap={{scale: 0.98, y: 0}}
                                                 className="text-left bg-white/80 border border-white/80 rounded-2xl p-4 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between"
                                             >
                                                 <div>
@@ -138,7 +143,8 @@ export default function App() {
                                                         {test.description}
                                                     </p>
                                                 </div>
-                                                <span className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-blue-600">
+                                                <span
+                                                    className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-blue-600">
                           Начать тест
                           <span>→</span>
                         </span>
@@ -148,51 +154,39 @@ export default function App() {
                                 </motion.div>
                             )}
 
-                            // ТАБ: КАБИНЕТ
+                            {/* ТАБ: КАБИНЕТ */}
                             {activeTab === "profile" && (
                                 <motion.div
                                     key="profile"
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -20 }}
-                                    transition={{ duration: 0.3 }}
+                                    initial={{opacity: 0, y: 20}}
+                                    animate={{opacity: 1, y: 0}}
+                                    exit={{opacity: 0, y: -20}}
+                                    transition={{duration: 0.3}}
                                 >
-                                    <ProfileSection userId={user?.userId} />
+                                    <ProfileSection userId={user?.userId}/>
                                 </motion.div>
                             )}
 
-                            {/* ТАБ: ИСТОРИИ */}
-                            {activeTab === "stories" && (
+                            {activeTab === "more" && (
                                 <motion.div
-                                    key="stories"
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -20 }}
-                                    transition={{ duration: 0.3 }}
+                                    key="more"
+                                    initial={{opacity: 0, y: 20}}
+                                    animate={{opacity: 1, y: 0}}
+                                    exit={{opacity: 0, y: -20}}
+                                    transition={{duration: 0.3}}
                                 >
-                                    <StoriesSection />
+                                    <InsightsSection lastResult={user?.lastResult}/>
                                 </motion.div>
                             )}
 
-                            {/* ТАБ: О ПСИХОЛОГЕ */}
-                            {activeTab === "about" && (
-                                <motion.div
-                                    key="about"
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -20 }}
-                                    transition={{ duration: 0.3 }}
-                                >
-                                    <PsychologistSection />
-                                </motion.div>
-                            )}
                         </AnimatePresence>
                     </div>
                 </main>
 
                 {/* FOOTER — аккуратный, стеклянный */}
                 <footer className="mt-auto">
-                    <div className="h-14 rounded-2xl bg-white/60 backdrop-blur-xl border border-white/70 flex items-center justify-center text-xs sm:text-sm text-gray-500 shadow-sm">
+                    <div
+                        className="h-14 rounded-2xl bg-white/60 backdrop-blur-xl border border-white/70 flex items-center justify-center text-xs sm:text-sm text-gray-500 shadow-sm">
                         © {new Date().getFullYear()} INNER CODE
                     </div>
                 </footer>
@@ -229,15 +223,15 @@ export default function App() {
 
                 {showProfile && (
                     <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
+                        initial={{opacity: 0}}
+                        animate={{opacity: 1}}
+                        exit={{opacity: 0}}
                         className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
                     >
                         <motion.div
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.9, opacity: 0 }}
+                            initial={{scale: 0.9, opacity: 0}}
+                            animate={{scale: 1, opacity: 1}}
+                            exit={{scale: 0.9, opacity: 0}}
                             className="bg-white/90 backdrop-blur-2xl rounded-3xl p-6 w-full max-w-md shadow-2xl border border-white/70"
                         >
                             <div className="flex justify-between items-center mb-4">
@@ -251,7 +245,7 @@ export default function App() {
                                     &times;
                                 </button>
                             </div>
-                            <ProfileSection userId={user?.userId} />
+                            <ProfileSection userId={user?.userId}/>
                             <button
                                 onClick={() => setShowProfile(false)}
                                 className="w-full mt-6 py-2.5 rounded-2xl bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 transition-colors"

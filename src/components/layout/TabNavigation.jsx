@@ -1,13 +1,16 @@
 // src/components/layout/TabNavigation.jsx
 import React from "react";
 
-export function TabNavigation({ activeTab, setActiveTab }) {
+export function TabNavigation({ activeTab, setActiveTab, hasMore }) {
     const tabs = [
         { id: "tests", name: "Тесты", icon: "🧠" },
         { id: "profile", name: "Кабинет", icon: "👤" },
-        { id: "stories", name: "Истории", icon: "📖" },
-        { id: "about", name: "О психологе", icon: "👩‍⚕️" },
     ];
+
+    // Третий таб показываем только если человек уже прошёл тест
+    if (hasMore) {
+        tabs.push({ id: "more", name: "Дополнительно", icon: "✨" });
+    }
 
     return (
         <nav className="mb-4">
