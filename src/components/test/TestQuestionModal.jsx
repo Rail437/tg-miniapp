@@ -1,7 +1,7 @@
 // src/components/test/TestQuestionModal.jsx
-
 import React from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from "../../i18n";
 
 export function TestQuestionModal({
                                       test,
@@ -9,64 +9,67 @@ export function TestQuestionModal({
                                       onAnswer,
                                       onClose,
                                   }) {
-    const total = test.questions.length;
-    const current = currentQuestionIndex + 1;
-    const progress = (current / total) * 100;
+    const { lang } = useTranslation();
+
+    // Берём вопросы прямо из объекта теста
+    const questions = test.questions?.[lang] ?? test.questions?.ru ?? [];
+    const total = questions.length || 1;
+    const question = questions[currentQuestionIndex] ?? "";
+
+    const progress = Math.round(((currentQuestionIndex + 1) / total) * 100);
 
     return (
         <motion.div
+            className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/40 backdrop-blur flex items-center justify-center p-4 z-50"
         >
             <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                className="bg-white rounded-3xl w-full max-w-md p-6 shadow-xl"
+                className="bg-white/95 backdrop-blur-2xl rounded-3xl p-6 w-full max-w-md shadow-2xl border border-white/80"
+                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                transition={{ duration: 0.25 }}
             >
-                <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-bold">{test.name}</h2>
-                    <div className="text-sm text-gray-500">
-                        {current}/{total}
+                <div className="flex justify-between items-start mb-4">
+                    <div>
+                        <div className="text-xs uppercase text-blue-500 mb-1">
+                            {lang === "ru" ? "Вопрос" : "Question"} {currentQuestionIndex + 1} / {total}
+                        </div>
                     </div>
+
+                    <button
+                        onClick={onClose}
+                        className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+                    >
+                        ×
+                    </button>
                 </div>
 
-                <div className="mb-3">
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                            className="bg-blue-500 h-2 rounded-full transition-all"
-                            style={{ width: `${progress}%` }}
-                        />
-                    </div>
+                <div className="w-full h-1.5 bg-gray-100 rounded-full mb-4 overflow-hidden">
+                    <div
+                        className="h-full bg-gradient-to-r from-blue-500 to-purple-500"
+                        style={{ width: `${progress}%` }}
+                    />
                 </div>
 
-                <h3 className="text-lg font-semibold mb-6 text-center">
-                    {test.questions[currentQuestionIndex]}
-                </h3>
+                <p className="text-sm text-gray-800 mb-6">{question}</p>
 
-                <div className="space-y-3">
+                <div className="flex flex-col sm:flex-row gap-3">
                     <button
                         onClick={() => onAnswer(true)}
-                        className="w-full py-4 bg-green-500 text-white rounded-xl hover:bg-green-600 transition-colors font-semibold"
+                        className="flex-1 py-2.5 rounded-2xl bg-blue-600 text-white font-semibold"
                     >
-                        Да, согласен
+                        {lang === "ru" ? "Да" : "Yes"}
                     </button>
                     <button
                         onClick={() => onAnswer(false)}
-                        className="w-full py-4 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors font-semibold"
+                        className="flex-1 py-2.5 rounded-2xl bg-gray-100 text-gray-700 font-semibold"
                     >
-                        Нет, не согласен
+                        {lang === "ru" ? "Нет" : "No"}
                     </button>
                 </div>
-
-                <button
-                    onClick={onClose}
-                    className="mt-4 w-full py-2.5 text-sm text-gray-500 hover:text-gray-700"
-                >
-                    Выйти из теста
-                </button>
             </motion.div>
         </motion.div>
     );

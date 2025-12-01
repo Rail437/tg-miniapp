@@ -1,4 +1,5 @@
 // src/api/mockApiClient.js
+import { TYPE_RESULTS } from "../data/typeResults";
 
 const STORAGE_KEY = "innercode_mock_db";
 
@@ -72,7 +73,6 @@ export async function authTelegram(initDataMock) {
     };
 }
 
-
 /**
  * Начать основной тест
  */
@@ -106,15 +106,17 @@ export async function startMainTest(userId) {
 /**
  * Ответ на вопрос
  */
-export async function answerMainTest({ sessionId, questionIndex, answerValue }) {
+export async function answerMainTest({sessionId, questionIndex, answerValue}) {
     await delay();
     const db = loadDb();
 
     const session = db.sessions.find((s) => s.id === sessionId);
     if (!session) throw new Error("Session not found");
 
-    session.answers = session.answers.filter((a) => a.questionIndex !== questionIndex);
-    session.answers.push({ questionIndex, answerValue });
+    session.answers = session.answers.filter(
+        (a) => a.questionIndex !== questionIndex
+    );
+    session.answers.push({questionIndex, answerValue});
 
     const nextStep = questionIndex + 1;
     session.currentStep = nextStep;
@@ -156,54 +158,45 @@ export async function getTestSession(sessionId) {
 
 /**
  * Завершить тест — считаем результат по соционике (упрощённо)
+ * ТЕПЕРЬ: возвращаем результат с полями RU + EN
  */
 export async function completeMainTest(sessionId) {
     await delay();
     const db = loadDb();
 
     const session = db.sessions.find((s) => s.id === sessionId);
-    if (!session) throw new Error("Session not found");
+    if (!session) {
+        throw new Error("Session not found");
+    }
 
-    // Суммируем "да" (answerValue === 1)
-    const sum = session.answers.reduce(
+    // Суммируем "да"
+    const sumYes = session.answers.reduce(
         (acc, a) => acc + (typeof a.answerValue === "number" ? a.answerValue : 0),
         0
     );
 
-    // Очень простая логика:
-    // 3–4 "да" → ИЛЭ (Исследователь возможностей)
-    // 0–2 "да" → СЭИ (Хранитель комфорта)
-    let result = {
-        typeId: "ILE",
-        label: "Исследователь возможностей (ИЛЭ)",
-        description:
-            "Вы быстро видите новые идеи и связи, любите экспериментировать, обсуждать гипотезы и пробовать новое.",
-    };
+    // Логика определения
+    const baseResult = sumYes <= 2 ? TYPE_RESULTS.SEI : TYPE_RESULTS.ILE;
 
-    if (sum <= 2) {
-        result = {
-            typeId: "SEI",
-            label: "Хранитель комфорта (СЭИ)",
-            description:
-                "Вы цените уют, стабильность и тёплые отношения, замечаете детали и умеете создавать комфортную атмосферу.",
-        };
-    }
+    const now = new Date().toISOString();
 
     const resultRecord = {
         id: generateId("result"),
         userId: session.userId,
         sessionId: session.id,
-        ...result,
-        createdAt: new Date().toISOString(),
+        typeId: baseResult.typeId,
+        ru: baseResult.ru,
+        en: baseResult.en,
+        createdAt: now,
     };
 
-    // Сохраняем/обновляем последний результат
-    db.results = db.results.filter((r) => r.userId === session.userId);
+    // Сохраняем только свежий результат пользователя
+    db.results = db.results.filter((r) => r.userId !== session.userId);
     db.results.push(resultRecord);
 
     session.status = "COMPLETED";
-    session.resultType = result.typeId;
-    session.updatedAt = new Date().toISOString();
+    session.resultType = baseResult.typeId;
+    session.updatedAt = now;
 
     saveDb(db);
 
@@ -247,13 +240,13 @@ export async function getMyReferral(userId) {
     };
 }
 
-export async function registerReferralUse({ code, invitedUserId }) {
+export async function registerReferralUse({code, invitedUserId}) {
     await delay();
     const db = loadDb();
 
     const referral = db.referrals.find((r) => r.code === code);
-    if (!referral) return { ok: false };
-    if (referral.userId === invitedUserId) return { ok: false };
+    if (!referral) return {ok: false};
+    if (referral.userId === invitedUserId) return {ok: false};
 
     const exists = db.referralUses.some(
         (u) => u.referralId === referral.id && u.invitedUserId === invitedUserId
@@ -268,7 +261,7 @@ export async function registerReferralUse({ code, invitedUserId }) {
         saveDb(db);
     }
 
-    return { ok: true };
+    return {ok: true};
 }
 
 export async function getMyInvited(userId) {
@@ -286,7 +279,8 @@ export async function getMyInvited(userId) {
             invitedUserId: u.invitedUserId,
             joinedAt: u.createdAt,
             resultType: result?.typeId || null,
-            resultLabel: result?.label || null,
+            // Пытаемся взять RU, если нет — EN, иначе null
+            resultLabel: result?.ru?.label || result?.en?.label || null,
         };
     });
 

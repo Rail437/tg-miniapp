@@ -9,12 +9,15 @@ import {TestResultModal} from "./components/test/TestResultModal";
 import {ProfileSection} from "./components/ProfileSection";
 import {TopHeader} from "./components/layout/TopHeader";
 import {TabNavigation} from "./components/layout/TabNavigation";
-import {InsightsSection} from "./components/InsightsSection";
+import InsightsSection from "./components/InsightsSection";
+import {LanguageProvider, useTranslation} from "./i18n";
 import {apiClient} from "./api/apiClient";
 
-export default function App() {
+function AppInner() {
     const [activeTab, setActiveTab] = useState("tests");
     const [user, setUser] = useState(null);
+    const [initError, setInitError] = useState(null); // NEW
+    const {t, lang} = useTranslation();
 
     const {
         showTests,
@@ -29,38 +32,38 @@ export default function App() {
         resultData,
     } = useTestEngine(user?.userId);
 
-    const tabs = [
-        {id: "tests", name: "Тесты", icon: "🧠"},
-        {id: "profile", name: "Кабинет", icon: "👤"},
-        {id: "stories", name: "Истории", icon: "📖"},
-        {id: "about", name: "О психологе", icon: "👩‍⚕️"},
-    ];
+    // Инициализация пользователя + реферальный код из URL (?ref=...)
     useEffect(() => {
         async function init() {
-            // 1) "Авторизация" на моках
-            const initDataMock = "dummy";
-            const res = await apiClient.authTelegram(initDataMock);
-            setUser(res); // { userId, lastResult }
+            try {
+                const initDataMock = "dummy";
+                const res = await apiClient.authTelegram(initDataMock);
+                setUser(res); // { userId, lastResult }
 
-            // 2) Проверяем, есть ли реферальный код в URL (?ref=...)
-            const params = new URLSearchParams(window.location.search);
-            const refCode = params.get("ref");
+                const params = new URLSearchParams(window.location.search);
+                const refCode = params.get("ref");
 
-            if (refCode && res?.userId) {
-                try {
-                    await apiClient.registerReferralUse({
-                        code: refCode,
-                        invitedUserId: res.userId,
-                    });
-                } catch (e) {
-                    console.error("registerReferralUse error", e);
+                if (refCode && res?.userId) {
+                    try {
+                        await apiClient.registerReferralUse({
+                            code: refCode,
+                            invitedUserId: res.userId,
+                        });
+                    } catch (e) {
+                        console.error("registerReferralUse error", e);
+                    }
                 }
+            } catch (e) {
+                console.error("authTelegram/init error", e);
+                setInitError("INIT_FAILED");
             }
         }
 
         init();
     }, []);
 
+    // Если получили resultData после прохождения теста — обновляем user.lastResult,
+    // чтобы сразу появилась вкладка "Дополнительно"
     useEffect(() => {
         if (resultData && user) {
             setUser((prev) =>
@@ -79,7 +82,7 @@ export default function App() {
             {/* Центрируем всё приложение и задаём “рамку” максимальной ширины */}
             <div className="max-w-3xl mx-auto min-h-screen flex flex-col py-4 px-3">
                 {/* HEADER — стеклянная шапка */}
-                <TopHeader onOpenProfile={() => setActiveTab("profile")} />
+                <TopHeader onOpenProfile={() => setActiveTab("profile")}/>
 
                 {/* Навигация */}
                 <TabNavigation
@@ -143,41 +146,45 @@ export default function App() {
 
                                         <div className="text-center md:text-left space-y-2">
                                             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                                                Психологические тесты
+                                                {t("tests.mainTitle")}
                                             </h2>
                                             <p className="text-sm sm:text-base text-gray-600 max-w-md">
-                                                Узнай свой психотип, пойми, как устроен твой внутренний
-                                                код, и посмотри, как вы с другими людьми усиливаете
-                                                друг друга.
+                                                {t("tests.mainDescription")}
                                             </p>
                                         </div>
                                     </div>
 
                                     {/* Карточки тестов в стиле glass */}
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        {availableTests.map((test) => (
-                                            <motion.button
-                                                key={test.id}
-                                                onClick={() => startTest(test)}
-                                                whileHover={{y: -4, scale: 1.01}}
-                                                whileTap={{scale: 0.98, y: 0}}
-                                                className="text-left bg-white/80 border border-white/80 rounded-2xl p-4 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between"
-                                            >
-                                                <div>
-                                                    <h3 className="font-semibold text-base sm:text-lg text-gray-900 mb-1.5">
-                                                        {test.name}
-                                                    </h3>
-                                                    <p className="text-sm text-gray-600">
-                                                        {test.description}
-                                                    </p>
-                                                </div>
-                                                <span
-                                                    className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-blue-600">
-                          Начать тест
-                          <span>→</span>
-                        </span>
-                                            </motion.button>
-                                        ))}
+                                        {availableTests.map((test) => {
+                                            const title = test.name?.[lang] ?? test.name?.ru ?? "";
+                                            const desc =
+                                                test.description?.[lang] ??
+                                                test.description?.ru ??
+                                                "";
+
+                                            return (
+                                                <motion.button
+                                                    key={test.id}
+                                                    onClick={() => startTest(test)}
+                                                    whileHover={{y: -4, scale: 1.01}}
+                                                    whileTap={{scale: 0.98, y: 0}}
+                                                    className="text-left bg-white/80 border border-white/80 rounded-2xl p-4 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between"
+                                                >
+                                                    <div>
+                                                        <h3 className="font-semibold text-base sm:text-lg text-gray-900 mb-1.5">
+                                                            {title}
+                                                        </h3>
+                                                        <p className="text-sm text-gray-600">{desc}</p>
+                                                    </div>
+                                                    <span
+                                                        className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-blue-600">
+                            {lang === "ru" ? "Начать тест" : "Start test"}
+                                                        <span>→</span>
+                          </span>
+                                                </motion.button>
+                                            );
+                                        })}
                                     </div>
                                 </motion.div>
                             )}
@@ -195,6 +202,7 @@ export default function App() {
                                 </motion.div>
                             )}
 
+                            {/* ТАБ: ДОПОЛНИТЕЛЬНО */}
                             {activeTab === "more" && (
                                 <motion.div
                                     key="more"
@@ -206,7 +214,6 @@ export default function App() {
                                     <InsightsSection lastResult={user?.lastResult}/>
                                 </motion.div>
                             )}
-
                         </AnimatePresence>
                     </div>
                 </main>
@@ -241,14 +248,22 @@ export default function App() {
 
                 {showResults && (
                     <TestResultModal
-                        resultText={getTestResult()}
-                        onRestart={() => {
+                        result={resultData}
+                        onClose={() => {
                             resetTest();
-                            setActiveTab("tests");
+                            // Ничего не переключаем — остаёмся на текущей вкладке
                         }}
                     />
                 )}
             </AnimatePresence>
         </div>
+    );
+}
+
+export default function App() {
+    return (
+        <LanguageProvider>
+            <AppInner/>
+        </LanguageProvider>
     );
 }

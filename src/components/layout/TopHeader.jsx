@@ -1,34 +1,48 @@
 // src/components/layout/TopHeader.jsx
 import React from "react";
+import {useTranslation} from "../../i18n";
 
-export function TopHeader({ onOpenProfile }) {
+export function TopHeader({onOpenProfile}) {
+    const {t, lang, setLang} = useTranslation();
+
+    const toggleLang = () => {
+        setLang(lang === "ru" ? "en" : "ru");
+    };
+
     return (
-        <header className="mb-3">
-            <div className="flex items-center justify-between rounded-2xl bg-white/70 backdrop-blur-xl border border-white/60 shadow-sm px-4 py-2.5">
-
-                {/* Логотип + текст */}
-                <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-md">
-                        IC
+        <header className="mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+                {/* лого IC как у тебя было */}
+                <div
+                    className="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                    IC
+                </div>
+                <div>
+                    <div className="text-sm font-semibold text-gray-900">
+                        {t("header.title")}
                     </div>
-
-                    <div className="flex flex-col">
-                        <span className="text-sm font-semibold text-gray-900">INNER CODE</span>
-                        <span className="text-[11px] text-gray-500">узнавай код своей личности</span>
+                    <div className="text-[11px] text-gray-500">
+                        {t("header.subtitle")}
                     </div>
                 </div>
+            </div>
 
-                {/* Кнопка профиля */}
+            <div className="flex items-center gap-2">
+                {/* кнопка смены языка */}
                 <button
-                    onClick={onOpenProfile}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 border border-white/70 shadow-sm text-sm text-gray-700 hover:shadow-md hover:-translate-y-0.5 transition-all"
+                    onClick={toggleLang}
+                    className="px-2 py-1 rounded-xl bg-white/60 border border-white/80 text-xs text-gray-700 hover:bg-white shadow-sm"
                 >
-          <span className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs">
-            👤
-          </span>
-                    <span className="hidden sm:inline font-medium">Профиль</span>
+                    {lang === "ru" ? "EN" : "RU"}
                 </button>
 
+                {/* кнопка кабинета как у тебя было */}
+                <button
+                    onClick={onOpenProfile}
+                    className="px-3 py-1.5 rounded-xl bg-white/70 border border-white/80 text-xs text-gray-700 shadow-sm hover:bg-white"
+                >
+                    👤
+                </button>
             </div>
         </header>
     );

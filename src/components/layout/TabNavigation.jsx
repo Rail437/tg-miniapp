@@ -1,15 +1,17 @@
 // src/components/layout/TabNavigation.jsx
 import React from "react";
+import { useTranslation } from "../../i18n";
 
 export function TabNavigation({ activeTab, setActiveTab, hasMore }) {
+    const { t } = useTranslation();
+
     const tabs = [
-        { id: "tests", name: "Тесты", icon: "🧠" },
-        { id: "profile", name: "Кабинет", icon: "👤" },
+        { id: "tests", name: t("tabs.tests"), icon: "🧠" },
+        { id: "profile", name: t("tabs.profile"), icon: "👤" },
     ];
 
-    // Третий таб показываем только если человек уже прошёл тест
     if (hasMore) {
-        tabs.push({ id: "more", name: "Дополнительно", icon: "✨" });
+        tabs.push({ id: "more", name: t("tabs.more"), icon: "✨" });
     }
 
     return (
