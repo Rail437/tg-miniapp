@@ -37,10 +37,25 @@ export default function App() {
     ];
     useEffect(() => {
         async function init() {
-            // потом сюда подставишь реальный initData из Telegram.WebApp.initData
+            // 1) "Авторизация" на моках
             const initDataMock = "dummy";
             const res = await apiClient.authTelegram(initDataMock);
             setUser(res); // { userId, lastResult }
+
+            // 2) Проверяем, есть ли реферальный код в URL (?ref=...)
+            const params = new URLSearchParams(window.location.search);
+            const refCode = params.get("ref");
+
+            if (refCode && res?.userId) {
+                try {
+                    await apiClient.registerReferralUse({
+                        code: refCode,
+                        invitedUserId: res.userId,
+                    });
+                } catch (e) {
+                    console.error("registerReferralUse error", e);
+                }
+            }
         }
 
         init();

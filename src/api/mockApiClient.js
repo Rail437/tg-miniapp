@@ -48,11 +48,16 @@ export async function authTelegram(initDataMock) {
     await delay();
     const db = loadDb();
 
-    let user = db.users[0];
+    // Берём ?u= из адресной строки, чтобы различать "юзеров" в одном браузере
+    const params = new URLSearchParams(window.location.search);
+    const userKey = params.get("u") || "default";
+
+    // Ищем пользователя по "telegramId"
+    let user = db.users.find((u) => u.telegramId === userKey);
     if (!user) {
         user = {
             id: generateId("user"),
-            telegramId: "mock_telegram_id",
+            telegramId: userKey,
             createdAt: new Date().toISOString(),
         };
         db.users.push(user);
@@ -66,6 +71,7 @@ export async function authTelegram(initDataMock) {
         lastResult,
     };
 }
+
 
 /**
  * Начать основной тест
