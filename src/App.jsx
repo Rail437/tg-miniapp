@@ -14,6 +14,10 @@ import { TabNavigation }        from "./components/layout/TabNavigation";
 import { apiClient }            from "./api/apiClient";
 
 export default function App() {
+    const [activeTab, setActiveTab] = useState("tests");
+    const [showProfile, setShowProfile] = useState(false);
+    const [user, setUser] = useState(null);
+
     const {
         showTests,
         setShowTests,
@@ -24,11 +28,7 @@ export default function App() {
         answerQuestion,
         resetTest,
         getTestResult,
-    } = useTestEngine();
-
-    const [activeTab, setActiveTab] = useState("tests");
-    const [showProfile, setShowProfile] = useState(false);
-    const [user, setUser] = useState(null);
+    } = useTestEngine(user?.userId);
 
     const tabs = [
         { id: "tests", name: "Тесты", icon: "🧠" },
@@ -148,7 +148,7 @@ export default function App() {
                                 </motion.div>
                             )}
 
-                            {/* ТАБ: КАБИНЕТ */}
+                            // ТАБ: КАБИНЕТ
                             {activeTab === "profile" && (
                                 <motion.div
                                     key="profile"
@@ -157,7 +157,7 @@ export default function App() {
                                     exit={{ opacity: 0, y: -20 }}
                                     transition={{ duration: 0.3 }}
                                 >
-                                    <ProfileSection />
+                                    <ProfileSection userId={user?.userId} />
                                 </motion.div>
                             )}
 
@@ -251,7 +251,7 @@ export default function App() {
                                     &times;
                                 </button>
                             </div>
-                            <ProfileSection />
+                            <ProfileSection userId={user?.userId} />
                             <button
                                 onClick={() => setShowProfile(false)}
                                 className="w-full mt-6 py-2.5 rounded-2xl bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 transition-colors"
