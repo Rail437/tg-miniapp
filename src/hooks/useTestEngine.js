@@ -2,8 +2,6 @@
 import { useState } from "react";
 import { apiClient } from "../api/apiClient";
 
-// Хук теперь принимает userId, чтобы знать,
-// от имени какого пользователя работать
 export function useTestEngine(userId) {
     const [showTests, setShowTests] = useState(false);
     const [showResults, setShowResults] = useState(false);
@@ -16,8 +14,6 @@ export function useTestEngine(userId) {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Запуск теста: создаём сессию на "бэке" (пока моки),
-    // запоминаем sessionId и стартовый шаг
     const startTest = async (test) => {
         if (!userId) {
             setError("Пользователь ещё не инициализирован. Попробуйте через пару секунд.");
@@ -28,10 +24,7 @@ export function useTestEngine(userId) {
         setError(null);
 
         try {
-            // В моках это apiClient.startMainTest(userId),
-            // в реале — тот же вызов, только на настоящий бэк
             const res = await apiClient.startMainTest(userId);
-            // ожидаем { sessionId, currentStep, totalSteps }
             setSessionId(res.sessionId);
             setCurrentTest(test);
             setCurrentQuestion(res.currentStep ?? 0);
@@ -46,7 +39,6 @@ export function useTestEngine(userId) {
         }
     };
 
-    // Отправка ответа на вопрос
     const answerQuestion = async (answer) => {
         if (!sessionId || !currentTest) return;
 
@@ -54,7 +46,6 @@ export function useTestEngine(userId) {
         setError(null);
 
         try {
-            // тут маппим true/false → число, чтобы и моки, и бэк могли одинаково считать
             const answerValue = answer ? 1 : 0;
 
             const res = await apiClient.answerMainTest({
@@ -62,16 +53,12 @@ export function useTestEngine(userId) {
                 questionIndex: currentQuestion,
                 answerValue,
             });
-            // ожидаем { status: "IN_PROGRESS" | "COMPLETED", nextStep }
 
             if (res.status === "COMPLETED") {
-                // Завершаем тест и получаем результат
                 const result = await apiClient.completeMainTest(sessionId);
-                // ожидаем примерно: { typeId, label, description, ... }
                 setResultData(result);
                 setShowResults(true);
             } else {
-                // Переходим к следующему вопросу
                 setCurrentQuestion(
                     typeof res.nextStep === "number"
                         ? res.nextStep
@@ -86,7 +73,6 @@ export function useTestEngine(userId) {
         }
     };
 
-    // Сброс состояния теста
     const resetTest = () => {
         setShowTests(false);
         setShowResults(false);
@@ -97,38 +83,25 @@ export function useTestEngine(userId) {
         setError(null);
     };
 
-    // Преобразуем результат в строку для старого интерфейса TestResultModal
     const getTestResult = () => {
         if (!resultData) return "";
-
-        // Если есть label/description — красиво склеиваем,
-        // чтобы не пришлось прямо сейчас переписывать модалку результата
         const label = resultData.label || "Ваш результат";
-        const desc = resultData.description
-            ? ` — ${resultData.description}`
-            : "";
-
+        const desc = resultData.description ? ` — ${resultData.description}` : "";
         return `${label}${desc}`;
     };
 
     return {
-        // состояние показа модалок
         showTests,
         setShowTests,
         showResults,
-
-        // текущий тест и шаг
         currentTest,
         currentQuestion,
-
-        // действия
         startTest,
         answerQuestion,
         resetTest,
         getTestResult,
-
-        // доп. состояния (на будущее)
         isLoading,
         error,
+        resultData, // 👈 добавили наружу
     };
 }

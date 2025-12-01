@@ -27,6 +27,7 @@ export default function App() {
         answerQuestion,
         resetTest,
         getTestResult,
+        resultData,
     } = useTestEngine(user?.userId);
 
     const tabs = [
@@ -45,6 +46,19 @@ export default function App() {
 
         init();
     }, []);
+
+    useEffect(() => {
+        if (resultData && user) {
+            setUser((prev) =>
+                prev
+                    ? {
+                        ...prev,
+                        lastResult: resultData,
+                    }
+                    : prev
+            );
+        }
+    }, [resultData, user]);
 
     return (
         <div className="relative w-full min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-100">
