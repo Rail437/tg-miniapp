@@ -1,5 +1,6 @@
+// src/hooks/useTestEngine.js
+
 import { useState } from "react";
-import { availableTests } from "../data/availableTests";
 
 export function useTestEngine() {
     const [showTests, setShowTests] = useState(false);
@@ -17,39 +18,50 @@ export function useTestEngine() {
     };
 
     const answerQuestion = (answer) => {
+        if (!currentTest) return;
+
         const newAnswers = [...answers, answer];
         setAnswers(newAnswers);
 
-        if (currentTest && currentQuestion + 1 < currentTest.questions.length) {
+        if (currentQuestion + 1 < currentTest.questions.length) {
             setCurrentQuestion(currentQuestion + 1);
         } else {
+            // Тест закончился — показываем результат
             setShowResults(true);
         }
     };
 
     const resetTest = () => {
+        setShowTests(false);
         setShowResults(false);
         setCurrentTest(null);
-        setAnswers([]);
         setCurrentQuestion(0);
+        setAnswers([]);
     };
 
     const getTestResult = () => {
         if (!currentTest) return "";
 
-        const score = answers.reduce((sum, answer) => sum + (answer ? 1 : 0), 0);
+        const score = answers.reduce(
+            (sum, answer) => sum + (answer ? 1 : 0),
+            0
+        );
 
+        // Пока простая логика, как раньше
         if (currentTest.id === 1) {
-            if (score >= 3) return "Вы - Экстраверт";
-            else if (score >= 2) return "Вы - Амбиверт";
-            else return "Вы - Интроверт";
-        } else if (currentTest.id === 2) {
-            if (score >= 3) return "Высокий уровень стресса";
-            else if (score >= 2) return "Средний уровень стресса";
-            else return "Низкий уровень стресса";
+            if (score >= 3) return "Вы — Экстраверт";
+            if (score >= 2) return "Вы — Амбиверт";
+            return "Вы — Интроверт";
         }
 
-        return "Результат теста готов";
+        if (currentTest.id === 2) {
+            if (score >= 3) return "Высокий уровень стресса";
+            if (score >= 2) return "Средний уровень стресса";
+            return "Низкий уровень стресса";
+        }
+
+        // Заглушка для будущих тестов
+        return "Результат будет скоро доступен";
     };
 
     return {
@@ -58,7 +70,6 @@ export function useTestEngine() {
         showResults,
         currentTest,
         currentQuestion,
-        answers,
         startTest,
         answerQuestion,
         resetTest,

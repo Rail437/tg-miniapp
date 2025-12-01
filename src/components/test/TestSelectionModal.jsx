@@ -1,38 +1,54 @@
+// src/components/test/TestSelectionModal.jsx
+
 import React from "react";
 import { motion } from "framer-motion";
 
-export const TestSelectionModal = ({ tests, onSelectTest, onClose }) => (
-    <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-    >
+export function TestSelectionModal({ tests, onSelectTest, onClose }) {
+    return (
         <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 backdrop-blur flex items-center justify-center p-4 z-50"
         >
-            <h2 className="text-xl font-semibold mb-4 text-center">Выберите тест</h2>
-            <div className="space-y-3 mb-4">
-                {tests.map((test) => (
-                    <button
-                        key={test.id}
-                        onClick={() => onSelectTest(test)}
-                        className="w-full text-left border border-gray-200 rounded-2xl p-4 hover:bg-blue-50 transition-colors"
-                    >
-                        <div className="font-medium text-gray-800">{test.name}</div>
-                        <div className="text-sm text-gray-500 mt-1">{test.description}</div>
-                    </button>
-                ))}
-            </div>
-            <button
-                onClick={onClose}
-                className="w-full py-2.5 rounded-2xl bg-gray-100 text-gray-700 font-medium"
+            <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="bg-white rounded-3xl w-full max-w-md p-6 shadow-xl"
             >
-                Отмена
-            </button>
+                <h2 className="text-2xl font-bold mb-4 text-center">
+                    Выберите тест
+                </h2>
+
+                <div className="space-y-4 max-h-80 overflow-y-auto">
+                    {tests.map((test) => (
+                        <motion.div
+                            key={test.id}
+                            whileHover={{ scale: 1.02 }}
+                            className="p-4 bg-gray-50 rounded-xl border-2 border-transparent hover:border-blue-300 cursor-pointer transition-all"
+                            onClick={() => onSelectTest(test)}
+                        >
+                            <div className="font-bold text-lg text-gray-800">
+                                {test.name}
+                            </div>
+                            <div className="text-sm text-gray-600 mt-1">
+                                {test.description}
+                            </div>
+                            <div className="text-xs text-gray-500 mt-2">
+                                {test.questions.length} вопросов
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
+
+                <button
+                    onClick={onClose}
+                    className="mt-6 w-full py-3 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors"
+                >
+                    Назад
+                </button>
+            </motion.div>
         </motion.div>
-    </motion.div>
-);
+    );
+}

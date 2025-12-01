@@ -1,46 +1,73 @@
+// src/components/test/TestQuestionModal.jsx
+
 import React from "react";
 import { motion } from "framer-motion";
 
-export const TestQuestionModal = ({ test, currentQuestionIndex, onAnswer, onClose }) => (
-    <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-    >
+export function TestQuestionModal({
+                                      test,
+                                      currentQuestionIndex,
+                                      onAnswer,
+                                      onClose,
+                                  }) {
+    const total = test.questions.length;
+    const current = currentQuestionIndex + 1;
+    const progress = (current / total) * 100;
+
+    return (
         <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.95, opacity: 0 }}
-            className="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 backdrop-blur flex items-center justify-center p-4 z-50"
         >
-            <div className="flex justify-between items-center mb-2">
-                <h2 className="text-lg font-semibold text-gray-800">{test.name}</h2>
+            <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="bg-white rounded-3xl w-full max-w-md p-6 shadow-xl"
+            >
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-xl font-bold">{test.name}</h2>
+                    <div className="text-sm text-gray-500">
+                        {current}/{total}
+                    </div>
+                </div>
+
+                <div className="mb-3">
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                            className="bg-blue-500 h-2 rounded-full transition-all"
+                            style={{ width: `${progress}%` }}
+                        />
+                    </div>
+                </div>
+
+                <h3 className="text-lg font-semibold mb-6 text-center">
+                    {test.questions[currentQuestionIndex]}
+                </h3>
+
+                <div className="space-y-3">
+                    <button
+                        onClick={() => onAnswer(true)}
+                        className="w-full py-4 bg-green-500 text-white rounded-xl hover:bg-green-600 transition-colors font-semibold"
+                    >
+                        Да, согласен
+                    </button>
+                    <button
+                        onClick={() => onAnswer(false)}
+                        className="w-full py-4 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors font-semibold"
+                    >
+                        Нет, не согласен
+                    </button>
+                </div>
+
                 <button
                     onClick={onClose}
-                    className="text-gray-400 hover:text-gray-600 text-2xl"
+                    className="mt-4 w-full py-2.5 text-sm text-gray-500 hover:text-gray-700"
                 >
-                    &times;
+                    Выйти из теста
                 </button>
-            </div>
-            <p className="text-sm text-blue-600 mb-4">
-                Вопрос {currentQuestionIndex + 1} из {test.questions.length}
-            </p>
-            <p className="text-lg mb-6 text-gray-800">{test.questions[currentQuestionIndex]}</p>
-            <div className="flex gap-3 mb-4">
-                <button
-                    onClick={() => onAnswer(true)}
-                    className="flex-1 py-3 rounded-2xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 transition-colors"
-                >
-                    Скорее да
-                </button>
-                <button
-                    onClick={() => onAnswer(false)}
-                    className="flex-1 py-3 rounded-2xl bg-gray-100 text-gray-700 font-medium shadow-md hover:bg-gray-200 transition-colors"
-                >
-                    Скорее нет
-                </button>
-            </div>
+            </motion.div>
         </motion.div>
-    </motion.div>
-);
+    );
+}

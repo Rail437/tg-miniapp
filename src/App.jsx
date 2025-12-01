@@ -1,16 +1,17 @@
 // src/App.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { availableTests } from "./data/availableTests";
-import { useTestEngine } from "./hooks/useTestEngine";
-import { TestSelectionModal } from "./components/test/TestSelectionModal";
-import { TestQuestionModal } from "./components/test/TestQuestionModal";
-import { TestResultModal } from "./components/test/TestResultModal";
-import { ProfileSection } from "./components/ProfileSection";
-import { StoriesSection } from "./components/StoriesSection";
-import { PsychologistSection } from "./components/PsychologistSection";
-import { TopHeader } from "./components/layout/TopHeader";
-import { TabNavigation } from "./components/layout/TabNavigation";
+import { availableTests }       from "./data/availableTests";
+import { useTestEngine }        from "./hooks/useTestEngine";
+import { TestSelectionModal }   from "./components/test/TestSelectionModal";
+import { TestQuestionModal }    from "./components/test/TestQuestionModal";
+import { TestResultModal }      from "./components/test/TestResultModal";
+import { ProfileSection }       from "./components/ProfileSection";
+import { StoriesSection }       from "./components/StoriesSection";
+import { PsychologistSection }  from "./components/PsychologistSection";
+import { TopHeader }            from "./components/layout/TopHeader";
+import { TabNavigation }        from "./components/layout/TabNavigation";
+import { apiClient }            from "./api/apiClient";
 
 export default function App() {
     const {
@@ -27,6 +28,7 @@ export default function App() {
 
     const [activeTab, setActiveTab] = useState("tests");
     const [showProfile, setShowProfile] = useState(false);
+    const [user, setUser] = useState(null);
 
     const tabs = [
         { id: "tests", name: "Тесты", icon: "🧠" },
@@ -34,6 +36,15 @@ export default function App() {
         { id: "stories", name: "Истории", icon: "📖" },
         { id: "about", name: "О психологе", icon: "👩‍⚕️" },
     ];
+    useEffect(() => {
+        async function init() {
+            // потом сюда подставишь реальный initData из Telegram.WebApp.initData
+            const initDataMock = "dummy";
+            const res = await apiClient.authTelegram(initDataMock);
+            setUser(res); // { userId, lastResult }
+        }
+        init();
+    }, []);
 
     return (
         <div className="relative w-full min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-100">
