@@ -3,30 +3,15 @@ import React from "react";
 import {motion} from "framer-motion";
 import {useTranslation} from "../../i18n";
 
-export function TestResultModal({result, resultText, onClose}) {
+export function TestResultModal({result, onClose}) {
     const {t, lang} = useTranslation();
 
     // Локализуем заголовок
-    let localizedLabel = null;
-    let localizedDescription = null;
-
-    if (result) {
-        if (lang === "ru") {
-            localizedLabel = result.label || result.label_ru || result.label_en;
-            localizedDescription =
-                result.description || result.description_ru || result.description_en;
-        } else {
-            localizedLabel = result.label_en || result.label || result.label_ru;
-            localizedDescription =
-                result.description_en ||
-                result.description ||
-                result.description_ru;
-        }
-    }
+    let localizedLabel = result?.[lang].label;
+    let localizedDescription  = result?.[lang].description;
 
     const title = localizedLabel || t("result.title");
-    const description =
-        localizedDescription || resultText || t("result.subtitle");
+    console.log("result:", result);
 
     return (
         <motion.div
@@ -66,12 +51,12 @@ export function TestResultModal({result, resultText, onClose}) {
                     className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[11px] font-bold">
                  {result.typeId}
                 </span>
-                        <span>{t("result.typeLabel")}</span>
+                        <span>{localizedLabel}</span>
                     </div>
                 )}
 
                 {/* описание */}
-                <p className="text-sm text-gray-700 mb-4">{result.description}</p>
+                <p className="text-sm text-gray-700 mb-4">{localizedDescription}</p>
 
                 <button
                     onClick={onClose}

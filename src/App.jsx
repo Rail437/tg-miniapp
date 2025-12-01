@@ -240,7 +240,6 @@ function AppInner() {
                 {showResults && (
                     <TestResultModal
                         result={resultData}
-                        resultText={getTestResult()}
                         onClose={() => {
                             resetTest();
                             // Ничего не переключаем — остаёмся на текущей вкладке
