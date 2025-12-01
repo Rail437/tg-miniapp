@@ -1,43 +1,83 @@
 // src/components/test/TestResultModal.jsx
-
 import React from "react";
 import {motion} from "framer-motion";
+import {useTranslation} from "../../i18n";
 
-export function TestResultModal({resultText, onRestart}) {
+export function TestResultModal({result, resultText, onClose}) {
+    const {t, lang} = useTranslation();
+
+    // Локализуем заголовок
+    let localizedLabel = null;
+    let localizedDescription = null;
+
+    if (result) {
+        if (lang === "ru") {
+            localizedLabel = result.label || result.label_ru || result.label_en;
+            localizedDescription =
+                result.description || result.description_ru || result.description_en;
+        } else {
+            localizedLabel = result.label_en || result.label || result.label_ru;
+            localizedDescription =
+                result.description_en ||
+                result.description ||
+                result.description_ru;
+        }
+    }
+
+    const title = localizedLabel || t("result.title");
+    const description =
+        localizedDescription || resultText || t("result.subtitle");
+
     return (
         <motion.div
+            className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4"
             initial={{opacity: 0}}
             animate={{opacity: 1}}
             exit={{opacity: 0}}
-            className="fixed inset-0 bg-black/40 backdrop-blur flex items-center justify-center p-4 z-50"
         >
             <motion.div
-                initial={{scale: 0.9, opacity: 0}}
-                animate={{scale: 1, opacity: 1}}
-                exit={{scale: 0.9, opacity: 0}}
-                className="bg-white rounded-3xl w-full max-w-md p-6 shadow-xl text-center"
+                className="bg-white/95 backdrop-blur-2xl rounded-3xl p-6 w-full max-w-md shadow-2xl border border-white/80"
+                initial={{scale: 0.9, opacity: 0, y: 20}}
+                animate={{scale: 1, opacity: 1, y: 0}}
+                exit={{scale: 0.9, opacity: 0, y: 20}}
+                transition={{duration: 0.25}}
             >
-                <div
-                    className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4">
-                    ✓
+                {/* хедер */}
+                <div className="flex justify-between items-start mb-4">
+                    <div>
+                        <div className="text-xs uppercase tracking-wide text-blue-500 mb-1">
+                            {t("result.title")}
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900">{title}</h3>
+                    </div>
+                    <button
+                        onClick={onClose}
+                        className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+                    >
+                        &times;
+                    </button>
                 </div>
 
-                <h2 className="text-2xl font-bold mb-2">Тест завершён!</h2>
+                {/* плашка типа */}
+                {result?.typeId && (
+                    <div
+                        className="mb-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-medium">
+                <span
+                    className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[11px] font-bold">
+                 {result.typeId}
+                </span>
+                        <span>{t("result.typeLabel")}</span>
+                    </div>
+                )}
 
-                <div className="text-lg font-semibold text-blue-600 mb-4">
-                    {resultText}
-                </div>
-
-                <p className="text-gray-600 mb-6">
-                    Спасибо за прохождение теста! Ваши результаты помогут лучше понять
-                    себя.
-                </p>
+                {/* описание */}
+                <p className="text-sm text-gray-700 mb-4">{result.description}</p>
 
                 <button
-                    onClick={onRestart}
-                    className="w-full py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors"
+                    onClick={onClose}
+                    className="w-full py-2.5 rounded-2xl bg-gray-100 text-gray-800 text-sm font-semibold hover:bg-gray-200 transition-colors"
                 >
-                    Закрыть
+                    {t("result.buttonClose")}
                 </button>
             </motion.div>
         </motion.div>
