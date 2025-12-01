@@ -14,7 +14,6 @@ import {apiClient} from "./api/apiClient";
 
 export default function App() {
     const [activeTab, setActiveTab] = useState("tests");
-    const [showProfile, setShowProfile] = useState(false);
     const [user, setUser] = useState(null);
 
     const {
@@ -65,7 +64,7 @@ export default function App() {
             {/* Центрируем всё приложение и задаём “рамку” максимальной ширины */}
             <div className="max-w-3xl mx-auto min-h-screen flex flex-col py-4 px-3">
                 {/* HEADER — стеклянная шапка */}
-                <TopHeader onOpenProfile={() => setShowProfile(true)}/>
+                <TopHeader onOpenProfile={() => setActiveTab("profile")} />
 
                 {/* Навигация */}
                 <TabNavigation
@@ -233,41 +232,6 @@ export default function App() {
                             setActiveTab("tests");
                         }}
                     />
-                )}
-
-                {showProfile && (
-                    <motion.div
-                        initial={{opacity: 0}}
-                        animate={{opacity: 1}}
-                        exit={{opacity: 0}}
-                        className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
-                    >
-                        <motion.div
-                            initial={{scale: 0.9, opacity: 0}}
-                            animate={{scale: 1, opacity: 1}}
-                            exit={{scale: 0.9, opacity: 0}}
-                            className="bg-white/90 backdrop-blur-2xl rounded-3xl p-6 w-full max-w-md shadow-2xl border border-white/70"
-                        >
-                            <div className="flex justify-between items-center mb-4">
-                                <h2 className="text-xl font-bold text-gray-900">
-                                    Личный кабинет
-                                </h2>
-                                <button
-                                    onClick={() => setShowProfile(false)}
-                                    className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
-                                >
-                                    &times;
-                                </button>
-                            </div>
-                            <ProfileSection userId={user?.userId}/>
-                            <button
-                                onClick={() => setShowProfile(false)}
-                                className="w-full mt-6 py-2.5 rounded-2xl bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 transition-colors"
-                            >
-                                Закрыть
-                            </button>
-                        </motion.div>
-                    </motion.div>
                 )}
             </AnimatePresence>
         </div>
