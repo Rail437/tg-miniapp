@@ -279,7 +279,8 @@ export async function getMyInvited(userId) {
             invitedUserId: u.invitedUserId,
             joinedAt: u.createdAt,
             resultType: result?.typeId || null,
-            resultLabel: result?.label || null,
+            // Пытаемся взять RU, если нет — EN, иначе null
+            resultLabel: result?.ru?.label || result?.en?.label || null,
         };
     });
 

@@ -1,5 +1,5 @@
 // src/i18n.jsx
-import React, { createContext, useContext, useState } from "react";
+import React, {createContext, useContext, useState} from "react";
 
 const translations = {
     ru: {
@@ -50,6 +50,27 @@ const translations = {
             modalBullet3:
                 "Осознание того, какие люди вас дополняют, а какие могут напрягать.",
             modalClose: "Понятно, вернуться в кабинет",
+        },
+        insights: {
+            compatibility: {
+                title: "Совместимость по типам",
+                description:
+                    "Позже здесь появится персональная совместимость по вашему типу." +
+                    "\nПока можно пригласить друзей и увидеть их типы и совместимость в кабинете.",
+            },
+            stories: {
+                title: "Истории",
+                button: "Поделиться историей",
+                send: "Отправить",
+                success: "Спасибо! История отправлена.",
+            },
+            author: {
+                title: "Об авторе",
+                description: "Узнайте, кто стоит за INNER CODE и подходом к работе с психикой.",
+            },
+            modals: {
+                close: "Закрыть",
+            },
         },
     },
     en: {
@@ -102,6 +123,27 @@ const translations = {
                 "Awareness of which people complement you and which may feel stressful.",
             modalClose: "Got it, back to profile",
         },
+        insights: {
+            compatibility: {
+                title: "Compatibility by types",
+                description:
+                    "Soon you'll see personal compatibility based on your type here. " +
+                    "\nFor now, invite friends and see their types and compatibility in your profile.",
+            },
+            stories: {
+                title: "Stories",
+                button: "Share your story",
+                send: "Send",
+                success: "Thanks! Your story has been sent.",
+            },
+            author: {
+                title: "About author",
+                description: "Find out who is behind the INNER CODE and the approach to working with the psyche.",
+            },
+            modals: {
+                close: "Close",
+            },
+        },
     },
 };
 
@@ -111,7 +153,7 @@ const LanguageContext = createContext({
     t: (key) => key,
 });
 
-export const LanguageProvider = ({ children }) => {
+export const LanguageProvider = ({children}) => {
     const [lang, setLang] = useState("ru");
 
     const t = (key) => {
@@ -125,7 +167,7 @@ export const LanguageProvider = ({ children }) => {
     };
 
     return (
-        <LanguageContext.Provider value={{ lang, setLang, t }}>
+        <LanguageContext.Provider value={{lang, setLang, t}}>
             {children}
         </LanguageContext.Provider>
     );

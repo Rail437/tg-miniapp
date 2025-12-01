@@ -2,7 +2,6 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "../../i18n";
-import { testTexts } from "../../data/testTexts";
 
 export function TestQuestionModal({
                                       test,
@@ -12,10 +11,10 @@ export function TestQuestionModal({
                                   }) {
     const { lang } = useTranslation();
 
-    const text = testTexts[lang][test.i18nKey];
-    const questions = text.questions;
-    const question = questions[currentQuestionIndex];
-    const total = questions.length;
+    // Берём вопросы прямо из объекта теста
+    const questions = test.questions?.[lang] ?? test.questions?.ru ?? [];
+    const total = questions.length || 1;
+    const question = questions[currentQuestionIndex] ?? "";
 
     const progress = Math.round(((currentQuestionIndex + 1) / total) * 100);
 

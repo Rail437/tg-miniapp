@@ -13,7 +13,13 @@ export const ProfileSection = ({userId}) => {
     const [error, setError] = useState(false);
     const [showTypeModal, setShowTypeModal] = useState(false);
 
+    // Выбор локали
     const locale = lang === "ru" ? "ru-RU" : "en-US";
+
+    // Локализованная версия результата "на лету"
+    const localizedResult = lastResult
+        ? lastResult[lang] ?? lastResult.ru ?? lastResult.en ?? null
+        : null;
 
     useEffect(() => {
         if (!userId) {
@@ -34,7 +40,8 @@ export const ProfileSection = ({userId}) => {
 
                 setReferralLink(refData.link);
                 setReferrals(invited);
-                setLastResult(result?.[lang]);
+                // Сохраняем сырое значение: { typeId, ru, en, createdAt }
+                setLastResult(result || null);
             } catch (e) {
                 console.error("ProfileSection load error", e);
                 setError(true);
@@ -88,14 +95,14 @@ export const ProfileSection = ({userId}) => {
                             </div>
                             <div className="flex-1">
                                 <div className="font-semibold text-gray-900 flex items-center gap-2">
-                                    <span>{lastResult.label}</span>
+                                    <span>{localizedResult.label}</span>
                                     <span
                                         className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 uppercase tracking-wide">
                                         {t("profile.badgeDetailed")}
                                     </span>
                                 </div>
                                 <div className="text-sm text-gray-600 mt-1 line-clamp-2">
-                                    {lastResult.description}
+                                    {localizedResult.description}
                                 </div>
                                 <div className="mt-2 text-xs text-gray-400">
                                     {t("profile.resultFrom")}{" "}
@@ -208,7 +215,7 @@ export const ProfileSection = ({userId}) => {
                                         {t("profile.modalTag")}
                                     </div>
                                     <h3 className="text-xl font-bold text-gray-900">
-                                        {lastResult.label}
+                                        {localizedResult.label}
                                     </h3>
                                     <div className="text-xs text-gray-400 mt-1">
                                         {t("profile.modalDeterminedAt")}{" "}
@@ -229,7 +236,7 @@ export const ProfileSection = ({userId}) => {
                             </div>
 
                             <p className="text-sm text-gray-700 mb-4">
-                                {lastResult.description}
+                                {localizedResult.description}
                             </p>
 
                             {/* Заглушки под будущие "сильные стороны / риски" */}
