@@ -8,6 +8,9 @@ const impl = API_MODE === "real" ? realApi : mockApi;
 
 // Экспортируем единый интерфейс
 export const apiClient = {
+    // Установка токена (для realApi есть, для mock — просто заглушка)
+    setAuthToken: impl.setAuthToken ? impl.setAuthToken : () => {},
+
     // Авторизация через Telegram / получение юзера
     authTelegram: impl.authTelegram,
 

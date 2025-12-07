@@ -167,27 +167,33 @@ export const ProfileSection = ({userId}) => {
                         </p>
                     ) : (
                         <div className="space-y-2">
-                            {referrals.map((item, idx) => (
-                                <div
-                                    key={idx}
-                                    className="flex justify-between items-center bg-gray-50 rounded-xl px-3 py-2 text-xs"
-                                >
-                                    <div className="flex flex-col">
+                            {referrals.map((item, idx) => {
+                                const invitedIdShort = String(item.invitedUserId ?? "").slice(0, 6);
+
+                                return (
+                                    <div
+                                        key={idx}
+                                        className="flex justify-between items-center bg-gray-50 rounded-xl px-3 py-2 text-xs"
+                                    >
+                                        <div className="flex flex-col">
                                         <span className="font-medium text-gray-800">
                                             {t("profile.invitedUserPrefix")}{" "}
-                                            {item.invitedUserId.slice(0, 6)}…
+                                            {invitedIdShort}…
                                         </span>
-                                        {item.resultLabel && (
-                                            <span className="text-gray-500">
-                                                {item.resultLabel}
-                                            </span>
-                                        )}
+                                            {item.resultLabel && (
+                                                <span className="text-gray-500">
+                                                    {item.resultLabel}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <span className="text-gray-400">
+                                                {item.joinedAt
+                                                    ? new Date(item.joinedAt).toLocaleDateString(locale)
+                                                    : ""}
+                                         </span>
                                     </div>
-                                    <span className="text-gray-400">
-                                        {new Date(item.joinedAt).toLocaleDateString(locale)}
-                                    </span>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     )}
                 </div>

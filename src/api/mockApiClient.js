@@ -1,5 +1,5 @@
 // src/api/mockApiClient.js
-import { TYPE_RESULTS } from "../data/typeResults";
+import {TYPE_RESULTS} from "../data/typeResults";
 
 const STORAGE_KEY = "innercode_mock_db";
 
@@ -101,6 +101,10 @@ export async function startMainTest(userId) {
         currentStep: 0,
         totalSteps: TOTAL_STEPS,
     };
+}
+// Для совместимости с apiClient.setAuthToken
+export function setAuthToken(token) {
+    // в моках ничего не делаем
 }
 
 /**
@@ -209,8 +213,7 @@ export async function completeMainTest(sessionId) {
 export async function getLastResult(userId) {
     await delay();
     const db = loadDb();
-    const result = db.results.find((r) => r.userId === userId) || null;
-    return result;
+    return db.results.find((r) => r.userId === userId) || null;
 }
 
 /**
@@ -273,7 +276,7 @@ export async function getMyInvited(userId) {
 
     const uses = db.referralUses.filter((u) => u.referralId === myReferral.id);
 
-    const invited = uses.map((u) => {
+    return uses.map((u) => {
         const result = db.results.find((r) => r.userId === u.invitedUserId);
         return {
             invitedUserId: u.invitedUserId,
@@ -283,6 +286,4 @@ export async function getMyInvited(userId) {
             resultLabel: result?.ru?.label || result?.en?.label || null,
         };
     });
-
-    return invited;
 }
