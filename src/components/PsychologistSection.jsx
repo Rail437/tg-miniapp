@@ -74,7 +74,7 @@ export const PsychologistSection = () => {
                                 {t("psychologist.telegramCta")}
                             </a>
                             <a
-                                href="https://vk.com/mary_yunes"
+                                href="https://vk.com/club212397789"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors"

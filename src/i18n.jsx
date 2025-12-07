@@ -91,7 +91,7 @@ const translations = {
             contactsSubtitle:
                 "Если вы чувствуете, что пришло время обратиться за поддержкой — можно написать в мессенджер и задать свой вопрос.",
             telegramCta: "Telegram",
-            vkCta: "VK",
+            vkCta: "VK Podcasts",
         },
         storiesSection: {
             title: "Поделиться своей историей",
