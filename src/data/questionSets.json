@@ -1,0 +1,1386 @@
+{
+  "IE": {
+    "dimension": "IE",
+    "poles": [
+      "E",
+      "I"
+    ],
+    "questions": {
+      "E": [
+        {
+          "id": "IE_E_01",
+          "priority": 1,
+          "text": {
+            "ru": "Среди людей я чувствую прилив энергии — мне хочется общаться, узнавать мнения, обмениваться впечатлениями.",
+            "en": "Among people, I feel a surge of energy - I want to communicate, learn opinions, exchange impressions."
+          }
+        },
+        {
+          "id": "IE_E_02",
+          "priority": 1,
+          "text": {
+            "ru": "Общение меня наполняет — после встреч с людьми я чувствую бодрость и вдохновение.",
+            "en": "Communication fills me up - after meeting with people, I feel energized and inspired."
+          }
+        },
+        {
+          "id": "IE_E_03",
+          "priority": 2,
+          "text": {
+            "ru": "Мне легко заговорить с незнакомым человеком — тема разговора обычно находится сама собой.",
+            "en": "It's easy for me to start a conversation with a stranger - the topic of conversation usually comes up on its own."
+          }
+        },
+        {
+          "id": "IE_E_04",
+          "priority": 2,
+          "text": {
+            "ru": "Я часто думаю вслух: делюсь идеями, обсуждаю планы, рассказываю о своих чувствах.",
+            "en": "I often think out loud: share ideas, discuss plans, talk about my feelings."
+          }
+        },
+        {
+          "id": "IE_E_05",
+          "priority": 3,
+          "text": {
+            "ru": "Мне нравится бывать в людных местах: на мероприятиях, встречах, концертах, тусовках.",
+            "en": "I like to be in crowded places: at events, meetings, concerts, parties."
+          }
+        },
+        {
+          "id": "IE_E_06",
+          "priority": 3,
+          "text": {
+            "ru": "Я познаю жизнь через опыт — действуя, пробуя, взаимодействуя с разными людьми и ситуациями.",
+            "en": "I learn about life through experience - by acting, trying, interacting with different people and situations."
+          }
+        },
+        {
+          "id": "IE_E_07",
+          "priority": 4,
+          "text": {
+            "ru": "Мне интереснее узнать, как что-то устроено во внешнем мире, чем долго размышлять о том, почему всё так.",
+            "en": "I'm more interested in learning how something works in the external world than in thinking for a long time about why everything is the way it is."
+          }
+        },
+        {
+          "id": "IE_E_08",
+          "priority": 4,
+          "text": {
+            "ru": "Когда появляется идея, мне хочется скорее перейти к действиям, а не долго её анализировать.",
+            "en": "When an idea appears, I want to move to action quickly, rather than analyzing it for a long time."
+          }
+        },
+        {
+          "id": "IE_E_09",
+          "priority": 4,
+          "text": {
+            "ru": "Наедине мне быстро становится скучно — я ищу общение, движение, впечатления.",
+            "en": "When alone, I quickly get bored - I seek communication, movement, impressions."
+          }
+        },
+        {
+          "id": "IE_E_10",
+          "priority": 4,
+          "text": {
+            "ru": "Я легко приспосабливаюсь к обстоятельствам и чаще меняюсь сам под ситуацию, чем пытаюсь менять мир под себя.",
+            "en": "I easily adapt to circumstances and change myself to fit the situation more often than I try to change the world to fit me."
+          }
+        }
+      ],
+      "I": [
+        {
+          "id": "IE_I_01",
+          "priority": 1,
+          "text": {
+            "ru": "У меня часто идут внутренние диалоги, и я многое обдумываю про себя, прежде чем говорить.",
+            "en": "I often have internal dialogues and think a lot about things to myself before speaking."
+          }
+        },
+        {
+          "id": "IE_I_02",
+          "priority": 1,
+          "text": {
+            "ru": "Мне легче восстановиться, когда я один: на природе, дома, в тишине, без лишних разговоров.",
+            "en": "It's easier for me to recover when I'm alone: in nature, at home, in silence, without unnecessary conversations."
+          }
+        },
+        {
+          "id": "IE_I_03",
+          "priority": 2,
+          "text": {
+            "ru": "В компании я чаще думаю о себе: как я выгляжу, с кем хочу поговорить и где мне будет комфортно.",
+            "en": "In a company, I more often think about myself: how I look, who I want to talk to, and where I will be comfortable."
+          }
+        },
+        {
+          "id": "IE_I_04",
+          "priority": 2,
+          "text": {
+            "ru": "Я предпочитаю тесный круг близких друзей — мне важнее глубина общения, чем количество знакомых.",
+            "en": "I prefer a close circle of close friends - the depth of communication is more important to me than the number of acquaintances."
+          }
+        },
+        {
+          "id": "IE_I_05",
+          "priority": 3,
+          "text": {
+            "ru": "В большом обществе я быстро устаю и стараюсь найти одного человека, с которым можно поговорить по сути.",
+            "en": "In large society, I quickly get tired and try to find one person with whom I can talk about things that matter."
+          }
+        },
+        {
+          "id": "IE_I_06",
+          "priority": 3,
+          "text": {
+            "ru": "Чтобы открыться и активно общаться, мне нужно чувствовать доверие и безопасность.",
+            "en": "To open up and communicate actively, I need to feel trust and safety."
+          }
+        },
+        {
+          "id": "IE_I_07",
+          "priority": 4,
+          "text": {
+            "ru": "Я часто анализирую свои поступки — почему я так поступил, что почувствовал, что мог бы сделать иначе.",
+            "en": "I often analyze my actions - why I acted that way, what I felt, what I could have done differently."
+          }
+        },
+        {
+          "id": "IE_I_08",
+          "priority": 4,
+          "text": {
+            "ru": "Я получаю энергию на действия только тогда, когда внутри всё «состыковалось» — есть понимание и смысл.",
+            "en": "I get energy for actions only when everything inside is 'connected' - there is understanding and meaning."
+          }
+        },
+        {
+          "id": "IE_I_09",
+          "priority": 4,
+          "text": {
+            "ru": "Мне сложно начать разговор с незнакомым человеком, если нет настоящего интереса к теме или человеку.",
+            "en": "It's difficult for me to start a conversation with a stranger if there is no genuine interest in the topic or the person."
+          }
+        },
+        {
+          "id": "IE_I_10",
+          "priority": 4,
+          "text": {
+            "ru": "Иногда мне трудно посмотреть на ситуацию со стороны — я больше опираюсь на свои чувства и внутренние рассуждения.",
+            "en": "Sometimes it's hard for me to look at a situation from the outside - I rely more on my feelings and internal reasoning."
+          }
+        }
+      ]
+    }
+  },
+  "JP": {
+    "dimension": "JP",
+    "poles": [
+      "J",
+      "P"
+    ],
+    "questions": {
+      "J": [
+        {
+          "id": "JP_J_01",
+          "priority": 1,
+          "text": {
+            "ru": "Мне комфортнее, когда жизнь предсказуема — я люблю стабильность и заранее продуманный распорядок.",
+            "en": "I feel more comfortable when life is predictable - I love stability and a pre-planned routine."
+          }
+        },
+        {
+          "id": "JP_J_02",
+          "priority": 1,
+          "text": {
+            "ru": "Я часто строю планы и стараюсь придерживаться их; когда планы срываются, мне бывает неприятно.",
+            "en": "I often make plans and try to stick to them; when plans fall through, I can feel uncomfortable."
+          }
+        },
+        {
+          "id": "JP_J_03",
+          "priority": 2,
+          "text": {
+            "ru": "В решении задач мне важно идти шаг за шагом, последовательно, без хаоса и спешки.",
+            "en": "In solving tasks, it's important for me to go step by step, sequentially, without chaos and rush."
+          }
+        },
+        {
+          "id": "JP_J_04",
+          "priority": 2,
+          "text": {
+            "ru": "Мне нравится, когда всё вокруг в порядке: вещи на своих местах, день расписан, мысли структурированы.",
+            "en": "I like it when everything around is in order: things are in their places, the day is scheduled, thoughts are structured."
+          }
+        },
+        {
+          "id": "JP_J_05",
+          "priority": 3,
+          "text": {
+            "ru": "Если я что-то решил(а), обычно держусь этого решения и не меняю его без веской причины.",
+            "en": "If I've decided something, I usually stick to that decision and don't change it without a good reason."
+          }
+        },
+        {
+          "id": "JP_J_06",
+          "priority": 3,
+          "text": {
+            "ru": "Новые идеи и перемены я принимаю не сразу — мне нужно время, чтобы понять, как это впишется в мою жизнь.",
+            "en": "I don't accept new ideas and changes immediately - I need time to understand how it will fit into my life."
+          }
+        },
+        {
+          "id": "JP_J_07",
+          "priority": 4,
+          "text": {
+            "ru": "Я предпочитаю завершать начатое, прежде чем браться за что-то новое.",
+            "en": "I prefer to finish what I've started before taking on something new."
+          }
+        },
+        {
+          "id": "JP_J_08",
+          "priority": 4,
+          "text": {
+            "ru": "Мне сложно заниматься несколькими делами одновременно — я люблю концентрироваться на одном.",
+            "en": "It's difficult for me to do several things at the same time - I like to concentrate on one thing."
+          }
+        },
+        {
+          "id": "JP_J_09",
+          "priority": 4,
+          "text": {
+            "ru": "Чтобы действовать уверенно, мне важно заранее знать, что и как будет происходить.",
+            "en": "To act confidently, it's important for me to know in advance what will happen and how."
+          }
+        },
+        {
+          "id": "JP_J_10",
+          "priority": 4,
+          "text": {
+            "ru": "Мне приятно ощущение порядка — в делах, в доме, в мыслях.",
+            "en": "I enjoy the feeling of order - in affairs, at home, in thoughts."
+          }
+        }
+      ],
+      "P": [
+        {
+          "id": "JP_P_01",
+          "priority": 1,
+          "text": {
+            "ru": "Мне нравится чувство свободы — я чувствую себя живым(ой), когда могу действовать по настроению и без строгих рамок.",
+            "en": "I like the feeling of freedom - I feel alive when I can act according to my mood and without strict frameworks."
+          }
+        },
+        {
+          "id": "JP_P_02",
+          "priority": 1,
+          "text": {
+            "ru": "Я легко подстраиваюсь под изменения и не боюсь неожиданных поворотов.",
+            "en": "I easily adapt to changes and am not afraid of unexpected turns."
+          }
+        },
+        {
+          "id": "JP_P_03",
+          "priority": 2,
+          "text": {
+            "ru": "Люблю, когда жизнь насыщена: много дел, событий, идей — чем активнее, тем интереснее.",
+            "en": "I love it when life is full: many tasks, events, ideas - the more active, the more interesting."
+          }
+        },
+        {
+          "id": "JP_P_04",
+          "priority": 2,
+          "text": {
+            "ru": "Мне нравится пробовать новое — если что-то откликается, я просто включаюсь в это, не слишком анализируя.",
+            "en": "I like to try new things - if something resonates, I just get involved in it without analyzing too much."
+          }
+        },
+        {
+          "id": "JP_P_05",
+          "priority": 3,
+          "text": {
+            "ru": "В голове часто бурлит много мыслей — думаю об одном, делаю другое, мечтаю о третьем.",
+            "en": "Many thoughts are often bubbling in my head - I think about one thing, do another, dream about a third."
+          }
+        },
+        {
+          "id": "JP_P_06",
+          "priority": 3,
+          "text": {
+            "ru": "Я быстро принимаю решения, опираясь на внутреннее ощущение «нравится — не нравится».",
+            "en": "I make decisions quickly based on the internal feeling of 'like - don't like'."
+          }
+        },
+        {
+          "id": "JP_P_07",
+          "priority": 4,
+          "text": {
+            "ru": "Мне скучно в рутине — монотонная работа заметно снижает мою энергию.",
+            "en": "I get bored with routine - monotonous work noticeably reduces my energy."
+          }
+        },
+        {
+          "id": "JP_P_08",
+          "priority": 4,
+          "text": {
+            "ru": "Я люблю делать несколько дел одновременно и часто переключаюсь между задачами.",
+            "en": "I like to do several things at the same time and often switch between tasks."
+          }
+        },
+        {
+          "id": "JP_P_09",
+          "priority": 4,
+          "text": {
+            "ru": "Если теряю интерес к делу, могу относительно спокойно его отпустить и переключиться на другое.",
+            "en": "If I lose interest in something, I can relatively calmly let it go and switch to something else."
+          }
+        },
+        {
+          "id": "JP_P_10",
+          "priority": 4,
+          "text": {
+            "ru": "Бывает, что у меня прилив энергии и вдохновения сменяется периодом усталости и желания «выпасть из потока».",
+            "en": "It happens that my surge of energy and inspiration is replaced by a period of fatigue and a desire to 'drop out of the flow'."
+          }
+        }
+      ]
+    }
+  },
+  "NS": {
+    "dimension": "NS",
+    "poles": [
+      "N",
+      "S"
+    ],
+    "questions": {
+      "N": [
+        {
+          "id": "NS_N_01",
+          "priority": 1,
+          "text": {
+            "ru": "Прежде чем действовать, я часто предпочитаю поразмышлять — мне важно понять суть, а не просто сделать.",
+            "en": "Before acting, I often prefer to reflect - it's important for me to understand the essence, not just do."
+          }
+        },
+        {
+          "id": "NS_N_02",
+          "priority": 1,
+          "text": {
+            "ru": "Я часто живу мыслями о будущем: вижу образы, сценарии, варианты, и это может вдохновлять больше, чем текущее «здесь и сейчас».",
+            "en": "I often live with thoughts about the future: I see images, scenarios, options, and this can inspire more than the current 'here and now'."
+          }
+        },
+        {
+          "id": "NS_N_03",
+          "priority": 2,
+          "text": {
+            "ru": "Мне нравится строить теории, рассуждать о смысле происходящего, искать скрытые связи между событиями.",
+            "en": "I like to build theories, reflect on the meaning of what's happening, look for hidden connections between events."
+          }
+        },
+        {
+          "id": "NS_N_04",
+          "priority": 2,
+          "text": {
+            "ru": "Меня больше интересует, почему всё устроено именно так, чем то, что конкретно сейчас происходит.",
+            "en": "I'm more interested in why everything is arranged exactly this way, than in what is specifically happening right now."
+          }
+        },
+        {
+          "id": "NS_N_05",
+          "priority": 3,
+          "text": {
+            "ru": "Когда я говорю, люди иногда просят пояснить — я нередко выражаюсь образами, а не сухими фактами.",
+            "en": "When I speak, people sometimes ask for clarification - I often express myself in images, not dry facts."
+          }
+        },
+        {
+          "id": "NS_N_06",
+          "priority": 3,
+          "text": {
+            "ru": "Я могу подолгу обдумывать идею, прежде чем приступить к её реализации — для меня важно внутреннее понимание.",
+            "en": "I can think about an idea for a long time before starting to implement it - internal understanding is important to me."
+          }
+        },
+        {
+          "id": "NS_N_07",
+          "priority": 4,
+          "text": {
+            "ru": "Мне ближе разговоры о смыслах, идеях и перспективах, чем о чисто бытовых деталях.",
+            "en": "Conversations about meanings, ideas and perspectives are closer to me than purely everyday details."
+          }
+        },
+        {
+          "id": "NS_N_08",
+          "priority": 4,
+          "text": {
+            "ru": "Иногда люди думают, что я «витаю в облаках», а я просто много живу в мире идей и образов.",
+            "en": "Sometimes people think I'm 'daydreaming', but I just live a lot in the world of ideas and images."
+          }
+        },
+        {
+          "id": "NS_N_09",
+          "priority": 4,
+          "text": {
+            "ru": "Материальные вещи и бытовой комфорт для меня часто не на первом месте — важнее то, что вдохновляет и наполняет смыслом.",
+            "en": "Material things and everyday comfort are often not a priority for me - what inspires and gives meaning is more important."
+          }
+        },
+        {
+          "id": "NS_N_10",
+          "priority": 4,
+          "text": {
+            "ru": "Мне проще понять человека по атмосфере, внутреннему ощущению, словам «между строк», чем только по его конкретным действиям.",
+            "en": "It's easier for me to understand a person by the atmosphere, internal feeling, words 'between the lines', than only by their specific actions."
+          }
+        }
+      ],
+      "S": [
+        {
+          "id": "NS_S_01",
+          "priority": 1,
+          "text": {
+            "ru": "Мне часто проще понять, как что-то сделать на практике, чем долго обсуждать теорию.",
+            "en": "It's often easier for me to understand how to do something in practice than to discuss theory for a long time."
+          }
+        },
+        {
+          "id": "NS_S_02",
+          "priority": 1,
+          "text": {
+            "ru": "Мне легче попробовать на деле, а потом анализировать результат, чем заранее всё долго продумывать.",
+            "en": "It's easier for me to try in practice and then analyze the result, than to think everything through for a long time in advance."
+          }
+        },
+        {
+          "id": "NS_S_03",
+          "priority": 2,
+          "text": {
+            "ru": "Я хорошо чувствую своё тело: когда я устал(а), голоден(на), напряжён(а) или полон(а) сил.",
+            "en": "I am well aware of my body: when I'm tired, hungry, tense or full of energy."
+          }
+        },
+        {
+          "id": "NS_S_04",
+          "priority": 2,
+          "text": {
+            "ru": "Я легко ориентируюсь в вопросах комфорта: где удобно сидеть, что вкусно, какая одежда приятна телу.",
+            "en": "I easily navigate comfort issues: where it's comfortable to sit, what tastes good, what clothes feel pleasant on the body."
+          }
+        },
+        {
+          "id": "NS_S_05",
+          "priority": 3,
+          "text": {
+            "ru": "Я предпочитаю конкретику, факты и чёткие формулировки — не люблю чрезмерно расплывчатые рассуждения.",
+            "en": "I prefer specifics, facts and clear formulations - I don't like excessively vague reasoning."
+          }
+        },
+        {
+          "id": "NS_S_06",
+          "priority": 3,
+          "text": {
+            "ru": "Мир для меня — это реальные вещи, с которыми можно взаимодействовать, а не только идеи.",
+            "en": "The world for me is real things that can be interacted with, not just ideas."
+          }
+        },
+        {
+          "id": "NS_S_07",
+          "priority": 4,
+          "text": {
+            "ru": "Когда что-то не получается, я скорее пробую ещё раз или по-другому, чем надолго ухожу в размышления.",
+            "en": "When something doesn't work out, I'm more likely to try again or differently than to go into long reflections."
+          }
+        },
+        {
+          "id": "NS_S_08",
+          "priority": 4,
+          "text": {
+            "ru": "Мне важно видеть результат — действия, поступки, конкретные шаги.",
+            "en": "It's important for me to see results - actions, deeds, concrete steps."
+          }
+        },
+        {
+          "id": "NS_S_09",
+          "priority": 4,
+          "text": {
+            "ru": "В разговоре я склонен(на) говорить просто и по существу, без лишних образов и сложных конструкций.",
+            "en": "In conversation, I tend to speak simply and to the point, without unnecessary images and complex constructions."
+          }
+        },
+        {
+          "id": "NS_S_10",
+          "priority": 4,
+          "text": {
+            "ru": "Я часто ориентируюсь на свои ощущения: могу оценить качество еды, вещей, материалов «на вкус и на ощупь».",
+            "en": "I often rely on my sensations: I can assess the quality of food, things, materials 'by taste and touch'."
+          }
+        }
+      ]
+    }
+  },
+  "TF": {
+    "dimension": "TF",
+    "poles": [
+      "T",
+      "F"
+    ],
+    "questions": {
+      "T": [
+        {
+          "id": "TF_T_01",
+          "priority": 1,
+          "text": {
+            "ru": "Мне легче понимать факты и процессы, чем эмоции людей — я прежде всего вижу структуру происходящего.",
+            "en": "It's easier for me to understand facts and processes than people's emotions - I primarily see the structure of what's happening."
+          }
+        },
+        {
+          "id": "TF_T_02",
+          "priority": 1,
+          "text": {
+            "ru": "Новую информацию я воспринимаю через анализ и логические связи, выстраивая внутренние схемы.",
+            "en": "I perceive new information through analysis and logical connections, building internal schemes."
+          }
+        },
+        {
+          "id": "TF_T_03",
+          "priority": 2,
+          "text": {
+            "ru": "Мне нравится упрощать сложное до понятных, ясных моделей.",
+            "en": "I like to simplify the complex into understandable, clear models."
+          }
+        },
+        {
+          "id": "TF_T_04",
+          "priority": 2,
+          "text": {
+            "ru": "Я часто понимаю людей через наблюдение за их действиями и закономерностями поведения.",
+            "en": "I often understand people through observing their actions and patterns of behavior."
+          }
+        },
+        {
+          "id": "TF_T_05",
+          "priority": 3,
+          "text": {
+            "ru": "Для меня важнее объективные факты и результаты, чем субъективные впечатления.",
+            "en": "Objective facts and results are more important to me than subjective impressions."
+          }
+        },
+        {
+          "id": "TF_T_06",
+          "priority": 3,
+          "text": {
+            "ru": "В речи у меня нередко появляются логические связки: «следовательно», «поэтому», «итог такой».",
+            "en": "Logical connectors often appear in my speech: 'therefore', 'so', 'the conclusion is'."
+          }
+        },
+        {
+          "id": "TF_T_07",
+          "priority": 4,
+          "text": {
+            "ru": "Я предпочитаю работать по понятным правилам и стандартам, чем ориентироваться только на эмоциональные реакции.",
+            "en": "I prefer to work according to clear rules and standards rather than focusing only on emotional reactions."
+          }
+        },
+        {
+          "id": "TF_T_08",
+          "priority": 4,
+          "text": {
+            "ru": "Я люблю планировать задачи и процессы так, чтобы всё было структурировано.",
+            "en": "I like to plan tasks and processes so that everything is structured."
+          }
+        },
+        {
+          "id": "TF_T_09",
+          "priority": 4,
+          "text": {
+            "ru": "Мне сложно просто «плыть по течению» — я обычно оцениваю ресурсы и возможности довольно трезво.",
+            "en": "It's hard for me to just 'go with the flow' - I usually assess resources and opportunities quite soberly."
+          }
+        },
+        {
+          "id": "TF_T_10",
+          "priority": 4,
+          "text": {
+            "ru": "В спорных ситуациях я чаще опираюсь на логику и аргументы, чем на эмоции.",
+            "en": "In controversial situations, I more often rely on logic and arguments than on emotions."
+          }
+        }
+      ],
+      "F": [
+        {
+          "id": "TF_F_01",
+          "priority": 1,
+          "text": {
+            "ru": "Мне важно, как мои слова и действия влияют на других — я часто учитываю чувства людей.",
+            "en": "It's important to me how my words and actions affect others - I often take people's feelings into account."
+          }
+        },
+        {
+          "id": "TF_F_02",
+          "priority": 1,
+          "text": {
+            "ru": "Я легко ощущаю настроение и состояние окружающих и могу подстроиться под эмоциональный фон.",
+            "en": "I easily sense the mood and state of those around me and can adapt to the emotional atmosphere."
+          }
+        },
+        {
+          "id": "TF_F_03",
+          "priority": 2,
+          "text": {
+            "ru": "Мне интересно понимать людей, их мотивы и внутренний мир.",
+            "en": "I'm interested in understanding people, their motives and inner world."
+          }
+        },
+        {
+          "id": "TF_F_04",
+          "priority": 2,
+          "text": {
+            "ru": "В разговоре я стараюсь быть внимательным(ой) к чувствам собеседника.",
+            "en": "In conversation, I try to be attentive to the feelings of my interlocutor."
+          }
+        },
+        {
+          "id": "TF_F_05",
+          "priority": 3,
+          "text": {
+            "ru": "Я склонен(на) искать гармонию в отношениях и по возможности избегать лишних конфликтов.",
+            "en": "I tend to seek harmony in relationships and avoid unnecessary conflicts when possible."
+          }
+        },
+        {
+          "id": "TF_F_06",
+          "priority": 3,
+          "text": {
+            "ru": "Мне важно выражать свои эмоции и слышать эмоции других — это помогает мне ориентироваться в жизни.",
+            "en": "It's important for me to express my emotions and hear the emotions of others - this helps me navigate life."
+          }
+        },
+        {
+          "id": "TF_F_07",
+          "priority": 4,
+          "text": {
+            "ru": "Я ценю дружбу и близкие связи, мне важно поддерживать людей и чувствовать поддержку.",
+            "en": "I value friendship and close connections, it's important for me to support people and feel support."
+          }
+        },
+        {
+          "id": "TF_F_08",
+          "priority": 4,
+          "text": {
+            "ru": "Принимая решения, я учитываю не только факты, но и эмоциональные и моральные последствия.",
+            "en": "When making decisions, I consider not only facts but also emotional and moral consequences."
+          }
+        },
+        {
+          "id": "TF_F_09",
+          "priority": 4,
+          "text": {
+            "ru": "Я часто задумываюсь, как мои действия будут восприняты другими.",
+            "en": "I often think about how my actions will be perceived by others."
+          }
+        },
+        {
+          "id": "TF_F_10",
+          "priority": 4,
+          "text": {
+            "ru": "Я чувствую внутреннее удовлетворение, когда люди рядом со мной находятся в более гармоничном, спокойном состоянии.",
+            "en": "I feel inner satisfaction when people around me are in a more harmonious, calm state."
+          }
+        }
+      ]
+    }
+  },
+  "IE": {
+    "dimension": "IE",
+    "poles": [
+      "E",
+      "I"
+    ],
+    "questions": {
+      "E": [
+        {
+          "id": "IE_E_01",
+          "priority": 1,
+          "text": {
+            "ru": "Среди людей я чувствую прилив энергии — мне хочется общаться, узнавать мнения, обмениваться впечатлениями.",
+            "en": "Among people, I feel a surge of energy - I want to communicate, learn opinions, exchange impressions."
+          }
+        },
+        {
+          "id": "IE_E_02",
+          "priority": 1,
+          "text": {
+            "ru": "Общение меня наполняет — после встреч с людьми я чувствую бодрость и вдохновение.",
+            "en": "Communication fills me up - after meeting with people, I feel energized and inspired."
+          }
+        },
+        {
+          "id": "IE_E_03",
+          "priority": 2,
+          "text": {
+            "ru": "Мне легко заговорить с незнакомым человеком — тема разговора обычно находится сама собой.",
+            "en": "It's easy for me to start a conversation with a stranger - the topic of conversation usually comes up on its own."
+          }
+        },
+        {
+          "id": "IE_E_04",
+          "priority": 2,
+          "text": {
+            "ru": "Я часто думаю вслух: делюсь идеями, обсуждаю планы, рассказываю о своих чувствах.",
+            "en": "I often think out loud: share ideas, discuss plans, talk about my feelings."
+          }
+        },
+        {
+          "id": "IE_E_05",
+          "priority": 3,
+          "text": {
+            "ru": "Мне нравится бывать в людных местах: на мероприятиях, встречах, концертах, тусовках.",
+            "en": "I like to be in crowded places: at events, meetings, concerts, parties."
+          }
+        },
+        {
+          "id": "IE_E_06",
+          "priority": 3,
+          "text": {
+            "ru": "Я познаю жизнь через опыт — действуя, пробуя, взаимодействуя с разными людьми и ситуациями.",
+            "en": "I learn about life through experience - by acting, trying, interacting with different people and situations."
+          }
+        },
+        {
+          "id": "IE_E_07",
+          "priority": 4,
+          "text": {
+            "ru": "Мне интереснее узнать, как что-то устроено во внешнем мире, чем долго размышлять о том, почему всё так.",
+            "en": "I'm more interested in learning how something works in the external world than in thinking for a long time about why everything is the way it is."
+          }
+        },
+        {
+          "id": "IE_E_08",
+          "priority": 4,
+          "text": {
+            "ru": "Когда появляется идея, мне хочется скорее перейти к действиям, а не долго её анализировать.",
+            "en": "When an idea appears, I want to move to action quickly, rather than analyzing it for a long time."
+          }
+        },
+        {
+          "id": "IE_E_09",
+          "priority": 4,
+          "text": {
+            "ru": "Наедине мне быстро становится скучно — я ищу общение, движение, впечатления.",
+            "en": "When alone, I quickly get bored - I seek communication, movement, impressions."
+          }
+        },
+        {
+          "id": "IE_E_10",
+          "priority": 4,
+          "text": {
+            "ru": "Я легко приспосабливаюсь к обстоятельствам и чаще меняюсь сам под ситуацию, чем пытаюсь менять мир под себя.",
+            "en": "I easily adapt to circumstances and change myself to fit the situation more often than I try to change the world to fit me."
+          }
+        }
+      ],
+      "I": [
+        {
+          "id": "IE_I_01",
+          "priority": 1,
+          "text": {
+            "ru": "У меня часто идут внутренние диалоги, и я многое обдумываю про себя, прежде чем говорить.",
+            "en": "I often have internal dialogues and think a lot about things to myself before speaking."
+          }
+        },
+        {
+          "id": "IE_I_02",
+          "priority": 1,
+          "text": {
+            "ru": "Мне легче восстановиться, когда я один: на природе, дома, в тишине, без лишних разговоров.",
+            "en": "It's easier for me to recover when I'm alone: in nature, at home, in silence, without unnecessary conversations."
+          }
+        },
+        {
+          "id": "IE_I_03",
+          "priority": 2,
+          "text": {
+            "ru": "В компании я чаще думаю о себе: как я выгляжу, с кем хочу поговорить и где мне будет комфортно.",
+            "en": "In a company, I more often think about myself: how I look, who I want to talk to, and where I will be comfortable."
+          }
+        },
+        {
+          "id": "IE_I_04",
+          "priority": 2,
+          "text": {
+            "ru": "Я предпочитаю тесный круг близких друзей — мне важнее глубина общения, чем количество знакомых.",
+            "en": "I prefer a close circle of close friends - the depth of communication is more important to me than the number of acquaintances."
+          }
+        },
+        {
+          "id": "IE_I_05",
+          "priority": 3,
+          "text": {
+            "ru": "В большом обществе я быстро устаю и стараюсь найти одного человека, с которым можно поговорить по сути.",
+            "en": "In large society, I quickly get tired and try to find one person with whom I can talk about things that matter."
+          }
+        },
+        {
+          "id": "IE_I_06",
+          "priority": 3,
+          "text": {
+            "ru": "Чтобы открыться и активно общаться, мне нужно чувствовать доверие и безопасность.",
+            "en": "To open up and communicate actively, I need to feel trust and safety."
+          }
+        },
+        {
+          "id": "IE_I_07",
+          "priority": 4,
+          "text": {
+            "ru": "Я часто анализирую свои поступки — почему я так поступил, что почувствовал, что мог бы сделать иначе.",
+            "en": "I often analyze my actions - why I acted that way, what I felt, what I could have done differently."
+          }
+        },
+        {
+          "id": "IE_I_08",
+          "priority": 4,
+          "text": {
+            "ru": "Я получаю энергию на действия только тогда, когда внутри всё «состыковалось» — есть понимание и смысл.",
+            "en": "I get energy for actions only when everything inside is 'connected' - there is understanding and meaning."
+          }
+        },
+        {
+          "id": "IE_I_09",
+          "priority": 4,
+          "text": {
+            "ru": "Мне сложно начать разговор с незнакомым человеком, если нет настоящего интереса к теме или человеку.",
+            "en": "It's difficult for me to start a conversation with a stranger if there is no genuine interest in the topic or the person."
+          }
+        },
+        {
+          "id": "IE_I_10",
+          "priority": 4,
+          "text": {
+            "ru": "Иногда мне трудно посмотреть на ситуацию со стороны — я больше опираюсь на свои чувства и внутренние рассуждения.",
+            "en": "Sometimes it's hard for me to look at a situation from the outside - I rely more on my feelings and internal reasoning."
+          }
+        }
+      ]
+    }
+  },
+  "JP": {
+    "dimension": "JP",
+    "poles": [
+      "J",
+      "P"
+    ],
+    "questions": {
+      "J": [
+        {
+          "id": "JP_J_01",
+          "priority": 1,
+          "text": {
+            "ru": "Мне комфортнее, когда жизнь предсказуема — я люблю стабильность и заранее продуманный распорядок.",
+            "en": "I feel more comfortable when life is predictable - I love stability and a pre-planned routine."
+          }
+        },
+        {
+          "id": "JP_J_02",
+          "priority": 1,
+          "text": {
+            "ru": "Я часто строю планы и стараюсь придерживаться их; когда планы срываются, мне бывает неприятно.",
+            "en": "I often make plans and try to stick to them; when plans fall through, I can feel uncomfortable."
+          }
+        },
+        {
+          "id": "JP_J_03",
+          "priority": 2,
+          "text": {
+            "ru": "В решении задач мне важно идти шаг за шагом, последовательно, без хаоса и спешки.",
+            "en": "In solving tasks, it's important for me to go step by step, sequentially, without chaos and rush."
+          }
+        },
+        {
+          "id": "JP_J_04",
+          "priority": 2,
+          "text": {
+            "ru": "Мне нравится, когда всё вокруг в порядке: вещи на своих местах, день расписан, мысли структурированы.",
+            "en": "I like it when everything around is in order: things are in their places, the day is scheduled, thoughts are structured."
+          }
+        },
+        {
+          "id": "JP_J_05",
+          "priority": 3,
+          "text": {
+            "ru": "Если я что-то решил(а), обычно держусь этого решения и не меняю его без веской причины.",
+            "en": "If I've decided something, I usually stick to that decision and don't change it without a good reason."
+          }
+        },
+        {
+          "id": "JP_J_06",
+          "priority": 3,
+          "text": {
+            "ru": "Новые идеи и перемены я принимаю не сразу — мне нужно время, чтобы понять, как это впишется в мою жизнь.",
+            "en": "I don't accept new ideas and changes immediately - I need time to understand how it will fit into my life."
+          }
+        },
+        {
+          "id": "JP_J_07",
+          "priority": 4,
+          "text": {
+            "ru": "Я предпочитаю завершать начатое, прежде чем браться за что-то новое.",
+            "en": "I prefer to finish what I've started before taking on something new."
+          }
+        },
+        {
+          "id": "JP_J_08",
+          "priority": 4,
+          "text": {
+            "ru": "Мне сложно заниматься несколькими делами одновременно — я люблю концентрироваться на одном.",
+            "en": "It's difficult for me to do several things at the same time - I like to concentrate on one thing."
+          }
+        },
+        {
+          "id": "JP_J_09",
+          "priority": 4,
+          "text": {
+            "ru": "Чтобы действовать уверенно, мне важно заранее знать, что и как будет происходить.",
+            "en": "To act confidently, it's important for me to know in advance what will happen and how."
+          }
+        },
+        {
+          "id": "JP_J_10",
+          "priority": 4,
+          "text": {
+            "ru": "Мне приятно ощущение порядка — в делах, в доме, в мыслях.",
+            "en": "I enjoy the feeling of order - in affairs, at home, in thoughts."
+          }
+        }
+      ],
+      "P": [
+        {
+          "id": "JP_P_01",
+          "priority": 1,
+          "text": {
+            "ru": "Мне нравится чувство свободы — я чувствую себя живым(ой), когда могу действовать по настроению и без строгих рамок.",
+            "en": "I like the feeling of freedom - I feel alive when I can act according to my mood and without strict frameworks."
+          }
+        },
+        {
+          "id": "JP_P_02",
+          "priority": 1,
+          "text": {
+            "ru": "Я легко подстраиваюсь под изменения и не боюсь неожиданных поворотов.",
+            "en": "I easily adapt to changes and am not afraid of unexpected turns."
+          }
+        },
+        {
+          "id": "JP_P_03",
+          "priority": 2,
+          "text": {
+            "ru": "Люблю, когда жизнь насыщена: много дел, событий, идей — чем активнее, тем интереснее.",
+            "en": "I love it when life is full: many tasks, events, ideas - the more active, the more interesting."
+          }
+        },
+        {
+          "id": "JP_P_04",
+          "priority": 2,
+          "text": {
+            "ru": "Мне нравится пробовать новое — если что-то откликается, я просто включаюсь в это, не слишком анализируя.",
+            "en": "I like to try new things - if something resonates, I just get involved in it without analyzing too much."
+          }
+        },
+        {
+          "id": "JP_P_05",
+          "priority": 3,
+          "text": {
+            "ru": "В голове часто бурлит много мыслей — думаю об одном, делаю другое, мечтаю о третьем.",
+            "en": "Many thoughts are often bubbling in my head - I think about one thing, do another, dream about a third."
+          }
+        },
+        {
+          "id": "JP_P_06",
+          "priority": 3,
+          "text": {
+            "ru": "Я быстро принимаю решения, опираясь на внутреннее ощущение «нравится — не нравится».",
+            "en": "I make decisions quickly based on the internal feeling of 'like - don't like'."
+          }
+        },
+        {
+          "id": "JP_P_07",
+          "priority": 4,
+          "text": {
+            "ru": "Мне скучно в рутине — монотонная работа заметно снижает мою энергию.",
+            "en": "I get bored with routine - monotonous work noticeably reduces my energy."
+          }
+        },
+        {
+          "id": "JP_P_08",
+          "priority": 4,
+          "text": {
+            "ru": "Я люблю делать несколько дел одновременно и часто переключаюсь между задачами.",
+            "en": "I like to do several things at the same time and often switch between tasks."
+          }
+        },
+        {
+          "id": "JP_P_09",
+          "priority": 4,
+          "text": {
+            "ru": "Если теряю интерес к делу, могу относительно спокойно его отпустить и переключиться на другое.",
+            "en": "If I lose interest in something, I can relatively calmly let it go and switch to something else."
+          }
+        },
+        {
+          "id": "JP_P_10",
+          "priority": 4,
+          "text": {
+            "ru": "Бывает, что у меня прилив энергии и вдохновения сменяется периодом усталости и желания «выпасть из потока».",
+            "en": "It happens that my surge of energy and inspiration is replaced by a period of fatigue and a desire to 'drop out of the flow'."
+          }
+        }
+      ]
+    }
+  },
+  "NS": {
+    "dimension": "NS",
+    "poles": [
+      "N",
+      "S"
+    ],
+    "questions": {
+      "N": [
+        {
+          "id": "NS_N_01",
+          "priority": 1,
+          "text": {
+            "ru": "Прежде чем действовать, я часто предпочитаю поразмышлять — мне важно понять суть, а не просто сделать.",
+            "en": "Before acting, I often prefer to reflect - it's important for me to understand the essence, not just do."
+          }
+        },
+        {
+          "id": "NS_N_02",
+          "priority": 1,
+          "text": {
+            "ru": "Я часто живу мыслями о будущем: вижу образы, сценарии, варианты, и это может вдохновлять больше, чем текущее «здесь и сейчас».",
+            "en": "I often live with thoughts about the future: I see images, scenarios, options, and this can inspire more than the current 'here and now'."
+          }
+        },
+        {
+          "id": "NS_N_03",
+          "priority": 2,
+          "text": {
+            "ru": "Мне нравится строить теории, рассуждать о смысле происходящего, искать скрытые связи между событиями.",
+            "en": "I like to build theories, reflect on the meaning of what's happening, look for hidden connections between events."
+          }
+        },
+        {
+          "id": "NS_N_04",
+          "priority": 2,
+          "text": {
+            "ru": "Меня больше интересует, почему всё устроено именно так, чем то, что конкретно сейчас происходит.",
+            "en": "I'm more interested in why everything is arranged exactly this way, than in what is specifically happening right now."
+          }
+        },
+        {
+          "id": "NS_N_05",
+          "priority": 3,
+          "text": {
+            "ru": "Когда я говорю, люди иногда просят пояснить — я нередко выражаюсь образами, а не сухими фактами.",
+            "en": "When I speak, people sometimes ask for clarification - I often express myself in images, not dry facts."
+          }
+        },
+        {
+          "id": "NS_N_06",
+          "priority": 3,
+          "text": {
+            "ru": "Я могу подолгу обдумывать идею, прежде чем приступить к её реализации — для меня важно внутреннее понимание.",
+            "en": "I can think about an idea for a long time before starting to implement it - internal understanding is important to me."
+          }
+        },
+        {
+          "id": "NS_N_07",
+          "priority": 4,
+          "text": {
+            "ru": "Мне ближе разговоры о смыслах, идеях и перспективах, чем о чисто бытовых деталях.",
+            "en": "Conversations about meanings, ideas and perspectives are closer to me than purely everyday details."
+          }
+        },
+        {
+          "id": "NS_N_08",
+          "priority": 4,
+          "text": {
+            "ru": "Иногда люди думают, что я «витаю в облаках», а я просто много живу в мире идей и образов.",
+            "en": "Sometimes people think I'm 'daydreaming', but I just live a lot in the world of ideas and images."
+          }
+        },
+        {
+          "id": "NS_N_09",
+          "priority": 4,
+          "text": {
+            "ru": "Материальные вещи и бытовой комфорт для меня часто не на первом месте — важнее то, что вдохновляет и наполняет смыслом.",
+            "en": "Material things and everyday comfort are often not a priority for me - what inspires and gives meaning is more important."
+          }
+        },
+        {
+          "id": "NS_N_10",
+          "priority": 4,
+          "text": {
+            "ru": "Мне проще понять человека по атмосфере, внутреннему ощущению, словам «между строк», чем только по его конкретным действиям.",
+            "en": "It's easier for me to understand a person by the atmosphere, internal feeling, words 'between the lines', than only by their specific actions."
+          }
+        }
+      ],
+      "S": [
+        {
+          "id": "NS_S_01",
+          "priority": 1,
+          "text": {
+            "ru": "Мне часто проще понять, как что-то сделать на практике, чем долго обсуждать теорию.",
+            "en": "It's often easier for me to understand how to do something in practice than to discuss theory for a long time."
+          }
+        },
+        {
+          "id": "NS_S_02",
+          "priority": 1,
+          "text": {
+            "ru": "Мне легче попробовать на деле, а потом анализировать результат, чем заранее всё долго продумывать.",
+            "en": "It's easier for me to try in practice and then analyze the result, than to think everything through for a long time in advance."
+          }
+        },
+        {
+          "id": "NS_S_03",
+          "priority": 2,
+          "text": {
+            "ru": "Я хорошо чувствую своё тело: когда я устал(а), голоден(на), напряжён(а) или полон(а) сил.",
+            "en": "I am well aware of my body: when I'm tired, hungry, tense or full of energy."
+          }
+        },
+        {
+          "id": "NS_S_04",
+          "priority": 2,
+          "text": {
+            "ru": "Я легко ориентируюсь в вопросах комфорта: где удобно сидеть, что вкусно, какая одежда приятна телу.",
+            "en": "I easily navigate comfort issues: where it's comfortable to sit, what tastes good, what clothes feel pleasant on the body."
+          }
+        },
+        {
+          "id": "NS_S_05",
+          "priority": 3,
+          "text": {
+            "ru": "Я предпочитаю конкретику, факты и чёткие формулировки — не люблю чрезмерно расплывчатые рассуждения.",
+            "en": "I prefer specifics, facts and clear formulations - I don't like excessively vague reasoning."
+          }
+        },
+        {
+          "id": "NS_S_06",
+          "priority": 3,
+          "text": {
+            "ru": "Мир для меня — это реальные вещи, с которыми можно взаимодействовать, а не только идеи.",
+            "en": "The world for me is real things that can be interacted with, not just ideas."
+          }
+        },
+        {
+          "id": "NS_S_07",
+          "priority": 4,
+          "text": {
+            "ru": "Когда что-то не получается, я скорее пробую ещё раз или по-другому, чем надолго ухожу в размышления.",
+            "en": "When something doesn't work out, I'm more likely to try again or differently than to go into long reflections."
+          }
+        },
+        {
+          "id": "NS_S_08",
+          "priority": 4,
+          "text": {
+            "ru": "Мне важно видеть результат — действия, поступки, конкретные шаги.",
+            "en": "It's important for me to see results - actions, deeds, concrete steps."
+          }
+        },
+        {
+          "id": "NS_S_09",
+          "priority": 4,
+          "text": {
+            "ru": "В разговоре я склонен(на) говорить просто и по существу, без лишних образов и сложных конструкций.",
+            "en": "In conversation, I tend to speak simply and to the point, without unnecessary images and complex constructions."
+          }
+        },
+        {
+          "id": "NS_S_10",
+          "priority": 4,
+          "text": {
+            "ru": "Я часто ориентируюсь на свои ощущения: могу оценить качество еды, вещей, материалов «на вкус и на ощупь».",
+            "en": "I often rely on my sensations: I can assess the quality of food, things, materials 'by taste and touch'."
+          }
+        }
+      ]
+    }
+  },
+  "TF": {
+    "dimension": "TF",
+    "poles": [
+      "T",
+      "F"
+    ],
+    "questions": {
+      "T": [
+        {
+          "id": "TF_T_01",
+          "priority": 1,
+          "text": {
+            "ru": "Мне легче понимать факты и процессы, чем эмоции людей — я прежде всего вижу структуру происходящего.",
+            "en": "It's easier for me to understand facts and processes than people's emotions - I primarily see the structure of what's happening."
+          }
+        },
+        {
+          "id": "TF_T_02",
+          "priority": 1,
+          "text": {
+            "ru": "Новую информацию я воспринимаю через анализ и логические связи, выстраивая внутренние схемы.",
+            "en": "I perceive new information through analysis and logical connections, building internal schemes."
+          }
+        },
+        {
+          "id": "TF_T_03",
+          "priority": 2,
+          "text": {
+            "ru": "Мне нравится упрощать сложное до понятных, ясных моделей.",
+            "en": "I like to simplify the complex into understandable, clear models."
+          }
+        },
+        {
+          "id": "TF_T_04",
+          "priority": 2,
+          "text": {
+            "ru": "Я часто понимаю людей через наблюдение за их действиями и закономерностями поведения.",
+            "en": "I often understand people through observing their actions and patterns of behavior."
+          }
+        },
+        {
+          "id": "TF_T_05",
+          "priority": 3,
+          "text": {
+            "ru": "Для меня важнее объективные факты и результаты, чем субъективные впечатления.",
+            "en": "Objective facts and results are more important to me than subjective impressions."
+          }
+        },
+        {
+          "id": "TF_T_06",
+          "priority": 3,
+          "text": {
+            "ru": "В речи у меня нередко появляются логические связки: «следовательно», «поэтому», «итог такой».",
+            "en": "Logical connectors often appear in my speech: 'therefore', 'so', 'the conclusion is'."
+          }
+        },
+        {
+          "id": "TF_T_07",
+          "priority": 4,
+          "text": {
+            "ru": "Я предпочитаю работать по понятным правилам и стандартам, чем ориентироваться только на эмоциональные реакции.",
+            "en": "I prefer to work according to clear rules and standards rather than focusing only on emotional reactions."
+          }
+        },
+        {
+          "id": "TF_T_08",
+          "priority": 4,
+          "text": {
+            "ru": "Я люблю планировать задачи и процессы так, чтобы всё было структурировано.",
+            "en": "I like to plan tasks and processes so that everything is structured."
+          }
+        },
+        {
+          "id": "TF_T_09",
+          "priority": 4,
+          "text": {
+            "ru": "Мне сложно просто «плыть по течению» — я обычно оцениваю ресурсы и возможности довольно трезво.",
+            "en": "It's hard for me to just 'go with the flow' - I usually assess resources and opportunities quite soberly."
+          }
+        },
+        {
+          "id": "TF_T_10",
+          "priority": 4,
+          "text": {
+            "ru": "В спорных ситуациях я чаще опираюсь на логику и аргументы, чем на эмоции.",
+            "en": "In controversial situations, I more often rely on logic and arguments than on emotions."
+          }
+        }
+      ],
+      "F": [
+        {
+          "id": "TF_F_01",
+          "priority": 1,
+          "text": {
+            "ru": "Мне важно, как мои слова и действия влияют на других — я часто учитываю чувства людей.",
+            "en": "It's important to me how my words and actions affect others - I often take people's feelings into account."
+          }
+        },
+        {
+          "id": "TF_F_02",
+          "priority": 1,
+          "text": {
+            "ru": "Я легко ощущаю настроение и состояние окружающих и могу подстроиться под эмоциональный фон.",
+            "en": "I easily sense the mood and state of those around me and can adapt to the emotional atmosphere."
+          }
+        },
+        {
+          "id": "TF_F_03",
+          "priority": 2,
+          "text": {
+            "ru": "Мне интересно понимать людей, их мотивы и внутренний мир.",
+            "en": "I'm interested in understanding people, their motives and inner world."
+          }
+        },
+        {
+          "id": "TF_F_04",
+          "priority": 2,
+          "text": {
+            "ru": "В разговоре я стараюсь быть внимательным(ой) к чувствам собеседника.",
+            "en": "In conversation, I try to be attentive to the feelings of my interlocutor."
+          }
+        },
+        {
+          "id": "TF_F_05",
+          "priority": 3,
+          "text": {
+            "ru": "Я склонен(на) искать гармонию в отношениях и по возможности избегать лишних конфликтов.",
+            "en": "I tend to seek harmony in relationships and avoid unnecessary conflicts when possible."
+          }
+        },
+        {
+          "id": "TF_F_06",
+          "priority": 3,
+          "text": {
+            "ru": "Мне важно выражать свои эмоции и слышать эмоции других — это помогает мне ориентироваться в жизни.",
+            "en": "It's important for me to express my emotions and hear the emotions of others - this helps me navigate life."
+          }
+        },
+        {
+          "id": "TF_F_07",
+          "priority": 4,
+          "text": {
+            "ru": "Я ценю дружбу и близкие связи, мне важно поддерживать людей и чувствовать поддержку.",
+            "en": "I value friendship and close connections, it's important for me to support people and feel support."
+          }
+        },
+        {
+          "id": "TF_F_08",
+          "priority": 4,
+          "text": {
+            "ru": "Принимая решения, я учитываю не только факты, но и эмоциональные и моральные последствия.",
+            "en": "When making decisions, I consider not only facts but also emotional and moral consequences."
+          }
+        },
+        {
+          "id": "TF_F_09",
+          "priority": 4,
+          "text": {
+            "ru": "Я часто задумываюсь, как мои действия будут восприняты другими.",
+            "en": "I often think about how my actions will be perceived by others."
+          }
+        },
+        {
+          "id": "TF_F_10",
+          "priority": 4,
+          "text": {
+            "ru": "Я чувствую внутреннее удовлетворение, когда люди рядом со мной находятся в более гармоничном, спокойном состоянии.",
+            "en": "I feel inner satisfaction when people around me are in a more harmonious, calm state."
+          }
+        }
+      ]
+    }
+  }
+}

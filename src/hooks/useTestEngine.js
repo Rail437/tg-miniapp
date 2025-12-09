@@ -1,6 +1,6 @@
 // src/hooks/useTestEngine.js
-import { useState } from "react";
-import { apiClient } from "../api/apiClient";
+import {useState} from "react";
+import {apiClient} from "../api/apiClient";
 
 export function useTestEngine(userId) {
     const [showTests, setShowTests] = useState(false);
@@ -46,7 +46,7 @@ export function useTestEngine(userId) {
         setError(null);
 
         try {
-            const answerValue = answer ? 1 : 0;
+            const answerValue = answer;
 
             const res = await apiClient.answerMainTest({
                 sessionId,
