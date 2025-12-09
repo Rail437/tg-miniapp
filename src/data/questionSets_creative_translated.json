@@ -1,0 +1,1130 @@
+{
+  "Creative_Ne": {
+    "dimension": "Creative",
+    "poles": [
+      "Ti",
+      "Fi"
+    ],
+    "questions": {
+      "Ti": [
+        {
+          "id": "Creative_Ne_Ti_01",
+          "priority": 1,
+          "text": {
+            "ru": "Мне важно, чтобы идеи были логически выстроены — иначе я теряю интерес.",
+            "en": "I need ideas to be logically structured — otherwise I quickly lose interest."
+          }
+        },
+        {
+          "id": "Creative_Ne_Ti_02",
+          "priority": 1,
+          "text": {
+            "ru": "Я часто разбираю сложные вещи на части, чтобы понять внутреннюю структуру.",
+            "en": "I often break complex things into parts to understand their inner structure."
+          }
+        },
+        {
+          "id": "Creative_Ne_Ti_03",
+          "priority": 2,
+          "text": {
+            "ru": "Мне важно, чтобы рассуждения были точными и непротиворечивыми.",
+            "en": "It matters to me that reasoning is precise and free of contradictions."
+          }
+        },
+        {
+          "id": "Creative_Ne_Ti_04",
+          "priority": 2,
+          "text": {
+            "ru": "Я стремлюсь понять принципы, которые лежат в основе явлений.",
+            "en": "I tend to seek the underlying principles behind what’s happening."
+          }
+        },
+        {
+          "id": "Creative_Ne_Ti_05",
+          "priority": 3,
+          "text": {
+            "ru": "Мне нравится анализировать, как разные элементы системы связаны между собой.",
+            "en": "I enjoy analyzing how different elements of a system fit together."
+          }
+        },
+        {
+          "id": "Creative_Ne_Ti_06",
+          "priority": 3,
+          "text": {
+            "ru": "Когда что-то нелогично, это сразу бросается мне в глаза.",
+            "en": "I immediately notice when something is inconsistent or illogical."
+          }
+        },
+        {
+          "id": "Creative_Ne_Ti_07",
+          "priority": 4,
+          "text": {
+            "ru": "Мне важна ясность структуры: мне нужно понимать, что из чего следует.",
+            "en": "I feel more confident when I understand how one thing follows from another."
+          }
+        },
+        {
+          "id": "Creative_Ne_Ti_08",
+          "priority": 4,
+          "text": {
+            "ru": "Я чувствую удовлетворение, когда нахожу точное объяснение сложной вещи.",
+            "en": "I find satisfaction in discovering a clear, accurate explanation for something complex."
+          }
+        }
+      ],
+      "Fi": [
+        {
+          "id": "Creative_Ne_Fi_01",
+          "priority": 1,
+          "text": {
+            "ru": "Я ориентируюсь на искренние отношения и внутренние мотивы людей.",
+            "en": "I navigate life through sincerity and the inner motives of people."
+          }
+        },
+        {
+          "id": "Creative_Ne_Fi_02",
+          "priority": 1,
+          "text": {
+            "ru": "Мне важно, чтобы мои решения не противоречили моим ценностям.",
+            "en": "It’s important that my decisions align with my personal values."
+          }
+        },
+        {
+          "id": "Creative_Ne_Fi_03",
+          "priority": 2,
+          "text": {
+            "ru": "Я стремлюсь понимать, что чувствуют другие люди.",
+            "en": "I naturally try to understand what others are feeling."
+          }
+        },
+        {
+          "id": "Creative_Ne_Fi_04",
+          "priority": 2,
+          "text": {
+            "ru": "Я часто принимаю решения, исходя из чувства правильности.",
+            "en": "I often make choices based on what feels morally right to me."
+          }
+        },
+        {
+          "id": "Creative_Ne_Fi_05",
+          "priority": 3,
+          "text": {
+            "ru": "Я быстро замечаю, когда кто-то ведёт себя неискренне.",
+            "en": "I quickly notice when someone’s behavior feels insincere."
+          }
+        },
+        {
+          "id": "Creative_Ne_Fi_06",
+          "priority": 3,
+          "text": {
+            "ru": "Мне важно, чтобы отношения были тёплыми и глубокими.",
+            "en": "Warm, genuine relationships are important to me."
+          }
+        },
+        {
+          "id": "Creative_Ne_Fi_07",
+          "priority": 4,
+          "text": {
+            "ru": "Я предпочитаю взаимодействовать на уровне личных чувств, а не формальностей.",
+            "en": "I prefer interacting on a personal, emotional level rather than through formalities."
+          }
+        },
+        {
+          "id": "Creative_Ne_Fi_08",
+          "priority": 4,
+          "text": {
+            "ru": "Мои решения часто основаны на моём внутреннем моральном ориентире.",
+            "en": "My decisions are often guided by my inner moral compass."
+          }
+        }
+      ]
+    }
+  },
+  "Creative_Ni": {
+    "dimension": "Creative",
+    "poles": [
+      "Te",
+      "Fe"
+    ],
+    "questions": {
+      "Te": [
+        {
+          "id": "Creative_Ni_Te_01",
+          "priority": 1,
+          "text": {
+            "ru": "Мне важно, чтобы действия приносили практический результат.",
+            "en": "I care about actions that bring practical, measurable results."
+          }
+        },
+        {
+          "id": "Creative_Ni_Te_02",
+          "priority": 1,
+          "text": {
+            "ru": "Я люблю оптимизировать процессы и повышать эффективность.",
+            "en": "I enjoy optimizing processes and increasing efficiency."
+          }
+        },
+        {
+          "id": "Creative_Ni_Te_03",
+          "priority": 2,
+          "text": {
+            "ru": "Я предпочитаю проверенные методы, которые дают измеримый эффект.",
+            "en": "I prefer reliable methods that consistently produce real outcomes."
+          }
+        },
+        {
+          "id": "Creative_Ni_Te_04",
+          "priority": 2,
+          "text": {
+            "ru": "Мне важно, чтобы работа была организована и приносила пользу.",
+            "en": "I like my work to be organized and purposeful."
+          }
+        },
+        {
+          "id": "Creative_Ni_Te_05",
+          "priority": 3,
+          "text": {
+            "ru": "Я много внимания уделяю тому, что действительно работает на практике.",
+            "en": "I focus on what actually works in practice."
+          }
+        },
+        {
+          "id": "Creative_Ni_Te_06",
+          "priority": 3,
+          "text": {
+            "ru": "Мне нравится, когда деятельность структурирована и даёт конкретные результаты.",
+            "en": "I appreciate structured activity that leads to tangible results."
+          }
+        },
+        {
+          "id": "Creative_Ni_Te_07",
+          "priority": 4,
+          "text": {
+            "ru": "Я ценю компетентность и объективность в работе.",
+            "en": "I value competence and objectivity in getting things done."
+          }
+        },
+        {
+          "id": "Creative_Ni_Te_08",
+          "priority": 4,
+          "text": {
+            "ru": "Мне важно иметь чёткие критерии успеха.",
+            "en": "Clear criteria for success help me stay focused and motivated."
+          }
+        }
+      ],
+      "Fe": [
+        {
+          "id": "Creative_Ni_Fe_01",
+          "priority": 1,
+          "text": {
+            "ru": "Я чувствую эмоциональный фон людей и стараюсь его регулировать.",
+            "en": "I naturally sense the emotional tone in a group and try to keep it balanced."
+          }
+        },
+        {
+          "id": "Creative_Ni_Fe_02",
+          "priority": 1,
+          "text": {
+            "ru": "Мне важно создавать комфортную атмосферу в общении.",
+            "en": "Creating a warm, comfortable atmosphere in communication matters to me."
+          }
+        },
+        {
+          "id": "Creative_Ni_Fe_03",
+          "priority": 2,
+          "text": {
+            "ru": "Я легко выражаю эмоции и откликаюсь на эмоции других.",
+            "en": "I express emotions easily and respond to others’ emotional cues."
+          }
+        },
+        {
+          "id": "Creative_Ni_Fe_04",
+          "priority": 2,
+          "text": {
+            "ru": "Мне важно, чтобы общение было живым и эмоционально насыщенным.",
+            "en": "I enjoy lively, expressive interactions with people."
+          }
+        },
+        {
+          "id": "Creative_Ni_Fe_05",
+          "priority": 3,
+          "text": {
+            "ru": "Я часто адаптирую своё поведение, чтобы поддерживать настроение окружающих.",
+            "en": "I often adjust my behavior to help maintain a positive mood around me."
+          }
+        },
+        {
+          "id": "Creative_Ni_Fe_06",
+          "priority": 3,
+          "text": {
+            "ru": "Я чувствую, когда людям нужно эмоциональное участие.",
+            "en": "I can feel when someone needs emotional support."
+          }
+        },
+        {
+          "id": "Creative_Ni_Fe_07",
+          "priority": 4,
+          "text": {
+            "ru": "Я стремлюсь делать взаимодействие тёплым и дружелюбным.",
+            "en": "I try to make interactions warm, friendly, and engaging."
+          }
+        },
+        {
+          "id": "Creative_Ni_Fe_08",
+          "priority": 4,
+          "text": {
+            "ru": "Мне важно, чтобы люди вокруг чувствовали себя эмоционально комфортно.",
+            "en": "It’s important to me that people around me feel emotionally at ease."
+          }
+        }
+      ]
+    }
+  },
+  "Creative_Se": {
+    "dimension": "Creative",
+    "poles": [
+      "Ti",
+      "Fi"
+    ],
+    "questions": {
+      "Ti": [
+        {
+          "id": "Creative_Se_Ti_01",
+          "priority": 1,
+          "text": {
+            "ru": "Мне важно, чтобы идеи были логически выстроены — иначе я теряю интерес.",
+            "en": "I need ideas to be logically structured — otherwise I quickly lose interest."
+          }
+        },
+        {
+          "id": "Creative_Se_Ti_02",
+          "priority": 1,
+          "text": {
+            "ru": "Я часто разбираю сложные вещи на части, чтобы понять внутреннюю структуру.",
+            "en": "I often break complex things into parts to understand their inner structure."
+          }
+        },
+        {
+          "id": "Creative_Se_Ti_03",
+          "priority": 2,
+          "text": {
+            "ru": "Мне важно, чтобы рассуждения были точными и непротиворечивыми.",
+            "en": "It matters to me that reasoning is precise and free of contradictions."
+          }
+        },
+        {
+          "id": "Creative_Se_Ti_04",
+          "priority": 2,
+          "text": {
+            "ru": "Я стремлюсь понять принципы, которые лежат в основе явлений.",
+            "en": "I tend to seek the underlying principles behind what’s happening."
+          }
+        },
+        {
+          "id": "Creative_Se_Ti_05",
+          "priority": 3,
+          "text": {
+            "ru": "Мне нравится анализировать, как разные элементы системы связаны между собой.",
+            "en": "I enjoy analyzing how different elements of a system fit together."
+          }
+        },
+        {
+          "id": "Creative_Se_Ti_06",
+          "priority": 3,
+          "text": {
+            "ru": "Когда что-то нелогично, это сразу бросается мне в глаза.",
+            "en": "I immediately notice when something is inconsistent or illogical."
+          }
+        },
+        {
+          "id": "Creative_Se_Ti_07",
+          "priority": 4,
+          "text": {
+            "ru": "Мне важна ясность структуры: мне нужно понимать, что из чего следует.",
+            "en": "I feel more confident when I understand how one thing follows from another."
+          }
+        },
+        {
+          "id": "Creative_Se_Ti_08",
+          "priority": 4,
+          "text": {
+            "ru": "Я чувствую удовлетворение, когда нахожу точное объяснение сложной вещи.",
+            "en": "I find satisfaction in discovering a clear, accurate explanation for something complex."
+          }
+        }
+      ],
+      "Fi": [
+        {
+          "id": "Creative_Se_Fi_01",
+          "priority": 1,
+          "text": {
+            "ru": "Я ориентируюсь на искренние отношения и внутренние мотивы людей.",
+            "en": "I navigate life through sincerity and the inner motives of people."
+          }
+        },
+        {
+          "id": "Creative_Se_Fi_02",
+          "priority": 1,
+          "text": {
+            "ru": "Мне важно, чтобы мои решения не противоречили моим ценностям.",
+            "en": "It’s important that my decisions align with my personal values."
+          }
+        },
+        {
+          "id": "Creative_Se_Fi_03",
+          "priority": 2,
+          "text": {
+            "ru": "Я стремлюсь понимать, что чувствуют другие люди.",
+            "en": "I naturally try to understand what others are feeling."
+          }
+        },
+        {
+          "id": "Creative_Se_Fi_04",
+          "priority": 2,
+          "text": {
+            "ru": "Я часто принимаю решения, исходя из чувства правильности.",
+            "en": "I often make choices based on what feels morally right to me."
+          }
+        },
+        {
+          "id": "Creative_Se_Fi_05",
+          "priority": 3,
+          "text": {
+            "ru": "Я быстро замечаю, когда кто-то ведёт себя неискренне.",
+            "en": "I quickly notice when someone’s behavior feels insincere."
+          }
+        },
+        {
+          "id": "Creative_Se_Fi_06",
+          "priority": 3,
+          "text": {
+            "ru": "Мне важно, чтобы отношения были тёплыми и глубокими.",
+            "en": "Warm, genuine relationships are important to me."
+          }
+        },
+        {
+          "id": "Creative_Se_Fi_07",
+          "priority": 4,
+          "text": {
+            "ru": "Я предпочитаю взаимодействовать на уровне личных чувств, а не формальностей.",
+            "en": "I prefer interacting on a personal, emotional level rather than through formalities."
+          }
+        },
+        {
+          "id": "Creative_Se_Fi_08",
+          "priority": 4,
+          "text": {
+            "ru": "Мои решения часто основаны на моём внутреннем моральном ориентире.",
+            "en": "My decisions are often guided by my inner moral compass."
+          }
+        }
+      ]
+    }
+  },
+  "Creative_Si": {
+    "dimension": "Creative",
+    "poles": [
+      "Te",
+      "Fe"
+    ],
+    "questions": {
+      "Te": [
+        {
+          "id": "Creative_Si_Te_01",
+          "priority": 1,
+          "text": {
+            "ru": "Мне важно, чтобы действия приносили практический результат.",
+            "en": "I care about actions that bring practical, measurable results."
+          }
+        },
+        {
+          "id": "Creative_Si_Te_02",
+          "priority": 1,
+          "text": {
+            "ru": "Я люблю оптимизировать процессы и повышать эффективность.",
+            "en": "I enjoy optimizing processes and increasing efficiency."
+          }
+        },
+        {
+          "id": "Creative_Si_Te_03",
+          "priority": 2,
+          "text": {
+            "ru": "Я предпочитаю проверенные методы, которые дают измеримый эффект.",
+            "en": "I prefer reliable methods that consistently produce real outcomes."
+          }
+        },
+        {
+          "id": "Creative_Si_Te_04",
+          "priority": 2,
+          "text": {
+            "ru": "Мне важно, чтобы работа была организована и приносила пользу.",
+            "en": "I like my work to be organized and purposeful."
+          }
+        },
+        {
+          "id": "Creative_Si_Te_05",
+          "priority": 3,
+          "text": {
+            "ru": "Я много внимания уделяю тому, что действительно работает на практике.",
+            "en": "I focus on what actually works in practice."
+          }
+        },
+        {
+          "id": "Creative_Si_Te_06",
+          "priority": 3,
+          "text": {
+            "ru": "Мне нравится, когда деятельность структурирована и даёт конкретные результаты.",
+            "en": "I appreciate structured activity that leads to tangible results."
+          }
+        },
+        {
+          "id": "Creative_Si_Te_07",
+          "priority": 4,
+          "text": {
+            "ru": "Я ценю компетентность и объективность в работе.",
+            "en": "I value competence and objectivity in getting things done."
+          }
+        },
+        {
+          "id": "Creative_Si_Te_08",
+          "priority": 4,
+          "text": {
+            "ru": "Мне важно иметь чёткие критерии успеха.",
+            "en": "Clear criteria for success help me stay focused and motivated."
+          }
+        }
+      ],
+      "Fe": [
+        {
+          "id": "Creative_Si_Fe_01",
+          "priority": 1,
+          "text": {
+            "ru": "Я чувствую эмоциональный фон людей и стараюсь его регулировать.",
+            "en": "I naturally sense the emotional tone in a group and try to keep it balanced."
+          }
+        },
+        {
+          "id": "Creative_Si_Fe_02",
+          "priority": 1,
+          "text": {
+            "ru": "Мне важно создавать комфортную атмосферу в общении.",
+            "en": "Creating a warm, comfortable atmosphere in communication matters to me."
+          }
+        },
+        {
+          "id": "Creative_Si_Fe_03",
+          "priority": 2,
+          "text": {
+            "ru": "Я легко выражаю эмоции и откликаюсь на эмоции других.",
+            "en": "I express emotions easily and respond to others’ emotional cues."
+          }
+        },
+        {
+          "id": "Creative_Si_Fe_04",
+          "priority": 2,
+          "text": {
+            "ru": "Мне важно, чтобы общение было живым и эмоционально насыщенным.",
+            "en": "I enjoy lively, expressive interactions with people."
+          }
+        },
+        {
+          "id": "Creative_Si_Fe_05",
+          "priority": 3,
+          "text": {
+            "ru": "Я часто адаптирую своё поведение, чтобы поддерживать настроение окружающих.",
+            "en": "I often adjust my behavior to help maintain a positive mood around me."
+          }
+        },
+        {
+          "id": "Creative_Si_Fe_06",
+          "priority": 3,
+          "text": {
+            "ru": "Я чувствую, когда людям нужно эмоциональное участие.",
+            "en": "I can feel when someone needs emotional support."
+          }
+        },
+        {
+          "id": "Creative_Si_Fe_07",
+          "priority": 4,
+          "text": {
+            "ru": "Я стремлюсь делать взаимодействие тёплым и дружелюбным.",
+            "en": "I try to make interactions warm, friendly, and engaging."
+          }
+        },
+        {
+          "id": "Creative_Si_Fe_08",
+          "priority": 4,
+          "text": {
+            "ru": "Мне важно, чтобы люди вокруг чувствовали себя эмоционально комфортно.",
+            "en": "It’s important to me that people around me feel emotionally at ease."
+          }
+        }
+      ]
+    }
+  },
+  "Creative_Te": {
+    "dimension": "Creative",
+    "poles": [
+      "Ni",
+      "Si"
+    ],
+    "questions": {
+      "Ni": [
+        {
+          "id": "Creative_Te_Ni_01",
+          "priority": 1,
+          "text": {
+            "ru": "Я часто вижу скрытые тенденции и предугадываю развитие событий.",
+            "en": "I often notice subtle patterns and foresee how events may unfold."
+          }
+        },
+        {
+          "id": "Creative_Te_Ni_02",
+          "priority": 1,
+          "text": {
+            "ru": "Мне важно понимать глубинные процессы, а не только факты.",
+            "en": "I’m drawn to underlying meanings rather than surface-level facts."
+          }
+        },
+        {
+          "id": "Creative_Te_Ni_03",
+          "priority": 2,
+          "text": {
+            "ru": "Я люблю размышлять о будущем и смысле происходящего.",
+            "en": "I like contemplating the future and the deeper purpose behind things."
+          }
+        },
+        {
+          "id": "Creative_Te_Ni_04",
+          "priority": 2,
+          "text": {
+            "ru": "Я часто ощущаю, как события складываются в единую линию.",
+            "en": "I often feel how separate events connect into one storyline."
+          }
+        },
+        {
+          "id": "Creative_Te_Ni_05",
+          "priority": 3,
+          "text": {
+            "ru": "Мне важно видеть долгосрочные последствия решений.",
+            "en": "I naturally consider long‑term consequences when making decisions."
+          }
+        },
+        {
+          "id": "Creative_Te_Ni_06",
+          "priority": 3,
+          "text": {
+            "ru": "Я склонен замечать паттерны, которые повторяются.",
+            "en": "I tend to notice patterns that repeat over time."
+          }
+        },
+        {
+          "id": "Creative_Te_Ni_07",
+          "priority": 4,
+          "text": {
+            "ru": "Мне нравится исследовать смысл того, что происходит.",
+            "en": "I enjoy exploring the meaning of what’s happening beneath the surface."
+          }
+        },
+        {
+          "id": "Creative_Te_Ni_08",
+          "priority": 4,
+          "text": {
+            "ru": "Я часто предчувствую развитие ситуации раньше других.",
+            "en": "I frequently sense where a situation is heading before others do."
+          }
+        }
+      ],
+      "Si": [
+        {
+          "id": "Creative_Te_Si_01",
+          "priority": 1,
+          "text": {
+            "ru": "Мне важен комфорт и способность поддерживать стабильность.",
+            "en": "Comfort and maintaining stability are important to me."
+          }
+        },
+        {
+          "id": "Creative_Te_Si_02",
+          "priority": 1,
+          "text": {
+            "ru": "Я предпочитаю спокойный ритм и контролируемую среду.",
+            "en": "I prefer a calm pace and a controlled, predictable environment."
+          }
+        },
+        {
+          "id": "Creative_Te_Si_03",
+          "priority": 2,
+          "text": {
+            "ru": "Я ценю ощущения тела и умею создавать уют вокруг.",
+            "en": "I value physical sensations and enjoy creating a cozy atmosphere."
+          }
+        },
+        {
+          "id": "Creative_Te_Si_04",
+          "priority": 2,
+          "text": {
+            "ru": "Мне важно гармонично распределять энергию и силы.",
+            "en": "I try to manage my energy and well‑being in a balanced way."
+          }
+        },
+        {
+          "id": "Creative_Te_Si_05",
+          "priority": 3,
+          "text": {
+            "ru": "Я стремлюсь поддерживать порядок и удобство.",
+            "en": "I like keeping things orderly and comfortable."
+          }
+        },
+        {
+          "id": "Creative_Te_Si_06",
+          "priority": 3,
+          "text": {
+            "ru": "Мне важно качество ощущений — еда, пространство, одежда.",
+            "en": "The quality of sensory experiences — food, space, clothing — matters to me."
+          }
+        },
+        {
+          "id": "Creative_Te_Si_07",
+          "priority": 4,
+          "text": {
+            "ru": "Я замечаю физический дискомфорт и стараюсь его устранить.",
+            "en": "I quickly notice physical discomfort and try to fix it."
+          }
+        },
+        {
+          "id": "Creative_Te_Si_08",
+          "priority": 4,
+          "text": {
+            "ru": "Мне важно ощущать безопасность и телесное благополучие.",
+            "en": "Feeling safe and physically well is essential for me."
+          }
+        }
+      ]
+    }
+  },
+  "Creative_Ti": {
+    "dimension": "Creative",
+    "poles": [
+      "Ne",
+      "Se"
+    ],
+    "questions": {
+      "Ne": [
+        {
+          "id": "Creative_Ti_Ne_01",
+          "priority": 1,
+          "text": {
+            "ru": "Я всегда замечаю новые возможности и альтернативы.",
+            "en": "I easily spot new possibilities and alternatives."
+          }
+        },
+        {
+          "id": "Creative_Ti_Ne_02",
+          "priority": 1,
+          "text": {
+            "ru": "Мне нравится придумывать идеи и рассматривать разные варианты.",
+            "en": "I enjoy coming up with ideas and exploring different options."
+          }
+        },
+        {
+          "id": "Creative_Ti_Ne_03",
+          "priority": 2,
+          "text": {
+            "ru": "Я быстро улавливаю потенциал в людях и ситуациях.",
+            "en": "I quickly recognize potential in people and situations."
+          }
+        },
+        {
+          "id": "Creative_Ti_Ne_04",
+          "priority": 2,
+          "text": {
+            "ru": "Мне важно движение вперёд — без перспектив я застаиваюсь.",
+            "en": "I need a sense of forward movement — without prospects I feel stuck."
+          }
+        },
+        {
+          "id": "Creative_Ti_Ne_05",
+          "priority": 3,
+          "text": {
+            "ru": "Я люблю исследовать необычные идеи и направления.",
+            "en": "I love exploring unusual ideas and directions."
+          }
+        },
+        {
+          "id": "Creative_Ti_Ne_06",
+          "priority": 3,
+          "text": {
+            "ru": "Я легко замечаю, как можно улучшить или преобразовать ситуацию.",
+            "en": "I readily notice how a situation could be improved or transformed."
+          }
+        },
+        {
+          "id": "Creative_Ti_Ne_07",
+          "priority": 4,
+          "text": {
+            "ru": "Мне нравится, когда есть простор для вариантов.",
+            "en": "I enjoy having room for flexibility and options."
+          }
+        },
+        {
+          "id": "Creative_Ti_Ne_08",
+          "priority": 4,
+          "text": {
+            "ru": "Я часто предлагаю новые подходы там, где другие их не видят.",
+            "en": "I often propose new approaches where others see none."
+          }
+        }
+      ],
+      "Se": [
+        {
+          "id": "Creative_Ti_Se_01",
+          "priority": 1,
+          "text": {
+            "ru": "Я уверенно влияю на ситуацию и беру контроль, когда нужно.",
+            "en": "I confidently influence situations and take control when necessary."
+          }
+        },
+        {
+          "id": "Creative_Ti_Se_02",
+          "priority": 1,
+          "text": {
+            "ru": "Мне важны сила воли и способность добиваться результата.",
+            "en": "Willpower and achieving concrete results matter to me."
+          }
+        },
+        {
+          "id": "Creative_Ti_Se_03",
+          "priority": 2,
+          "text": {
+            "ru": "Я чувствую границы и умею их отстаивать.",
+            "en": "I sense boundaries well and know how to assert them."
+          }
+        },
+        {
+          "id": "Creative_Ti_Se_04",
+          "priority": 2,
+          "text": {
+            "ru": "Я предпочитаю действовать прямо и добиваться конкретного эффекта.",
+            "en": "I prefer acting directly and aiming for clear, tangible outcomes."
+          }
+        },
+        {
+          "id": "Creative_Ti_Se_05",
+          "priority": 3,
+          "text": {
+            "ru": "Мне нравится ощущать контроль над ситуацией.",
+            "en": "I like feeling in control of what’s happening."
+          }
+        },
+        {
+          "id": "Creative_Ti_Se_06",
+          "priority": 3,
+          "text": {
+            "ru": "Я быстро ориентируюсь в моменте и принимаю решения.",
+            "en": "I quickly orient myself and make decisions in real‑time."
+          }
+        },
+        {
+          "id": "Creative_Ti_Se_07",
+          "priority": 4,
+          "text": {
+            "ru": "Я умею добиваться своего, даже в конкурентной среде.",
+            "en": "I know how to assert myself even in competitive environments."
+          }
+        },
+        {
+          "id": "Creative_Ti_Se_08",
+          "priority": 4,
+          "text": {
+            "ru": "Мне важно ощущение внутренней силы и решительности.",
+            "en": "Feeling strong and decisive is important to me."
+          }
+        }
+      ]
+    }
+  },
+  "Creative_Fe": {
+    "dimension": "Creative",
+    "poles": [
+      "Si",
+      "Ni"
+    ],
+    "questions": {
+      "Si": [
+        {
+          "id": "Creative_Fe_Si_01",
+          "priority": 1,
+          "text": {
+            "ru": "Мне важен комфорт и способность поддерживать стабильность.",
+            "en": "Comfort and maintaining stability are important to me."
+          }
+        },
+        {
+          "id": "Creative_Fe_Si_02",
+          "priority": 1,
+          "text": {
+            "ru": "Я предпочитаю спокойный ритм и контролируемую среду.",
+            "en": "I prefer a calm pace and a controlled, predictable environment."
+          }
+        },
+        {
+          "id": "Creative_Fe_Si_03",
+          "priority": 2,
+          "text": {
+            "ru": "Я ценю ощущения тела и умею создавать уют вокруг.",
+            "en": "I value physical sensations and enjoy creating a cozy atmosphere."
+          }
+        },
+        {
+          "id": "Creative_Fe_Si_04",
+          "priority": 2,
+          "text": {
+            "ru": "Мне важно гармонично распределять энергию и силы.",
+            "en": "I try to manage my energy and well‑being in a balanced way."
+          }
+        },
+        {
+          "id": "Creative_Fe_Si_05",
+          "priority": 3,
+          "text": {
+            "ru": "Я стремлюсь поддерживать порядок и удобство.",
+            "en": "I like keeping things orderly and comfortable."
+          }
+        },
+        {
+          "id": "Creative_Fe_Si_06",
+          "priority": 3,
+          "text": {
+            "ru": "Мне важно качество ощущений — еда, пространство, одежда.",
+            "en": "The quality of sensory experiences — food, space, clothing — matters to me."
+          }
+        },
+        {
+          "id": "Creative_Fe_Si_07",
+          "priority": 4,
+          "text": {
+            "ru": "Я замечаю физический дискомфорт и стараюсь его устранить.",
+            "en": "I quickly notice physical discomfort and try to fix it."
+          }
+        },
+        {
+          "id": "Creative_Fe_Si_08",
+          "priority": 4,
+          "text": {
+            "ru": "Мне важно ощущать безопасность и телесное благополучие.",
+            "en": "Feeling safe and physically well is essential for me."
+          }
+        }
+      ],
+      "Ni": [
+        {
+          "id": "Creative_Fe_Ni_01",
+          "priority": 1,
+          "text": {
+            "ru": "Я часто вижу скрытые тенденции и предугадываю развитие событий.",
+            "en": "I often notice subtle patterns and foresee how events may unfold."
+          }
+        },
+        {
+          "id": "Creative_Fe_Ni_02",
+          "priority": 1,
+          "text": {
+            "ru": "Мне важно понимать глубинные процессы, а не только факты.",
+            "en": "I’m drawn to underlying meanings rather than surface-level facts."
+          }
+        },
+        {
+          "id": "Creative_Fe_Ni_03",
+          "priority": 2,
+          "text": {
+            "ru": "Я люблю размышлять о будущем и смысле происходящего.",
+            "en": "I like contemplating the future and the deeper purpose behind things."
+          }
+        },
+        {
+          "id": "Creative_Fe_Ni_04",
+          "priority": 2,
+          "text": {
+            "ru": "Я часто ощущаю, как события складываются в единую линию.",
+            "en": "I often feel how separate events connect into one storyline."
+          }
+        },
+        {
+          "id": "Creative_Fe_Ni_05",
+          "priority": 3,
+          "text": {
+            "ru": "Мне важно видеть долгосрочные последствия решений.",
+            "en": "I naturally consider long‑term consequences when making decisions."
+          }
+        },
+        {
+          "id": "Creative_Fe_Ni_06",
+          "priority": 3,
+          "text": {
+            "ru": "Я склонен замечать паттерны, которые повторяются.",
+            "en": "I tend to notice patterns that repeat over time."
+          }
+        },
+        {
+          "id": "Creative_Fe_Ni_07",
+          "priority": 4,
+          "text": {
+            "ru": "Мне нравится исследовать смысл того, что происходит.",
+            "en": "I enjoy exploring the meaning of what’s happening beneath the surface."
+          }
+        },
+        {
+          "id": "Creative_Fe_Ni_08",
+          "priority": 4,
+          "text": {
+            "ru": "Я часто предчувствую развитие ситуации раньше других.",
+            "en": "I frequently sense where a situation is heading before others do."
+          }
+        }
+      ]
+    }
+  },
+  "Creative_Fi": {
+    "dimension": "Creative",
+    "poles": [
+      "Se",
+      "Ne"
+    ],
+    "questions": {
+      "Se": [
+        {
+          "id": "Creative_Fi_Se_01",
+          "priority": 1,
+          "text": {
+            "ru": "Я уверенно влияю на ситуацию и беру контроль, когда нужно.",
+            "en": "I confidently influence situations and take control when necessary."
+          }
+        },
+        {
+          "id": "Creative_Fi_Se_02",
+          "priority": 1,
+          "text": {
+            "ru": "Мне важны сила воли и способность добиваться результата.",
+            "en": "Willpower and achieving concrete results matter to me."
+          }
+        },
+        {
+          "id": "Creative_Fi_Se_03",
+          "priority": 2,
+          "text": {
+            "ru": "Я чувствую границы и умею их отстаивать.",
+            "en": "I sense boundaries well and know how to assert them."
+          }
+        },
+        {
+          "id": "Creative_Fi_Se_04",
+          "priority": 2,
+          "text": {
+            "ru": "Я предпочитаю действовать прямо и добиваться конкретного эффекта.",
+            "en": "I prefer acting directly and aiming for clear, tangible outcomes."
+          }
+        },
+        {
+          "id": "Creative_Fi_Se_05",
+          "priority": 3,
+          "text": {
+            "ru": "Мне нравится ощущать контроль над ситуацией.",
+            "en": "I like feeling in control of what’s happening."
+          }
+        },
+        {
+          "id": "Creative_Fi_Se_06",
+          "priority": 3,
+          "text": {
+            "ru": "Я быстро ориентируюсь в моменте и принимаю решения.",
+            "en": "I quickly orient myself and make decisions in real‑time."
+          }
+        },
+        {
+          "id": "Creative_Fi_Se_07",
+          "priority": 4,
+          "text": {
+            "ru": "Я умею добиваться своего, даже в конкурентной среде.",
+            "en": "I know how to assert myself even in competitive environments."
+          }
+        },
+        {
+          "id": "Creative_Fi_Se_08",
+          "priority": 4,
+          "text": {
+            "ru": "Мне важно ощущение внутренней силы и решительности.",
+            "en": "Feeling strong and decisive is important to me."
+          }
+        }
+      ],
+      "Ne": [
+        {
+          "id": "Creative_Fi_Ne_01",
+          "priority": 1,
+          "text": {
+            "ru": "Я всегда замечаю новые возможности и альтернативы.",
+            "en": "I easily spot new possibilities and alternatives."
+          }
+        },
+        {
+          "id": "Creative_Fi_Ne_02",
+          "priority": 1,
+          "text": {
+            "ru": "Мне нравится придумывать идеи и рассматривать разные варианты.",
+            "en": "I enjoy coming up with ideas and exploring different options."
+          }
+        },
+        {
+          "id": "Creative_Fi_Ne_03",
+          "priority": 2,
+          "text": {
+            "ru": "Я быстро улавливаю потенциал в людях и ситуациях.",
+            "en": "I quickly recognize potential in people and situations."
+          }
+        },
+        {
+          "id": "Creative_Fi_Ne_04",
+          "priority": 2,
+          "text": {
+            "ru": "Мне важно движение вперёд — без перспектив я застаиваюсь.",
+            "en": "I need a sense of forward movement — without prospects I feel stuck."
+          }
+        },
+        {
+          "id": "Creative_Fi_Ne_05",
+          "priority": 3,
+          "text": {
+            "ru": "Я люблю исследовать необычные идеи и направления.",
+            "en": "I love exploring unusual ideas and directions."
+          }
+        },
+        {
+          "id": "Creative_Fi_Ne_06",
+          "priority": 3,
+          "text": {
+            "ru": "Я легко замечаю, как можно улучшить или преобразовать ситуацию.",
+            "en": "I readily notice how a situation could be improved or transformed."
+          }
+        },
+        {
+          "id": "Creative_Fi_Ne_07",
+          "priority": 4,
+          "text": {
+            "ru": "Мне нравится, когда есть простор для вариантов.",
+            "en": "I enjoy having room for flexibility and options."
+          }
+        },
+        {
+          "id": "Creative_Fi_Ne_08",
+          "priority": 4,
+          "text": {
+            "ru": "Я часто предлагаю новые подходы там, где другие их не видят.",
+            "en": "I often propose new approaches where others see none."
+          }
+        }
+      ]
+    }
+  }
+}

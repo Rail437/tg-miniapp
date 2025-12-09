@@ -2,21 +2,43 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "../../i18n";
+import answerScale from "../../data/answerScale.json";
 
 export function TestQuestionModal({
                                       test,
+                                      question,
                                       currentQuestionIndex,
+                                      totalQuestions,
                                       onAnswer,
                                       onClose,
                                   }) {
     const { lang } = useTranslation();
 
-    // Берём вопросы прямо из объекта теста
-    const questions = test.questions?.[lang] ?? test.questions?.ru ?? [];
-    const total = questions.length || 1;
-    const question = questions[currentQuestionIndex] ?? "";
+    if (!question) return null;
 
-    const progress = Math.round(((currentQuestionIndex + 1) / total) * 100);
+    const title =
+        test?.name?.[lang] ??
+        test?.name?.ru ??
+        (lang === "ru"
+            ? "Тест по соционике"
+            : "Socionics test");
+
+    const text =
+        question.text?.[lang] ??
+        question.text?.ru ??
+        "";
+
+    const scale = answerScale[lang] ?? answerScale.ru;
+
+    const progress =
+        totalQuestions > 0
+            ? Math.min(
+                100,
+                Math.round(
+                    ((currentQuestionIndex + 1) / totalQuestions) * 100
+                )
+            )
+            : 0;
 
     return (
         <motion.div
@@ -32,11 +54,19 @@ export function TestQuestionModal({
                 exit={{ scale: 0.9, opacity: 0, y: 20 }}
                 transition={{ duration: 0.25 }}
             >
+                {/* Хедер */}
                 <div className="flex justify-between items-start mb-4">
                     <div>
                         <div className="text-xs uppercase text-blue-500 mb-1">
-                            {lang === "ru" ? "Вопрос" : "Question"} {currentQuestionIndex + 1} / {total}
+                            {lang === "ru" ? "Вопрос" : "Question"}{" "}
+                            {currentQuestionIndex + 1}
+                            {totalQuestions
+                                ? ` / ${totalQuestions}`
+                                : ""}
                         </div>
+                        <h3 className="text-sm font-semibold text-gray-900">
+                            {title}
+                        </h3>
                     </div>
 
                     <button
@@ -47,6 +77,7 @@ export function TestQuestionModal({
                     </button>
                 </div>
 
+                {/* Прогресс-бар */}
                 <div className="w-full h-1.5 bg-gray-100 rounded-full mb-4 overflow-hidden">
                     <div
                         className="h-full bg-gradient-to-r from-blue-500 to-purple-500"
@@ -54,21 +85,27 @@ export function TestQuestionModal({
                     />
                 </div>
 
-                <p className="text-sm text-gray-800 mb-6">{question}</p>
+                {/* Текст вопроса */}
+                <p className="text-sm text-gray-800 mb-6">{text}</p>
 
-                <div className="flex flex-col sm:flex-row gap-3">
-                    <button
-                        onClick={() => onAnswer(true)}
-                        className="flex-1 py-2.5 rounded-2xl bg-blue-600 text-white font-semibold"
-                    >
-                        {lang === "ru" ? "Да" : "Yes"}
-                    </button>
-                    <button
-                        onClick={() => onAnswer(false)}
-                        className="flex-1 py-2.5 rounded-2xl bg-gray-100 text-gray-700 font-semibold"
-                    >
-                        {lang === "ru" ? "Нет" : "No"}
-                    </button>
+                {/* 4 варианта ответа из answerScale */}
+                <div className="flex flex-col gap-2">
+                    {scale.options.map((opt) => (
+                        <button
+                            key={opt.id}
+                            onClick={() => onAnswer(opt.value)}
+                            className="w-full py-2.5 px-3 rounded-2xl border border-gray-100 bg-gray-50/70 hover:bg-gray-100 text-sm text-gray-800 text-left transition-all"
+                        >
+                            <div className="font-medium">
+                                {opt.label}
+                            </div>
+                            {opt.description && (
+                                <div className="text-xs text-gray-500 mt-0.5">
+                                    {opt.description}
+                                </div>
+                            )}
+                        </button>
+                    ))}
                 </div>
             </motion.div>
         </motion.div>

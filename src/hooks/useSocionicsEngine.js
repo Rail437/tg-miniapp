@@ -1,0 +1,252 @@
+// src/hooks/useSocionicsEngine.js
+import { useRef, useState } from "react";
+import { SocionicsTestEngine } from "../components/test/SocionicsTestEngine";
+
+import testFlow from "../data/testFlow.json";
+import answerScale from "../data/answerScale.json";
+import allTypes from "../data/allTypes.json";
+
+// База (JP / NS / TF / IE)
+import baseQuestionSets from "../data/questionSets.json";
+// Креативные блоки (Creative_*)
+import creativeQuestionSets from "../data/questionSets_creative_translated.json";
+
+// Объединяем наборы вопросов в один объект для движка
+const mergedQuestionSets = {
+    ...baseQuestionSets,
+    ...creativeQuestionSets,
+};
+
+const BASE_STORAGE_KEY = "socionicsBaseResult";
+
+export function useSocionicsEngine(userId) {
+    const engineRef = useRef(null);
+
+    const [showTests, setShowTests] = useState(false);
+    const [showResults, setShowResults] = useState(false);
+
+    const [currentTest, setCurrentTest] = useState(null);
+    const [currentQuestion, setCurrentQuestion] = useState(null);
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const [totalQuestions, setTotalQuestions] = useState(0);
+
+    const [resultData, setResultData] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    // Флаг: базовая часть (JP + Base + IE) завершена
+    const [baseCompleted, setBaseCompleted] = useState(false);
+
+    const ensureEngine = () => {
+        if (!engineRef.current) {
+            engineRef.current = new SocionicsTestEngine({
+                answerScale,
+                questionSets: mergedQuestionSets,
+                testFlow,
+                allTypes,
+            });
+        }
+        return engineRef.current;
+    };
+
+    // Полный запуск теста с нуля (1-я + 2-я часть)
+    const startTest = (test) => {
+        setError(null);
+        setBaseCompleted(false);
+
+        const engine = ensureEngine();
+        engine.reset();
+
+        const firstQuestion = engine.start();
+        console.log("ENGINE firstQuestion:", firstQuestion);
+
+        setCurrentTest(test || { id: "socionics_full" });
+        setCurrentQuestion(firstQuestion);
+        setCurrentQuestionIndex(0);
+
+        // Грубая оценка количества вопросов
+        const stagesCount = (testFlow.stages || []).filter(
+            (s) => s.type !== "terminal"
+        ).length;
+        const maxPerPole = testFlow.config?.maxQuestionsPerPole ?? 6;
+        setTotalQuestions(stagesCount * maxPerPole);
+
+        setShowTests(false);
+        setShowResults(false);
+        setResultData(null);
+    };
+
+    // Ответ на текущий вопрос
+    const answerQuestion = (answerValue) => {
+        if (!currentQuestion) return;
+
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            const engine = ensureEngine();
+            const res = engine.answer(answerValue);
+
+            console.log("ENGINE answer result:", res);
+
+            // Если завершилась стадия IE (экстраверсия/интроверсия) — базовая часть определена
+            if (res.stageCompleted && res.stageResult?.dimension === "IE") {
+                const baseSummary = engine.getBaseSummary?.();
+                if (baseSummary) {
+                    const payload = {
+                        ...baseSummary,
+                        createdAt: new Date().toISOString(),
+                    };
+                    try {
+                        localStorage.setItem(
+                            BASE_STORAGE_KEY,
+                            JSON.stringify(payload)
+                        );
+                        console.log(
+                            "Saved base result to localStorage:",
+                            payload
+                        );
+                        setBaseCompleted(true);
+                    } catch (e) {
+                        console.warn(
+                            "Failed to save base result to localStorage",
+                            e
+                        );
+                    }
+                }
+            }
+
+            if (res.testCompleted) {
+                // Тест завершён
+                setCurrentQuestion(null);
+                setShowResults(true);
+
+                const t = res.finalType;
+
+                let final;
+
+                if (t) {
+                    final = {
+                        typeId: t.id,
+                        ru: {
+                            label: t.nickname?.ru || t.codeRu || t.id,
+                            description: t.descriptionRu || "",
+                        },
+                        en: {
+                            label: t.nickname?.en || t.id,
+                            description: t.descriptionEn || "",
+                        },
+                        createdAt: new Date().toISOString(),
+                    };
+                } else {
+                    final = {
+                        typeId: "UNKNOWN",
+                        ru: {
+                            label: "Тип не определён",
+                            description:
+                                "По ответам пока не удалось надёжно определить ваш соционический тип. Попробуйте пройти тест ещё раз позже.",
+                        },
+                        en: {
+                            label: "Type not determined",
+                            description:
+                                "Based on your answers, the system could not reliably determine your socionics type yet.",
+                        },
+                        createdAt: new Date().toISOString(),
+                    };
+                }
+                // ✅ Сохраняем новый результат локально
+                try {
+                    localStorage.setItem("socionicsFinalResult", JSON.stringify(final));
+                    console.log("Saved final result to localStorage:", final);
+                } catch (e) {
+                    console.warn("Failed to save final result", e);
+                }
+                setResultData(final);
+            } else {
+                // Тест продолжается — берём следующий вопрос
+                setCurrentQuestion(res.question);
+                setCurrentQuestionIndex((prev) => prev + 1);
+            }
+        } catch (e) {
+            console.error("Socionics answerQuestion error", e);
+            setError("Ошибка при обработке ответа. Попробуйте ещё раз.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Запуск только 2-й части по сохранённой базе
+    const startFromSavedBase = () => {
+        setError(null);
+        setBaseCompleted(true); // мы уже знаем, что база была пройдена ранее
+
+        let saved = null;
+        try {
+            const raw = localStorage.getItem(BASE_STORAGE_KEY);
+            if (raw) saved = JSON.parse(raw);
+        } catch (e) {
+            console.warn("Failed to read base result from localStorage", e);
+        }
+
+        if (!saved) {
+            setError("Нет сохранённого базового результата теста.");
+            return;
+        }
+
+        const engine = ensureEngine();
+
+        let firstQuestion = null;
+        try {
+            firstQuestion = engine.startFromBaseSummary(saved);
+        } catch (e) {
+            console.error("startFromBaseSummary error", e);
+        }
+
+        if (!firstQuestion) {
+            setError("Не удалось возобновить вторую часть теста.");
+            return;
+        }
+
+        setCurrentTest({ id: "socionics_creative" });
+        setCurrentQuestion(firstQuestion);
+        setCurrentQuestionIndex(0);
+        setShowTests(false);
+        setShowResults(false);
+        setResultData(null);
+    };
+
+    const resetTest = () => {
+        setShowTests(false);
+        setShowResults(false);
+        setCurrentTest(null);
+        setCurrentQuestion(null);
+        setCurrentQuestionIndex(0);
+        setTotalQuestions(0);
+        setResultData(null);
+        setError(null);
+        setBaseCompleted(false);
+        // движок при следующем старте сам себя сбросит через reset()
+    };
+
+    return {
+        showTests,
+        setShowTests,
+        showResults,
+
+        currentTest,
+        currentQuestion,
+        currentQuestionIndex,
+        totalQuestions,
+
+        startTest,
+        startFromSavedBase,
+        answerQuestion,
+        resetTest,
+
+        resultData,
+        isLoading,
+        error,
+
+        baseCompleted,
+    };
+}

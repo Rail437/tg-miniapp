@@ -1,0 +1,141 @@
+{
+  "config": {
+    "initialQuestionsPerPole": 2,
+    "extraQuestionsPerPole": 2,
+    "maxQuestionsPerPole": 6,
+    "decisionThreshold": 3
+  },
+  "stages": [
+    {
+      "id": "JP",
+      "questionSetId": "JP",
+      "dimension": "JP",
+      "poles": ["J", "P"],
+      "next": {
+        "J": "Base_Rational",
+        "P": "Base_Irrational"
+      }
+    },
+
+    {
+      "id": "Base_Rational",
+      "questionSetId": "TF",
+      "dimension": "Base",
+      "poles": ["T", "F"],
+      "next": {
+        "T": "IE_Rational",
+        "F": "IE_Rational"
+      }
+    },
+
+    {
+      "id": "Base_Irrational",
+      "questionSetId": "NS",
+      "dimension": "Base",
+      "poles": ["N", "S"],
+      "next": {
+        "N": "IE_Irrational",
+        "S": "IE_Irrational"
+      }
+    },
+
+    {
+      "id": "IE_Rational",
+      "questionSetId": "IE",
+      "dimension": "IE",
+      "poles": ["E", "I"],
+
+      "contextDimension": "Base",
+      "nextByContext": {
+        "T_E": "Creative_Te",
+        "T_I": "Creative_Ti",
+        "F_E": "Creative_Fe",
+        "F_I": "Creative_Fi"
+      }
+    },
+
+    {
+      "id": "IE_Irrational",
+      "questionSetId": "IE",
+      "dimension": "IE",
+      "poles": ["E", "I"],
+
+      "contextDimension": "Base",
+      "nextByContext": {
+        "N_E": "Creative_Ne",
+        "N_I": "Creative_Ni",
+        "S_E": "Creative_Se",
+        "S_I": "Creative_Si"
+      }
+    },
+
+    {
+      "id": "Creative_Ne",
+      "questionSetId": "Creative_Ne",
+      "dimension": "Creative",
+      "poles": ["Ti", "Fi"],
+      "next": { "*": "Finish" }
+    },
+
+    {
+      "id": "Creative_Ni",
+      "questionSetId": "Creative_Ni",
+      "dimension": "Creative",
+      "poles": ["Te", "Fe"],
+      "next": { "*": "Finish" }
+    },
+
+    {
+      "id": "Creative_Se",
+      "questionSetId": "Creative_Se",
+      "dimension": "Creative",
+      "poles": ["Ti", "Fi"],
+      "next": { "*": "Finish" }
+    },
+
+    {
+      "id": "Creative_Si",
+      "questionSetId": "Creative_Si",
+      "dimension": "Creative",
+      "poles": ["Te", "Fe"],
+      "next": { "*": "Finish" }
+    },
+
+    {
+      "id": "Creative_Te",
+      "questionSetId": "Creative_Te",
+      "dimension": "Creative",
+      "poles": ["Ni", "Si"],
+      "next": { "*": "Finish" }
+    },
+
+    {
+      "id": "Creative_Ti",
+      "questionSetId": "Creative_Ti",
+      "dimension": "Creative",
+      "poles": ["Ne", "Se"],
+      "next": { "*": "Finish" }
+    },
+
+    {
+      "id": "Creative_Fe",
+      "questionSetId": "Creative_Fe",
+      "dimension": "Creative",
+      "poles": ["Si", "Ni"],
+      "next": { "*": "Finish" }
+    },
+
+    {
+      "id": "Creative_Fi",
+      "questionSetId": "Creative_Fi",
+      "dimension": "Creative",
+      "poles": ["Se", "Ne"],
+      "next": { "*": "Finish" }
+    },
+
+    {
+      "id": "Finish",
+      "type": "terminal"
+    }
+  ]
+}

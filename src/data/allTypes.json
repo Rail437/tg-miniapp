@@ -1,0 +1,370 @@
+{
+  "ILE": {
+    "id": "ILE",
+    "codeRu": "ИЛЭ",
+    "nickname": {
+      "ru": "Дон Кихот",
+      "en": "Don Quixote"
+    },
+    "quadra": "Alpha",
+    "rationality": "irrational",
+    "attitude": "extravert",
+    "leading": {
+      "code": "Ne",
+      "ru": "Интуиция возможностей"
+    },
+    "creative": {
+      "code": "Ti",
+      "ru": "Структурная логика"
+    },
+    "activation": {
+      "code": "Fe",
+      "ru": "Этика контакта"
+    }
+  },
+  "IEE": {
+    "id": "IEE",
+    "codeRu": "ИЭЭ",
+    "nickname": {
+      "ru": "Гексли",
+      "en": "Huxley"
+    },
+    "quadra": "Delta",
+    "rationality": "irrational",
+    "attitude": "extravert",
+    "leading": {
+      "code": "Ne",
+      "ru": "Интуиция возможностей"
+    },
+    "creative": {
+      "code": "Fi",
+      "ru": "Этика отношений"
+    },
+    "activation": {
+      "code": "Te",
+      "ru": "Деловая логика"
+    }
+  },
+  "IEI": {
+    "id": "IEI",
+    "codeRu": "ИЭИ",
+    "nickname": {
+      "ru": "Есенин",
+      "en": "Yesenin"
+    },
+    "quadra": "Beta",
+    "rationality": "irrational",
+    "attitude": "introvert",
+    "leading": {
+      "code": "Ni",
+      "ru": "Интуиция времени"
+    },
+    "creative": {
+      "code": "Fe",
+      "ru": "Этика контакта"
+    },
+    "activation": {
+      "code": "Ti",
+      "ru": "Структурная логика"
+    }
+  },
+  "ILI": {
+    "id": "ILI",
+    "codeRu": "ИЛИ",
+    "nickname": {
+      "ru": "Бальзак",
+      "en": "Balzac"
+    },
+    "quadra": "Gamma",
+    "rationality": "irrational",
+    "attitude": "introvert",
+    "leading": {
+      "code": "Ni",
+      "ru": "Интуиция времени"
+    },
+    "creative": {
+      "code": "Te",
+      "ru": "Деловая логика"
+    },
+    "activation": {
+      "code": "Fi",
+      "ru": "Этика отношений"
+    }
+  },
+  "SLE": {
+    "id": "SLE",
+    "codeRu": "СЛЭ",
+    "nickname": {
+      "ru": "Жуков",
+      "en": "Zhukov"
+    },
+    "quadra": "Beta",
+    "rationality": "irrational",
+    "attitude": "extravert",
+    "leading": {
+      "code": "Se",
+      "ru": "Волевая сенсорика"
+    },
+    "creative": {
+      "code": "Ti",
+      "ru": "Структурная логика"
+    },
+    "activation": {
+      "code": "Fe",
+      "ru": "Этика контакта"
+    }
+  },
+  "SEE": {
+    "id": "SEE",
+    "codeRu": "СЭЭ",
+    "nickname": {
+      "ru": "Наполеон",
+      "en": "Napoleon"
+    },
+    "quadra": "Gamma",
+    "rationality": "irrational",
+    "attitude": "extravert",
+    "leading": {
+      "code": "Se",
+      "ru": "Волевая сенсорика"
+    },
+    "creative": {
+      "code": "Fi",
+      "ru": "Этика отношений"
+    },
+    "activation": {
+      "code": "Te",
+      "ru": "Деловая логика"
+    }
+  },
+  "SEI": {
+    "id": "SEI",
+    "codeRu": "СЭИ",
+    "nickname": {
+      "ru": "Дюма",
+      "en": "Dumas"
+    },
+    "quadra": "Alpha",
+    "rationality": "irrational",
+    "attitude": "introvert",
+    "leading": {
+      "code": "Si",
+      "ru": "Сенсорика комфорта"
+    },
+    "creative": {
+      "code": "Fe",
+      "ru": "Этика контакта"
+    },
+    "activation": {
+      "code": "Ti",
+      "ru": "Структурная логика"
+    }
+  },
+  "SLI": {
+    "id": "SLI",
+    "codeRu": "СЛИ",
+    "nickname": {
+      "ru": "Габен",
+      "en": "Gabin"
+    },
+    "quadra": "Delta",
+    "rationality": "irrational",
+    "attitude": "introvert",
+    "leading": {
+      "code": "Si",
+      "ru": "Сенсорика комфорта"
+    },
+    "creative": {
+      "code": "Te",
+      "ru": "Деловая логика"
+    },
+    "activation": {
+      "code": "Fe",
+      "ru": "Этика контакта"
+    }
+  },
+  "LII": {
+    "id": "LII",
+    "codeRu": "ЛИИ",
+    "nickname": {
+      "ru": "Робеспьер",
+      "en": "Robespierre"
+    },
+    "quadra": "Alpha",
+    "rationality": "rational",
+    "attitude": "introvert",
+    "leading": {
+      "code": "Ti",
+      "ru": "Структурная логика"
+    },
+    "creative": {
+      "code": "Ne",
+      "ru": "Интуиция возможностей"
+    },
+    "activation": {
+      "code": "Se",
+      "ru": "Волевая сенсорика"
+    }
+  },
+  "LSI": {
+    "id": "LSI",
+    "codeRu": "ЛСИ",
+    "nickname": {
+      "ru": "Максим Горький",
+      "en": "Maxim Gorky"
+    },
+    "quadra": "Beta",
+    "rationality": "rational",
+    "attitude": "introvert",
+    "leading": {
+      "code": "Ti",
+      "ru": "Структурная логика"
+    },
+    "creative": {
+      "code": "Se",
+      "ru": "Волевая сенсорика"
+    },
+    "activation": {
+      "code": "Ni",
+      "ru": "Интуиция времени"
+    }
+  },
+  "LIE": {
+    "id": "LIE",
+    "codeRu": "ЛИЭ",
+    "nickname": {
+      "ru": "Джек Лондон",
+      "en": "Jack London"
+    },
+    "quadra": "Gamma",
+    "rationality": "rational",
+    "attitude": "extravert",
+    "leading": {
+      "code": "Te",
+      "ru": "Деловая логика"
+    },
+    "creative": {
+      "code": "Ni",
+      "ru": "Интуиция времени"
+    },
+    "activation": {
+      "code": "Se",
+      "ru": "Волевая сенсорика"
+    }
+  },
+  "LSE": {
+    "id": "LSE",
+    "codeRu": "ЛСЭ",
+    "nickname": {
+      "ru": "Штирлиц",
+      "en": "Stierlitz"
+    },
+    "quadra": "Delta",
+    "rationality": "rational",
+    "attitude": "extravert",
+    "leading": {
+      "code": "Te",
+      "ru": "Деловая логика"
+    },
+    "creative": {
+      "code": "Si",
+      "ru": "Сенсорика комфорта"
+    },
+    "activation": {
+      "code": "Ne",
+      "ru": "Интуиция возможностей"
+    }
+  },
+  "EII": {
+    "id": "EII",
+    "codeRu": "ЭИИ",
+    "nickname": {
+      "ru": "Достоевский",
+      "en": "Dostoevsky"
+    },
+    "quadra": "Delta",
+    "rationality": "rational",
+    "attitude": "introvert",
+    "leading": {
+      "code": "Fi",
+      "ru": "Этика отношений"
+    },
+    "creative": {
+      "code": "Ne",
+      "ru": "Интуиция возможностей"
+    },
+    "activation": {
+      "code": "Si",
+      "ru": "Сенсорика комфорта"
+    }
+  },
+  "ESI": {
+    "id": "ESI",
+    "codeRu": "ЭСИ",
+    "nickname": {
+      "ru": "Драйзер",
+      "en": "Dreiser"
+    },
+    "quadra": "Gamma",
+    "rationality": "rational",
+    "attitude": "introvert",
+    "leading": {
+      "code": "Fi",
+      "ru": "Этика отношений"
+    },
+    "creative": {
+      "code": "Se",
+      "ru": "Волевая сенсорика"
+    },
+    "activation": {
+      "code": "Ni",
+      "ru": "Интуиция времени"
+    }
+  },
+  "ESE": {
+    "id": "ESE",
+    "codeRu": "ЭСЭ",
+    "nickname": {
+      "ru": "Гюго",
+      "en": "Hugo"
+    },
+    "quadra": "Alpha",
+    "rationality": "rational",
+    "attitude": "extravert",
+    "leading": {
+      "code": "Fe",
+      "ru": "Этика контакта"
+    },
+    "creative": {
+      "code": "Si",
+      "ru": "Сенсорика комфорта"
+    },
+    "activation": {
+      "code": "Ne",
+      "ru": "Интуиция возможностей"
+    }
+  },
+  "EIE": {
+    "id": "EIE",
+    "codeRu": "ЭИЭ",
+    "nickname": {
+      "ru": "Гамлет",
+      "en": "Hamlet"
+    },
+    "quadra": "Beta",
+    "rationality": "rational",
+    "attitude": "extravert",
+    "leading": {
+      "code": "Fe",
+      "ru": "Этика контакта"
+    },
+    "creative": {
+      "code": "Ni",
+      "ru": "Интуиция времени"
+    },
+    "activation": {
+      "code": "Se",
+      "ru": "Волевая сенсорика"
+    }
+  }
+}

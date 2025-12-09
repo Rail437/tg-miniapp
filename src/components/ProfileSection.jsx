@@ -9,6 +9,7 @@ export const ProfileSection = ({userId}) => {
     const [referralLink, setReferralLink] = useState("");
     const [referrals, setReferrals] = useState([]);
     const [lastResult, setLastResult] = useState(null);
+    const LOCAL_STORAGE_KEY = "socionicsFinalResult";
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     const [showTypeModal, setShowTypeModal] = useState(false);
@@ -18,8 +19,7 @@ export const ProfileSection = ({userId}) => {
 
     // Локализованная версия результата "на лету"
     const localizedResult = lastResult
-        ? lastResult[lang] ?? lastResult.ru ?? lastResult.en ?? null
-        : null;
+        ? lastResult[lang] ?? lastResult.ru ?? lastResult.en ?? null : null;
 
     useEffect(() => {
         if (!userId) {
@@ -32,7 +32,19 @@ export const ProfileSection = ({userId}) => {
                 setLoading(true);
                 setError(false);
 
-                const [refData, invited, result] = await Promise.all([
+                // 1. Пробуем прочитать локальный результат
+                let localResult = null;
+                try {
+                    const raw = localStorage.getItem("socionicsFinalResult");
+                    if (raw) {
+                        localResult = JSON.parse(raw);
+                    }
+                } catch (e) {
+                    console.warn("Failed to read local socionics result", e);
+                }
+
+                // 2. Параллельно тянем данные с бэка
+                const [refData, invited, backendResult] = await Promise.all([
                     apiClient.getMyReferral(userId),
                     apiClient.getMyInvited(userId),
                     apiClient.getLastResult(userId),
@@ -40,8 +52,27 @@ export const ProfileSection = ({userId}) => {
 
                 setReferralLink(refData.link);
                 setReferrals(invited);
-                // Сохраняем сырое значение: { typeId, ru, en, createdAt }
-                setLastResult(result || null);
+
+                // 3. Выбираем самый свежий результат:
+                //    - если есть local и backend → сравниваем createdAt
+                //    - если только один из них → берём его
+                let bestResult = null;
+
+                if (localResult && backendResult) {
+                    const localTime = localResult.createdAt
+                        ? Date.parse(localResult.createdAt)
+                        : 0;
+                    const backendTime = backendResult.createdAt
+                        ? Date.parse(backendResult.createdAt)
+                        : 0;
+
+                    bestResult = localTime >= backendTime ? localResult : backendResult;
+                } else {
+                    bestResult = localResult || backendResult || null;
+                }
+
+                // сохраняем "сырое" значение: { typeId, ru, en, createdAt }
+                setLastResult(bestResult);
             } catch (e) {
                 console.error("ProfileSection load error", e);
                 setError(true);

@@ -1,0 +1,18 @@
+{
+  "ru": {
+    "options": [
+      { "id": "++", "value": 2,  "label": "Точно про меня",      "description": "" },
+      { "id": "+",  "value": 1,  "label": "Скорее про меня",     "description": "" },
+      { "id": "-",  "value": -1, "label": "Скорее не про меня",  "description": "" },
+      { "id": "--", "value": -2, "label": "Точно не про меня",   "description": "" }
+    ]
+  },
+  "en": {
+    "options": [
+      { "id": "++", "value": 2,  "label": "Exactly about me",    "description": "" },
+      { "id": "+",  "value": 1,  "label": "Rather about me",     "description": "" },
+      { "id": "-",  "value": -1, "label": "Rather not about me", "description": "" },
+      { "id": "--", "value": -2, "label": "Definitely not me",   "description": "" }
+    ]
+  }
+}
