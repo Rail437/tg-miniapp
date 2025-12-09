@@ -1,6 +1,7 @@
 // src/hooks/useTestEngine.js
-import {useState} from "react";
-import {apiClient} from "../api/apiClient";
+import { useState } from "react";
+import { apiClient } from "../api/apiClient";
+import { testTexts } from "../data/testTexts";
 
 export function useTestEngine(userId) {
     const [showTests, setShowTests] = useState(false);
@@ -8,86 +9,145 @@ export function useTestEngine(userId) {
 
     const [currentTest, setCurrentTest] = useState(null);
     const [currentQuestion, setCurrentQuestion] = useState(0);
+    const [totalQuestions, setTotalQuestions] = useState(0);
+
     const [sessionId, setSessionId] = useState(null);
     const [resultData, setResultData] = useState(null);
 
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const startTest = async (test) => {
-        if (!userId) {
-            setError("Пользователь ещё не инициализирован. Попробуйте через пару секунд.");
-            return;
+    // --- Вспомогательное: для главного теста считаем кол-во вопросов ---
+    function calcTotalQuestions(test) {
+        if (!test) return 0;
+
+        // Берём ru как "каноничный" язык — длина массивов в ru/en одинаковая
+        const ruBlock = testTexts["ru"]?.[test.i18nKey];
+        if (ruBlock && Array.isArray(ruBlock.questions)) {
+            return ruBlock.questions.length;
         }
 
-        setIsLoading(true);
+        // fallback: попробуем взять из самого теста
+        const ruFromTest = test.questions?.ru;
+        if (Array.isArray(ruFromTest)) {
+            return ruFromTest.length;
+        }
+
+        return 0;
+    }
+
+    // --- Старт теста ---
+    const startTest = async (test) => {
+        setCurrentTest(test);
+        setCurrentQuestion(0);
+        setShowResults(false);
+        setResultData(null);
         setError(null);
 
-        try {
-            const res = await apiClient.startMainTest(userId);
-            setSessionId(res.sessionId);
-            setCurrentTest(test);
-            setCurrentQuestion(res.currentStep ?? 0);
-            setShowTests(false);
-            setShowResults(false);
-            setResultData(null);
-        } catch (e) {
-            console.error("startTest error", e);
-            setError("Не удалось начать тест. Попробуйте ещё раз.");
-        } finally {
-            setIsLoading(false);
+        const questionsCount = calcTotalQuestions(test);
+        setTotalQuestions(questionsCount);
+
+        // Если это наш главный тест и есть userId — создаём сессию на бэке
+        if (test.id === "main_socionic" && userId) {
+            try {
+                setIsLoading(true);
+                const res = await apiClient.startMainTest(userId);
+                // ожидаем что бэк вернёт sessionId
+                setSessionId(res.sessionId);
+            } catch (e) {
+                console.error("startMainTest error", e);
+                setError("Не удалось начать тест. Попробуйте ещё раз.");
+            } finally {
+                setIsLoading(false);
+            }
         }
+
+        setShowTests(false);
     };
 
+    // --- Ответ на вопрос ---
     const answerQuestion = async (answer) => {
-        if (!sessionId || !currentTest) return;
+        if (!currentTest) return;
+
+        const isLastQuestion =
+            totalQuestions > 0 && currentQuestion >= totalQuestions - 1;
 
         setIsLoading(true);
         setError(null);
 
         try {
-            const answerValue = answer;
+            // Если хотим всё же слать ответы по ходу теста — шлём, но
+            // ответ БЭКА ПОЛНОСТЬЮ ИГНОРИРУЕМ
+            if (currentTest.id === "main_socionic" && sessionId) {
+                try {
+                    await apiClient.answerMainTest({
+                        sessionId,
+                        questionIndex: currentQuestion,
+                        answerValue: answer ? 1 : 0,
+                    });
+                } catch (e) {
+                    // Логируем, но не ломаем UX
+                    console.error("answerMainTest error (ignored)", e);
+                }
+            }
 
-            const res = await apiClient.answerMainTest({
-                sessionId,
-                questionIndex: currentQuestion,
-                answerValue,
-            });
+            if (isLastQuestion) {
+                // ❗️Вот тут наша новая логика:
+                // тест закончился -> отправляем запрос на сохранение результата
+                let result = null;
 
-            if (res.status === "COMPLETED") {
-                const result = await apiClient.completeMainTest(sessionId);
-                setResultData(result);
+                if (currentTest.id === "main_socionic" && sessionId) {
+                    try {
+                        result = await apiClient.completeMainTest(sessionId);
+                    } catch (e) {
+                        console.error("completeMainTest error", e);
+                        setError(
+                            "Не удалось сохранить результат. Попробуйте позже."
+                        );
+                    }
+                }
+
+                if (result) {
+                    setResultData(result);
+                }
+
                 setShowResults(true);
             } else {
-                setCurrentQuestion(
-                    typeof res.nextStep === "number"
-                        ? res.nextStep
-                        : currentQuestion + 1
-                );
+                // Просто идём на следующий вопрос, никакой проверки ответа бэка
+                setCurrentQuestion((q) => q + 1);
             }
-        } catch (e) {
-            console.error("answerQuestion error", e);
-            setError("Ошибка при отправке ответа. Попробуйте ещё раз.");
         } finally {
             setIsLoading(false);
         }
     };
 
+    // --- Получение последнего результата (для профиля и т.п.) ---
+    const getTestResult = async () => {
+        if (!userId) return null;
+        try {
+            setIsLoading(true);
+            const res = await apiClient.getLastResult(userId);
+            setResultData(res);
+            return res;
+        } catch (e) {
+            console.error("getLastResult error", e);
+            setError("Не удалось загрузить результат.");
+            return null;
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // --- Сброс ---
     const resetTest = () => {
         setShowTests(false);
         setShowResults(false);
         setCurrentTest(null);
         setCurrentQuestion(0);
+        setTotalQuestions(0);
         setSessionId(null);
         setResultData(null);
         setError(null);
-    };
-
-    const getTestResult = () => {
-        if (!resultData) return "";
-        const label = resultData.label || "Ваш результат";
-        const desc = resultData.description ? ` — ${resultData.description}` : "";
-        return `${label}${desc}`;
     };
 
     return {
@@ -102,6 +162,6 @@ export function useTestEngine(userId) {
         getTestResult,
         isLoading,
         error,
-        resultData, // 👈 добавили наружу
+        resultData,
     };
 }

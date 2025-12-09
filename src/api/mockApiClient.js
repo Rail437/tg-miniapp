@@ -209,7 +209,7 @@ export async function completeMainTest(sessionId) {
 }
 
 export async function saveTestResult(userId, result) {
-    console.log("MOCK saveTestResult", { userId, result });
+    console.log("MOCK saveTestResult", {userId, result});
 
     const db = loadDb();
 
@@ -229,7 +229,7 @@ export async function saveTestResult(userId, result) {
     saveDb(db);
 
     // для фронта всё равно вернём "ок"
-    return { ok: true };
+    return {ok: true};
 }
 
 /**
@@ -301,14 +301,27 @@ export async function getMyInvited(userId) {
 
     const uses = db.referralUses.filter((u) => u.referralId === myReferral.id);
 
-    return uses.map((u) => {
+    const invited = uses.map((u) => {
         const result = db.results.find((r) => r.userId === u.invitedUserId);
+
+        // Пытаемся достать имя из "users" (если ты его там хранишь)
+        const invitedUser = db.users.find((usr) => usr.id === u.invitedUserId);
+
         return {
             invitedUserId: u.invitedUserId,
             joinedAt: u.createdAt,
+
+            // новое поле имя (может быть null)
+            name: invitedUser?.name || null,
+
+            // новый флаг: тест пройден или нет
+            completed: !!result,   // true, если у пользователя уже есть результат
+
+            // старые поля – можно оставить, если где-то ещё используются
             resultType: result?.typeId || null,
-            // Пытаемся взять RU, если нет — EN, иначе null
-            resultLabel: result?.ru?.label || result?.en?.label || null,
+            resultLabel: result?.label || null,
         };
     });
+
+    return invited;
 }
