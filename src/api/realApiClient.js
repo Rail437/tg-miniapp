@@ -1,5 +1,6 @@
 // src/api/realApiClient.js
 import {API_BASE_URL} from "../config/apiConfig";
+import { TYPE_RESULTS } from "../data/typeResults";
 
 // Храним JWT-токен в модуле
 let authToken = null;
@@ -130,7 +131,16 @@ export async function getLastResult(userId) {
         method: "GET",
     });
 
-    if (!raw) return null;
+    // Если результата реально нет
+    if (!raw || !raw.typeId || raw.typeId === "NON") {
+        return null; // ← фронт это понимает как «нет результата»
+    }
+
+    // Приводим тип к известной структуре
+    const base = TYPE_RESULTS[raw.typeId];
+    if (!base) {
+        return null; // ← безопасно, если тип неизвестен
+    }
 
     const {typeId, createdAt, result} = raw;
 
