@@ -21,6 +21,9 @@ export const apiClient = {
     completeMainTest: impl.completeMainTest,
     getLastResult: impl.getLastResult,
 
+    // Новый метод — сохранить результат
+    saveTestResult: impl.saveTestResult,
+
     // Рефералки
     getMyReferral: impl.getMyReferral,
     registerReferralUse: impl.registerReferralUse,

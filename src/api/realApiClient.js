@@ -1,5 +1,5 @@
 // src/api/realApiClient.js
-import { API_BASE_URL } from "../config/apiConfig";
+import {API_BASE_URL} from "../config/apiConfig";
 
 // Храним JWT-токен в модуле
 let authToken = null;
@@ -61,7 +61,7 @@ async function request(path, options = {}) {
 export async function authTelegram(initData) {
     const data = await request("/auth/telegram", {
         method: "POST",
-        body: JSON.stringify({ initData }),
+        body: JSON.stringify({initData}),
     });
 
     // Если бэк вернул токен — сохраняем его
@@ -77,15 +77,15 @@ export async function authTelegram(initData) {
 export async function startMainTest(userId) {
     return request("/tests/main/start", {
         method: "POST",
-        body: JSON.stringify({ userId }),
+        body: JSON.stringify({userId}),
     });
 }
 
 // Ответ на вопрос теста
-export async function answerMainTest({ sessionId, questionIndex, answerValue }) {
+export async function answerMainTest({sessionId, questionIndex, answerValue}) {
     return request("/tests/main/answer", {
         method: "POST",
-        body: JSON.stringify({ sessionId, questionIndex, answerValue }),
+        body: JSON.stringify({sessionId, questionIndex, answerValue}),
     });
 }
 
@@ -100,15 +100,54 @@ export async function getTestSession(sessionId) {
 export async function completeMainTest(sessionId) {
     return request("/tests/main/complete", {
         method: "POST",
-        body: JSON.stringify({ sessionId }),
+        body: JSON.stringify({sessionId}),
+    });
+}
+
+export async function saveTestResult(userId, result) {
+    // result здесь — твой "богатый" объект из finalize:
+    // { typeId, ru, en, createdAt }
+
+    const payload = {
+        userId,
+        typeId: result.typeId,
+        // сюда можно потом положить что-то важное:
+        // пути по дереву, сырые ответы, JP/Base/IE и т.п.
+        result: {}, // пока пусто, но поле уже есть в контракте
+        createdAt: result.createdAt,
+    };
+
+    return request("/tests/main/result", {
+        method: "POST",
+        body: JSON.stringify(payload),
     });
 }
 
 // Получить последний результат пользователя
 export async function getLastResult(userId) {
-    return request(`/tests/main/last-result?userId=${userId}`, {
+    const raw = await request(`/tests/main/last-result?userId=${userId}`, {
         method: "GET",
     });
+
+    if (!raw) return null;
+
+    const { typeId, createdAt, result } = raw;
+
+    const ruDesc = typeDescriptionsRu[typeId] || null;
+    const enDesc = typeDescriptionsEn[typeId] || null;
+
+    return {
+        typeId,
+        ru: ruDesc
+            ? { label: ruDesc.label, description: ruDesc.description }
+            : null,
+        en: enDesc
+            ? { label: enDesc.label, description: enDesc.description }
+            : null,
+        createdAt,
+        // если потом захочешь использовать сырые данные из бэка:
+        backendResult: result ?? null,
+    };
 }
 
 // Моя реферальная ссылка
@@ -119,10 +158,10 @@ export async function getMyReferral(userId) {
 }
 
 // Зарегистрировать использование реферального кода
-export async function registerReferralUse({ code, invitedUserId }) {
+export async function registerReferralUse({code, invitedUserId}) {
     return request("/referral/use", {
         method: "POST",
-        body: JSON.stringify({ code, invitedUserId }),
+        body: JSON.stringify({code, invitedUserId}),
     });
 }
 

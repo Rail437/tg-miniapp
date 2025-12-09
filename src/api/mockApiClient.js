@@ -1,5 +1,5 @@
 // src/api/mockApiClient.js
-import {TYPE_RESULTS} from "../data/typeResults";
+// import {TYPE_RESULTS} from "../data/typeResults";
 
 const STORAGE_KEY = "innercode_mock_db";
 
@@ -102,6 +102,7 @@ export async function startMainTest(userId) {
         totalSteps: TOTAL_STEPS,
     };
 }
+
 // Для совместимости с apiClient.setAuthToken
 export function setAuthToken(token) {
     // в моках ничего не делаем
@@ -180,7 +181,7 @@ export async function completeMainTest(sessionId) {
     );
 
     // Логика определения
-    const baseResult = sumYes <= 2 ? TYPE_RESULTS.SEI : TYPE_RESULTS.ILE;
+    // const baseResult = sumYes <= 2 ? TYPE_RESULTS.SEI : TYPE_RESULTS.ILE;
 
     const now = new Date().toISOString();
 
@@ -205,6 +206,30 @@ export async function completeMainTest(sessionId) {
     saveDb(db);
 
     return resultRecord;
+}
+
+export async function saveTestResult(userId, result) {
+    console.log("MOCK saveTestResult", { userId, result });
+
+    const db = loadDb();
+
+    // минимальная запись, близкая к тому, что будет в БД
+    const record = {
+        id: generateId("result"),
+        userId,
+        typeId: result.typeId,
+        createdAt: result.createdAt,
+        result: {}, // сюда можешь потом что-нибудь добавить
+    };
+
+    // удаляем старый результат пользователя, если был
+    db.results = db.results.filter((r) => r.userId !== userId);
+    db.results.push(record);
+
+    saveDb(db);
+
+    // для фронта всё равно вернём "ок"
+    return { ok: true };
 }
 
 /**

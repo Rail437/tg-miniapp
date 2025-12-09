@@ -77,7 +77,7 @@ export function useSocionicsEngine(userId) {
     };
 
     // Ответ на текущий вопрос
-    const answerQuestion = (answerValue) => {
+    const answerQuestion = async (answerValue) => {
         if (!currentQuestion) return;
 
         setIsLoading(true);
@@ -89,7 +89,7 @@ export function useSocionicsEngine(userId) {
 
             console.log("ENGINE answer result:", res);
 
-            // Если завершилась стадия IE (экстраверсия/интроверсия) — базовая часть определена
+            // Если завершена стадия IE → базовая часть готова
             if (res.stageCompleted && res.stageResult?.dimension === "IE") {
                 const baseSummary = engine.getBaseSummary?.();
                 if (baseSummary) {
@@ -97,76 +97,27 @@ export function useSocionicsEngine(userId) {
                         ...baseSummary,
                         createdAt: new Date().toISOString(),
                     };
+
                     try {
-                        localStorage.setItem(
-                            BASE_STORAGE_KEY,
-                            JSON.stringify(payload)
-                        );
-                        console.log(
-                            "Saved base result to localStorage:",
-                            payload
-                        );
+                        localStorage.setItem(BASE_STORAGE_KEY, JSON.stringify(payload));
+                        console.log("Saved base result to localStorage:", payload);
                         setBaseCompleted(true);
                     } catch (e) {
-                        console.warn(
-                            "Failed to save base result to localStorage",
-                            e
-                        );
+                        console.warn("Failed to save base result", e);
                     }
                 }
             }
 
+            // Если тест завершен — отправляем финальный результат
             if (res.testCompleted) {
-                // Тест завершён
-                setCurrentQuestion(null);
-                setShowResults(true);
-
-                const t = res.finalType;
-
-                let final;
-
-                if (t) {
-                    final = {
-                        typeId: t.id,
-                        ru: {
-                            label: t.nickname?.ru || t.codeRu || t.id,
-                            description: t.descriptionRu || "",
-                        },
-                        en: {
-                            label: t.nickname?.en || t.id,
-                            description: t.descriptionEn || "",
-                        },
-                        createdAt: new Date().toISOString(),
-                    };
-                } else {
-                    final = {
-                        typeId: "UNKNOWN",
-                        ru: {
-                            label: "Тип не определён",
-                            description:
-                                "По ответам пока не удалось надёжно определить ваш соционический тип. Попробуйте пройти тест ещё раз позже.",
-                        },
-                        en: {
-                            label: "Type not determined",
-                            description:
-                                "Based on your answers, the system could not reliably determine your socionics type yet.",
-                        },
-                        createdAt: new Date().toISOString(),
-                    };
-                }
-                // ✅ Сохраняем новый результат локально
-                try {
-                    localStorage.setItem("socionicsFinalResult", JSON.stringify(final));
-                    console.log("Saved final result to localStorage:", final);
-                } catch (e) {
-                    console.warn("Failed to save final result", e);
-                }
-                setResultData(final);
-            } else {
-                // Тест продолжается — берём следующий вопрос
-                setCurrentQuestion(res.question);
-                setCurrentQuestionIndex((prev) => prev + 1);
+                await finalize(res.finalType);
+                return;
             }
+
+            // Тест НЕ завершён → показываем следующий вопрос
+            setCurrentQuestion(res.question);
+            setCurrentQuestionIndex((prev) => prev + 1);
+
         } catch (e) {
             console.error("Socionics answerQuestion error", e);
             setError("Ошибка при обработке ответа. Попробуйте ещё раз.");
@@ -227,6 +178,51 @@ export function useSocionicsEngine(userId) {
         setBaseCompleted(false);
         // движок при следующем старте сам себя сбросит через reset()
     };
+
+    async function finalize(finalType) {
+        if (!finalType) {
+            console.warn("No finalType passed to finalize()");
+            return;
+        }
+
+        const result = {
+            typeId: finalType.id,
+            ru: {
+                label: finalType.nickname?.ru || finalType.codeRu || finalType.id,
+                description: finalType.descriptionRu || "",
+            },
+            en: {
+                label: finalType.nickname?.en || finalType.id,
+                description: finalType.descriptionEn || "",
+            },
+            createdAt: new Date().toISOString(),
+        };
+
+        // 1. Сохраняем локально
+        try {
+            localStorage.setItem("socionicsFinalResult", JSON.stringify(result));
+            console.log("Saved local result");
+        } catch (e) {
+            console.warn("Failed to save localResult:", e);
+        }
+
+        // 2. Сохраняем на сервер
+        try {
+            if (userId) {
+                await apiClient.saveTestResult(userId, result);
+                console.log("Result saved to backend");
+            } else {
+                console.warn("Cannot save to backend — no userId");
+            }
+        } catch (e) {
+            console.warn("Failed to send result to backend:", e);
+        }
+
+        // 3. Отображаем
+        setResultData(result);
+        setShowResults(true);
+        setCurrentQuestion(null);
+    }
 
     return {
         showTests,
