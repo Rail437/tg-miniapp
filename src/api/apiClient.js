@@ -4,7 +4,7 @@ import * as mockApi from "./mockApiClient";
 import * as realApi from "./realApiClient";
 
 // Выбираем реализацию в зависимости от режима
-const impl = API_MODE === "mock" ? realApi : mockApi;
+const impl = API_MODE === "real" ? realApi : mockApi;
 
 // Экспортируем единый интерфейс
 export const apiClient = {

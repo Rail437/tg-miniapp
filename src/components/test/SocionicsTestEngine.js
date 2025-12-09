@@ -639,31 +639,43 @@ export class SocionicsTestEngine {
     _checkStageDecision(stageId, stage, st) {
         const poles = stage.poles || [];
         if (poles.length < 2) {
-            return {decided: true, resultPole: poles[0] || null};
+            return { decided: true, resultPole: poles[0] || null };
         }
 
         const [p1, p2] = poles;
+
         const s1 = st.scores[p1] || 0;
         const s2 = st.scores[p2] || 0;
         const diff = s1 - s2;
 
         const threshold = this.flowConfig.decisionThreshold || 3;
         const maxPerPole = this.flowConfig.maxQuestionsPerPole || 6;
+        const minPerPole = this.flowConfig.initialQuestionsPerPole || 2;
 
         const asked1 = st.askedCount[p1] || 0;
         const asked2 = st.askedCount[p2] || 0;
+
         const allAtMax = asked1 >= maxPerPole && asked2 >= maxPerPole;
+        const enoughAskedInitially = asked1 >= minPerPole && asked2 >= minPerPole;
 
-        if (Math.abs(diff) >= threshold || allAtMax) {
-            let resultPole = null;
-            if (diff > 0) resultPole = p1;
-            else if (diff < 0) resultPole = p2;
-            else resultPole = p1; // при идеальной ничьей выбираем первый полюс как fallback
-
-            return {decided: true, resultPole};
+        // ⛔ Минимум 2 на каждый полюс ещё не задано — решение нельзя принимать
+        if (!enoughAskedInitially && !allAtMax) {
+            return { decided: false, resultPole: null };
         }
 
-        return {decided: false, resultPole: null};
+        // ✔ Достаточно вопросов + достаточная разница
+        if (Math.abs(diff) >= threshold || allAtMax) {
+            let resultPole = null;
+
+            if (diff > 0) resultPole = p1;
+            else if (diff < 0) resultPole = p2;
+            else resultPole = p1; // ничья → первый полюс, как fallback
+
+            return { decided: true, resultPole };
+        }
+
+        // ❌ Пока недостаточно разницы — продолжаем
+        return { decided: false, resultPole: null };
     }
 
     /**
