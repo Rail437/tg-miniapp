@@ -62,10 +62,6 @@ export async function authTelegram(initData) {
     const isTelegram = !!window.Telegram?.WebApp;
     const data = await request("/auth/telegram", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            ...(isTelegram ? {"X-Telegram-WebApp": "true"} : {}),
-        },
         body: JSON.stringify({initData}),
     });
 
