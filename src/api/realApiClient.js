@@ -59,8 +59,13 @@ async function request(path, options = {}) {
 
 // Авторизация через Telegram
 export async function authTelegram(initData) {
+    const isTelegram = !!window.Telegram?.WebApp;
     const data = await request("/auth/telegram", {
         method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            ...(isTelegram ? {"X-Telegram-WebApp": "true"} : {}),
+        },
         body: JSON.stringify({initData}),
     });
 
@@ -131,7 +136,7 @@ export async function getLastResult(userId) {
 
     if (!raw) return null;
 
-    const { typeId, createdAt, result } = raw;
+    const {typeId, createdAt, result} = raw;
 
     const ruDesc = typeDescriptionsRu[typeId] || null;
     const enDesc = typeDescriptionsEn[typeId] || null;
@@ -139,10 +144,10 @@ export async function getLastResult(userId) {
     return {
         typeId,
         ru: ruDesc
-            ? { label: ruDesc.label, description: ruDesc.description }
+            ? {label: ruDesc.label, description: ruDesc.description}
             : null,
         en: enDesc
-            ? { label: enDesc.label, description: enDesc.description }
+            ? {label: enDesc.label, description: enDesc.description}
             : null,
         createdAt,
         // если потом захочешь использовать сырые данные из бэка:
