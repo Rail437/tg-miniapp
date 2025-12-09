@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react";
 import {apiClient} from "../api/apiClient";
 import {AnimatePresence, motion} from "framer-motion";
 import {useTranslation} from "../i18n";
+import {mapBackendResultToViewModel} from "../data/socionicsMapping"; // 👈 новый импорт
 
 export const ProfileSection = ({userId}) => {
     const {t, lang} = useTranslation();
@@ -34,8 +35,11 @@ export const ProfileSection = ({userId}) => {
                 ]);
 
                 setReferralLink(refData.link);
-                setReferrals(invited || []);
-                setLastResult(result?.[lang]);
+                setReferrals(invited);
+
+                const mapped = mapBackendResultToViewModel(result, lang);
+                setLastResult(mapped);
+
             } catch (e) {
                 console.error("ProfileSection load error", e);
                 setError(true);

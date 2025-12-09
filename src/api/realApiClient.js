@@ -1,6 +1,6 @@
 // src/api/realApiClient.js
 import {API_BASE_URL} from "../config/apiConfig";
-import { TYPE_RESULTS } from "../data/typeResults";
+import { TYPE_RESULTS } from "../data/allTypes";
 
 // Храним JWT-токен в модуле
 let authToken = null;

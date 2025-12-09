@@ -1,43 +1,20 @@
 // src/components/test/TestResultModal.jsx
 import React from "react";
-import { motion } from "framer-motion";
-import { useTranslation } from "../../i18n";
+import {motion} from "framer-motion";
+import {useTranslation} from "../../i18n";
+
+import {mapBackendResultToViewModel} from "../../data/socionicsMapping";
 
 // Подробные описания типов
-import typeDescriptionsRu from "../../data/typeDescriptions_ru.json";
-import typeDescriptionsEn from "../../data/typeDescriptions_en.json";
 
-export function TestResultModal({ result, onClose }) {
-    const { t, lang } = useTranslation();
+export function TestResultModal({result, onClose}) {
+    const {t, lang} = useTranslation();
 
     if (!result) return null;
 
-    const locale = lang === "ru" ? "ru-RU" : "en-US";
+    const mapped = mapBackendResultToViewModel(result, lang);
 
-    // локализованный блок из результата (то, что вернул движок)
-    const localizedBlock =
-        result[lang] ?? result.ru ?? result.en ?? null;
-
-    const typeId = result.typeId;
-
-    // Заголовок: пробуем взять из словаря, потом из результата, потом fallback
-    const dictionaryLabel =
-        lang === "ru"
-            ? typeDescriptionsRu[typeId]?.label
-            : typeDescriptionsEn[typeId]?.label;
-
-    const title =
-        dictionaryLabel ||
-        localizedBlock?.label ||
-        t("result.title");
-
-    // Подробное описание из словаря, если есть
-    const detailedDescription =
-        (lang === "ru"
-            ? typeDescriptionsRu[typeId]?.description
-            : typeDescriptionsEn[typeId]?.description) ||
-        localizedBlock?.description ||
-        "";
+    const title = mapped?.label || t("result.title");
 
     const createdAtText = result.createdAt
         ? new Date(result.createdAt).toLocaleString(locale, {
@@ -51,9 +28,9 @@ export function TestResultModal({ result, onClose }) {
     return (
         <motion.div
             className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            exit={{opacity: 0}}
         >
             <motion.div
                 className="
@@ -68,10 +45,10 @@ export function TestResultModal({ result, onClose }) {
                     flex
                     flex-col
                 "
-                initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                transition={{ duration: 0.25 }}
+                initial={{scale: 0.9, opacity: 0, y: 20}}
+                animate={{scale: 1, opacity: 1, y: 0}}
+                exit={{scale: 0.9, opacity: 0, y: 20}}
+                transition={{duration: 0.25}}
             >
                 {/* Заголовок */}
                 <div className="flex items-start justify-between p-5 shrink-0">
@@ -100,14 +77,24 @@ export function TestResultModal({ result, onClose }) {
 
                 {/* Скроллируемый контент */}
                 <div className="overflow-y-auto px-5 pb-5 space-y-4">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-2xl mx-auto mb-2">
+                    <div
+                        className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-2xl mx-auto mb-2">
                         🧠
                     </div>
 
                     {/* Основное описание типа */}
-                    <p className="text-sm text-gray-700 whitespace-pre-line">
-                        {detailedDescription}
-                    </p>
+                    {mapped && (
+                        <div
+                            className="mb-3 inline-flex items-center gap-2 px-2.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-medium">
+                    <span
+                        className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[11px] font-bold">
+                        {mapped.typeId}
+                    </span>
+                            <span>{mapped.label}</span>
+                        </div>
+                    )}
+
+                    <p className="text-sm text-gray-700 mb-4">{mapped?.description}</p>
                 </div>
 
                 {/* Кнопка закрытия снизу */}
