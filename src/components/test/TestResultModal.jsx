@@ -108,20 +108,6 @@ export function TestResultModal({ result, onClose }) {
                     <p className="text-sm text-gray-700 whitespace-pre-line">
                         {detailedDescription}
                     </p>
-
-                    {/* Блок “что даёт знание типа” — можно переиспользовать тексты из i18n */}
-                    <div className="space-y-3 text-sm">
-                        <div>
-                            <div className="font-semibold text-gray-900 mb-1">
-                                {t("profile.modalWhatGives")}
-                            </div>
-                            <ul className="list-disc list-inside text-gray-700 space-y-1">
-                                <li>{t("profile.modalBullet1")}</li>
-                                <li>{t("profile.modalBullet2")}</li>
-                                <li>{t("profile.modalBullet3")}</li>
-                            </ul>
-                        </div>
-                    </div>
                 </div>
 
                 {/* Кнопка закрытия снизу */}
