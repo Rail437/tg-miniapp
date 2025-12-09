@@ -1,9 +1,5 @@
 // src/api/realApiClient.js
 import {API_BASE_URL} from "../config/apiConfig";
-import { TYPE_RESULTS } from "../data/allTypes";
-import allTypes from "../data/allTypes.json";
-import typeDescriptionsRu from "../data/typeDescriptions_ru.json";
-import typeDescriptionsEn from "../data/typeDescriptions_en.json";
 // Храним JWT-токен в модуле
 let authToken = null;
 
@@ -128,39 +124,11 @@ export async function saveTestResult(userId, result) {
 }
 
 // Получить последний результат пользователя
+
 export async function getLastResult(userId) {
-    const raw = await request(`/tests/main/last-result?userId=${userId}`, {
+    return request(`/tests/main/last-result?userId=${userId}`, {
         method: "GET",
     });
-
-    // Если результата реально нет
-    if (!raw || !raw.typeId || raw.typeId === "NON") {
-        return null; // ← фронт это понимает как «нет результата»
-    }
-
-    // Приводим тип к известной структуре
-    const base = TYPE_RESULTS[raw.typeId];
-    if (!base) {
-        return null; // ← безопасно, если тип неизвестен
-    }
-
-    const {typeId, createdAt, result} = raw;
-
-    const ruDesc = typeDescriptionsRu[typeId] || null;
-    const enDesc = typeDescriptionsEn[typeId] || null;
-
-    return {
-        typeId,
-        ru: ruDesc
-            ? {label: ruDesc.label, description: ruDesc.description}
-            : null,
-        en: enDesc
-            ? {label: enDesc.label, description: enDesc.description}
-            : null,
-        createdAt,
-        // если потом захочешь использовать сырые данные из бэка:
-        backendResult: result ?? null,
-    };
 }
 
 // Моя реферальная ссылка
