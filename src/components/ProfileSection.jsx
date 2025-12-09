@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { apiClient } from "../api/apiClient";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "../i18n";
+import typeDescriptionsRu from "../data/typeDescriptions_ru.json";
+import typeDescriptionsEn from "../data/typeDescriptions_en.json";
 
 export const ProfileSection = ({ userId }) => {
     const { t, lang } = useTranslation();
@@ -17,10 +19,18 @@ export const ProfileSection = ({ userId }) => {
     const [showTypeModal, setShowTypeModal] = useState(false);
 
     // Определяем локализованную версию результата
+    const locale = lang === "ru" ? "ru-RU" : "en-US";
     const localizedResult =
         lastResult?.[lang] ?? lastResult?.ru ?? lastResult?.en ?? null;
+    const typeId = lastResult?.typeId;
 
-    const locale = lang === "ru" ? "ru-RU" : "en-US";
+    const detailedDescription =
+        (lang === "ru"
+            ? typeDescriptionsRu[typeId]?.description
+            : typeDescriptionsEn[typeId]?.description) ||
+        localizedResult?.description ||
+        "";
+
 
     // ------------------------------------------------------------------------------
     // Загружаем реферальные данные + результат (localStorage + backend)
@@ -134,7 +144,7 @@ export const ProfileSection = ({ userId }) => {
 
                                 {/* короткое описание (обрезка на 2 строки) */}
                                 <div className="text-sm text-gray-600 mt-1 line-clamp-2">
-                                    {localizedResult.description}
+                                    {detailedDescription}
                                 </div>
 
                                 <div className="mt-2 text-xs text-gray-400">
@@ -246,22 +256,32 @@ export const ProfileSection = ({ userId }) => {
                         exit={{ opacity: 0 }}
                     >
                         <motion.div
-                            className="bg-white/95 rounded-3xl p-6 w-full max-w-md shadow-2xl border border-white/80"
+                            className="
+                    bg-white/95
+                    rounded-3xl
+                    shadow-2xl
+                    border border-white/80
+                    w-full
+                    max-w-md
+                    max-h-[85vh]
+                    overflow-hidden
+                    flex
+                    flex-col
+                "
                             initial={{ scale: 0.9, opacity: 0, y: 20 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
                             exit={{ scale: 0.9, opacity: 0, y: 20 }}
                             transition={{ duration: 0.25 }}
                         >
-                            <div className="flex justify-between items-start mb-4">
+                            {/* Заголовок + кнопка закрытия */}
+                            <div className="flex items-start justify-between p-5 shrink-0">
                                 <div>
                                     <div className="text-xs uppercase tracking-wide text-blue-500 mb-1">
                                         {t("profile.modalTag")}
                                     </div>
-
                                     <h3 className="text-xl font-bold text-gray-900">
                                         {localizedResult.label}
                                     </h3>
-
                                     <div className="text-xs text-gray-400 mt-1">
                                         {t("profile.modalDeterminedAt")}{" "}
                                         {new Date(lastResult.createdAt).toLocaleDateString(locale)}
@@ -270,45 +290,50 @@ export const ProfileSection = ({ userId }) => {
 
                                 <button
                                     onClick={() => setShowTypeModal(false)}
-                                    className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+                                    className="text-gray-400 hover:text-gray-600 text-2xl leading-none ml-4"
                                 >
                                     &times;
                                 </button>
                             </div>
 
-                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-2xl mb-4">
-                                🧠
-                            </div>
+                            {/* Скроллируемая область контента */}
+                            <div className="overflow-y-auto px-5 pb-5 space-y-4">
+                                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-2xl mx-auto mb-2">
+                                    🧠
+                                </div>
 
-                            {/* Полное описание */}
-                            <p className="text-sm text-gray-700 mb-4 whitespace-pre-line">
-                                {localizedResult.description}
-                            </p>
+                                <p className="text-sm text-gray-700 whitespace-pre-line">
+                                    {detailedDescription}
+                                </p>
 
-                            {/* Заготовка для будущих "плюсов и минусов" */}
-                            <div className="space-y-3 text-sm">
-                                <div>
-                                    <div className="font-semibold text-gray-900 mb-1">
-                                        {t("profile.modalWhatGives")}
+                                <div className="space-y-3 text-sm">
+                                    <div>
+                                        <div className="font-semibold text-gray-900 mb-1">
+                                            {t("profile.modalWhatGives")}
+                                        </div>
+                                        <ul className="list-disc list-inside text-gray-700 space-y-1">
+                                            <li>{t("profile.modalBullet1")}</li>
+                                            <li>{t("profile.modalBullet2")}</li>
+                                            <li>{t("profile.modalBullet3")}</li>
+                                        </ul>
                                     </div>
-                                    <ul className="list-disc list-inside text-gray-700 space-y-1">
-                                        <li>{t("profile.modalBullet1")}</li>
-                                        <li>{t("profile.modalBullet2")}</li>
-                                        <li>{t("profile.modalBullet3")}</li>
-                                    </ul>
                                 </div>
                             </div>
 
-                            <button
-                                onClick={() => setShowTypeModal(false)}
-                                className="mt-6 w-full py-2.5 rounded-2xl bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition-colors"
-                            >
-                                {t("profile.modalClose")}
-                            </button>
+                            {/* Футер с кнопкой закрытия — фиксирован внизу */}
+                            <div className="p-5 border-t border-gray-200 shrink-0">
+                                <button
+                                    onClick={() => setShowTypeModal(false)}
+                                    className="w-full py-2.5 rounded-2xl bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition-colors"
+                                >
+                                    {t("profile.modalClose")}
+                                </button>
+                            </div>
                         </motion.div>
                     </motion.div>
                 )}
             </AnimatePresence>
+
         </>
     );
 };
