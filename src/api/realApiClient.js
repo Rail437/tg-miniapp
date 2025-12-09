@@ -1,7 +1,9 @@
 // src/api/realApiClient.js
 import {API_BASE_URL} from "../config/apiConfig";
-import { TYPE_RESULTS } from "../data/typeResults";
-
+import { TYPE_RESULTS } from "../data/allTypes";
+import allTypes from "../data/allTypes.json";
+import typeDescriptionsRu from "../data/typeDescriptions_ru.json";
+import typeDescriptionsEn from "../data/typeDescriptions_en.json";
 // Храним JWT-токен в модуле
 let authToken = null;
 
@@ -181,4 +183,61 @@ export async function getMyInvited(userId) {
     return request(`/referral/invited?userId=${userId}`, {
         method: "GET",
     });
+}
+
+const impl = API_MODE === "real" ? realApi : mockApi;
+
+// Маппер сырых данных бэка → формат, который ждут компоненты
+function mapSocionicsResult(raw) {
+    if (!raw || !raw.typeId) return null;
+
+    const typeId = raw.typeId;
+    const meta = allTypes[typeId];
+
+    const ruDesc = typeDescriptionsRu[typeId] || {};
+    const enDesc = typeDescriptionsEn[typeId] || {};
+
+    const nicknameRu = meta?.nickname?.ru;
+    const nicknameEn = meta?.nickname?.en;
+
+    return {
+        typeId,
+        createdAt: raw.createdAt,
+
+        ru: {
+            // красивый заголовок по-русски
+            label:
+                ruDesc.label ||
+                ruDesc.title ||
+                [meta?.codeRu, nicknameRu].filter(Boolean).join(" — ") ||
+                typeId,
+            description: ruDesc.description || "",
+            // доп. поля, если вдруг пригодятся
+            code: meta?.codeRu,
+            nickname: nicknameRu,
+            quadra: meta?.quadra,
+            rationality: meta?.rationality,
+            attitude: meta?.attitude,
+            leading: meta?.leading,
+            creative: meta?.creative,
+            activation: meta?.activation,
+        },
+
+        en: {
+            label:
+                enDesc.label ||
+                enDesc.title ||
+                nicknameEn ||
+                typeId,
+            description: enDesc.description || "",
+            code: typeId,
+            nickname: nicknameEn,
+            quadra: meta?.quadra,
+            rationality: meta?.rationality,
+            attitude: meta?.attitude,
+            leading: meta?.leading,
+            creative: meta?.creative,
+            activation: meta?.activation,
+        },
+    };
 }

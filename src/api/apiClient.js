@@ -18,9 +18,16 @@ export const apiClient = {
     startMainTest: impl.startMainTest,
     answerMainTest: impl.answerMainTest,
     getTestSession: impl.getTestSession,
-    completeMainTest: impl.completeMainTest,
-    getLastResult: impl.getLastResult,
+    // 👇 Оборачиваем: сырое → нормализованное
+    completeMainTest: async (sessionId) => {
+        const raw = await impl.completeMainTest(sessionId);
+        return mapSocionicsResult(raw);
+    },
 
+    getLastResult: async (userId) => {
+        const raw = await impl.getLastResult(userId);
+        return mapSocionicsResult(raw);
+    },
     // Новый метод — сохранить результат
     saveTestResult: impl.saveTestResult,
 
