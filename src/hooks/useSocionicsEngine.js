@@ -10,6 +10,7 @@ import allTypes from "../data/allTypes.json";
 import baseQuestionSets from "../data/questionSets.json";
 // Креативные блоки (Creative_*)
 import creativeQuestionSets from "../data/questionSets_creative_translated.json";
+import {apiClient} from "../api/apiClient";
 
 // Объединяем наборы вопросов в один объект для движка
 const mergedQuestionSets = {
