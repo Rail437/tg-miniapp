@@ -40,7 +40,10 @@ function AppInner() {
         const init = async () => {
             try {
                 const tg = window.Telegram?.WebApp;
-                const initData = tg?.initData || "";
+                const initData =
+                    tg?.initData && tg.initData.length > 0
+                        ? tg.initData                      // реальное initData
+                        : "user=test_user";                // dev-режим для браузера
 
                 // 1. Авторизация на бэке
                 const authResponse = await apiClient.authTelegram(initData);
