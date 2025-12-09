@@ -1,26 +1,30 @@
 // src/components/ProfileSection.jsx
-import React, {useEffect, useState} from "react";
-import {apiClient} from "../api/apiClient";
-import {AnimatePresence, motion} from "framer-motion";
-import {useTranslation} from "../i18n";
+import React, { useEffect, useState } from "react";
+import { apiClient } from "../api/apiClient";
+import { AnimatePresence, motion } from "framer-motion";
+import { useTranslation } from "../i18n";
 
-export const ProfileSection = ({userId}) => {
-    const {t, lang} = useTranslation();
+export const ProfileSection = ({ userId }) => {
+    const { t, lang } = useTranslation();
     const [referralLink, setReferralLink] = useState("");
     const [referrals, setReferrals] = useState([]);
     const [lastResult, setLastResult] = useState(null);
+
     const LOCAL_STORAGE_KEY = "socionicsFinalResult";
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     const [showTypeModal, setShowTypeModal] = useState(false);
 
-    // Выбор локали
+    // Определяем локализованную версию результата
+    const localizedResult =
+        lastResult?.[lang] ?? lastResult?.ru ?? lastResult?.en ?? null;
+
     const locale = lang === "ru" ? "ru-RU" : "en-US";
 
-    // Локализованная версия результата "на лету"
-    const localizedResult = lastResult
-        ? lastResult[lang] ?? lastResult.ru ?? lastResult.en ?? null : null;
-
+    // ------------------------------------------------------------------------------
+    // Загружаем реферальные данные + результат (localStorage + backend)
+    // ------------------------------------------------------------------------------
     useEffect(() => {
         if (!userId) {
             setLoading(false);
@@ -35,15 +39,13 @@ export const ProfileSection = ({userId}) => {
                 // 1. Пробуем прочитать локальный результат
                 let localResult = null;
                 try {
-                    const raw = localStorage.getItem("socionicsFinalResult");
-                    if (raw) {
-                        localResult = JSON.parse(raw);
-                    }
+                    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+                    if (raw) localResult = JSON.parse(raw);
                 } catch (e) {
                     console.warn("Failed to read local socionics result", e);
                 }
 
-                // 2. Параллельно тянем данные с бэка
+                // 2. Загружаем данные с backend
                 const [refData, invited, backendResult] = await Promise.all([
                     apiClient.getMyReferral(userId),
                     apiClient.getMyInvited(userId),
@@ -53,28 +55,18 @@ export const ProfileSection = ({userId}) => {
                 setReferralLink(refData.link);
                 setReferrals(invited);
 
-                // 3. Выбираем самый свежий результат:
-                //    - если есть local и backend → сравниваем createdAt
-                //    - если только один из них → берём его
-                let bestResult = null;
+                // 3. Выбираем самый свежий результат
+                let bestResult = localResult || backendResult || null;
 
                 if (localResult && backendResult) {
-                    const localTime = localResult.createdAt
-                        ? Date.parse(localResult.createdAt)
-                        : 0;
-                    const backendTime = backendResult.createdAt
-                        ? Date.parse(backendResult.createdAt)
-                        : 0;
-
+                    const localTime = Date.parse(localResult.createdAt ?? 0);
+                    const backendTime = Date.parse(backendResult.createdAt ?? 0);
                     bestResult = localTime >= backendTime ? localResult : backendResult;
-                } else {
-                    bestResult = localResult || backendResult || null;
                 }
 
-                // сохраняем "сырое" значение: { typeId, ru, en, createdAt }
                 setLastResult(bestResult);
-            } catch (e) {
-                console.error("ProfileSection load error", e);
+            } catch (err) {
+                console.error("ProfileSection load error:", err);
                 setError(true);
             } finally {
                 setLoading(false);
@@ -84,11 +76,17 @@ export const ProfileSection = ({userId}) => {
         loadData();
     }, [userId]);
 
+    // ------------------------------------------------------------------------------
+    // Копирование реферальной ссылки
+    // ------------------------------------------------------------------------------
     const copyToClipboard = () => {
         if (!referralLink) return;
         navigator.clipboard.writeText(referralLink);
     };
 
+    // ------------------------------------------------------------------------------
+    // Если не авторизован → показываем подсказку
+    // ------------------------------------------------------------------------------
     if (!userId) {
         return (
             <div className="text-sm text-gray-500">
@@ -97,48 +95,53 @@ export const ProfileSection = ({userId}) => {
         );
     }
 
+    // ------------------------------------------------------------------------------
+    // РЕНДЕР
+    // ------------------------------------------------------------------------------
     return (
         <>
             <div className="space-y-6">
-                {/* Блок с психотипом */}
+
+                {/* =========================================================
+                     БЛОК С ПСИХОТИПОМ
+                ========================================================= */}
                 <div className="bg-white/80 rounded-2xl p-5 shadow-md border border-white/80">
                     <h2 className="text-lg font-bold mb-3 text-gray-900">
                         {t("profile.typeTitle")}
                     </h2>
 
                     {loading ? (
-                        <div className="text-sm text-gray-500">
-                            {t("profile.loading")}
-                        </div>
+                        <div className="text-sm text-gray-500">{t("profile.loading")}</div>
                     ) : error ? (
-                        <div className="text-sm text-red-500">
-                            {t("profile.loadError")}
-                        </div>
-                    ) : lastResult ? (
+                        <div className="text-sm text-red-500">{t("profile.loadError")}</div>
+                    ) : localizedResult ? (
                         <button
                             type="button"
                             onClick={() => setShowTypeModal(true)}
                             className="w-full text-left flex items-start gap-3 group"
                         >
-                            <div
-                                className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-xl shadow-md">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-xl shadow-md">
                                 🧠
                             </div>
+
                             <div className="flex-1">
                                 <div className="font-semibold text-gray-900 flex items-center gap-2">
                                     <span>{localizedResult.label}</span>
-                                    <span
-                                        className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 uppercase tracking-wide">
+                                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 uppercase tracking-wide">
                                         {t("profile.badgeDetailed")}
                                     </span>
                                 </div>
+
+                                {/* короткое описание (обрезка на 2 строки) */}
                                 <div className="text-sm text-gray-600 mt-1 line-clamp-2">
                                     {localizedResult.description}
                                 </div>
+
                                 <div className="mt-2 text-xs text-gray-400">
                                     {t("profile.resultFrom")}{" "}
                                     {new Date(lastResult.createdAt).toLocaleDateString(locale)}
                                 </div>
+
                                 <div className="mt-2 text-xs text-blue-500 group-hover:underline">
                                     {t("profile.clickToRead")}
                                 </div>
@@ -151,15 +154,16 @@ export const ProfileSection = ({userId}) => {
                     )}
                 </div>
 
-                {/* Блок с реферальной ссылкой */}
+                {/* =========================================================
+                     РЕФЕРАЛЬНАЯ ССЫЛКА
+                ========================================================= */}
                 <div className="bg-white/80 rounded-2xl p-5 shadow-md border border-white/80">
                     <h2 className="text-lg font-bold mb-3 text-gray-900">
                         {t("profile.referralTitle")}
                     </h2>
+
                     {loading && !referralLink ? (
-                        <div className="text-sm text-gray-500">
-                            {t("profile.loading")}
-                        </div>
+                        <div className="text-sm text-gray-500">{t("profile.loading")}</div>
                     ) : (
                         <>
                             <div className="flex gap-2">
@@ -169,6 +173,7 @@ export const ProfileSection = ({userId}) => {
                                     value={referralLink}
                                     className="flex-1 p-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs text-gray-700"
                                 />
+
                                 <button
                                     onClick={copyToClipboard}
                                     className="px-3 py-2 rounded-xl bg-blue-600 text-white text-xs font-medium hover:bg-blue-700 transition-colors"
@@ -176,6 +181,7 @@ export const ProfileSection = ({userId}) => {
                                     {t("profile.referralCopy")}
                                 </button>
                             </div>
+
                             <p className="text-xs text-gray-500 mt-2">
                                 {t("profile.referralHint")}
                             </p>
@@ -183,45 +189,42 @@ export const ProfileSection = ({userId}) => {
                     )}
                 </div>
 
-                {/* Блок с приглашёнными */}
+                {/* =========================================================
+                     СПИСОК ПРИГЛАШЁННЫХ
+                ========================================================= */}
                 <div className="bg-white/80 rounded-2xl p-5 shadow-md border border-white/80">
                     <h2 className="text-lg font-bold mb-3 text-gray-900">
                         {t("profile.invitedTitle")}
                     </h2>
+
                     {loading && referrals.length === 0 ? (
-                        <div className="text-sm text-gray-500">
-                            {t("profile.loading")}
-                        </div>
+                        <div className="text-sm text-gray-500">{t("profile.loading")}</div>
                     ) : referrals.length === 0 ? (
-                        <p className="text-sm text-gray-500">
-                            {t("profile.invitedNone")}
-                        </p>
+                        <p className="text-sm text-gray-500">{t("profile.invitedNone")}</p>
                     ) : (
                         <div className="space-y-2">
                             {referrals.map((item, idx) => {
-                                const invitedIdShort = String(item.invitedUserId ?? "").slice(0, 6);
-
+                                const shortId = String(item.invitedUserId ?? "").slice(0, 6);
                                 return (
                                     <div
                                         key={idx}
                                         className="flex justify-between items-center bg-gray-50 rounded-xl px-3 py-2 text-xs"
                                     >
                                         <div className="flex flex-col">
-                                        <span className="font-medium text-gray-800">
-                                            {t("profile.invitedUserPrefix")}{" "}
-                                            {invitedIdShort}…
-                                        </span>
+                                            <span className="font-medium text-gray-800">
+                                                {t("profile.invitedUserPrefix")} {shortId}…
+                                            </span>
+
                                             {item.resultLabel && (
-                                                <span className="text-gray-500">
-                                                    {item.resultLabel}
-                                                </span>
+                                                <span className="text-gray-500">{item.resultLabel}</span>
                                             )}
                                         </div>
+
                                         <span className="text-gray-400">
-                                                {item.joinedAt
-                                                    ? new Date(item.joinedAt).toLocaleDateString(locale)
-                                                    : ""}
-                                         </span>
+                                            {item.joinedAt
+                                                ? new Date(item.joinedAt).toLocaleDateString(locale)
+                                                : ""}
+                                        </span>
                                     </div>
                                 );
                             })}
@@ -230,35 +233,41 @@ export const ProfileSection = ({userId}) => {
                 </div>
             </div>
 
-            {/* Модалка с подробным описанием психотипа */}
+            {/* =========================================================
+                  МОДАЛЬНОЕ ОКНО "ПОДРОБНЕЕ"
+            ========================================================== */}
             <AnimatePresence>
-                {showTypeModal && lastResult && (
+                {showTypeModal && localizedResult && (
                     <motion.div
+                        key="type-details"
                         className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4"
-                        initial={{opacity: 0}}
-                        animate={{opacity: 1}}
-                        exit={{opacity: 0}}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
                     >
                         <motion.div
-                            className="bg-white/95 backdrop-blur-2xl rounded-3xl p-6 w-full max-w-md shadow-2xl border border-white/80"
-                            initial={{scale: 0.9, opacity: 0, y: 20}}
-                            animate={{scale: 1, opacity: 1, y: 0}}
-                            exit={{scale: 0.9, opacity: 0, y: 20}}
-                            transition={{duration: 0.25}}
+                            className="bg-white/95 rounded-3xl p-6 w-full max-w-md shadow-2xl border border-white/80"
+                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                            transition={{ duration: 0.25 }}
                         >
                             <div className="flex justify-between items-start mb-4">
                                 <div>
                                     <div className="text-xs uppercase tracking-wide text-blue-500 mb-1">
                                         {t("profile.modalTag")}
                                     </div>
+
                                     <h3 className="text-xl font-bold text-gray-900">
                                         {localizedResult.label}
                                     </h3>
+
                                     <div className="text-xs text-gray-400 mt-1">
                                         {t("profile.modalDeterminedAt")}{" "}
                                         {new Date(lastResult.createdAt).toLocaleDateString(locale)}
                                     </div>
                                 </div>
+
                                 <button
                                     onClick={() => setShowTypeModal(false)}
                                     className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
@@ -267,16 +276,16 @@ export const ProfileSection = ({userId}) => {
                                 </button>
                             </div>
 
-                            <div
-                                className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-2xl mb-4">
+                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-2xl mb-4">
                                 🧠
                             </div>
 
-                            <p className="text-sm text-gray-700 mb-4">
+                            {/* Полное описание */}
+                            <p className="text-sm text-gray-700 mb-4 whitespace-pre-line">
                                 {localizedResult.description}
                             </p>
 
-                            {/* Заглушки под будущие "сильные стороны / риски" */}
+                            {/* Заготовка для будущих "плюсов и минусов" */}
                             <div className="space-y-3 text-sm">
                                 <div>
                                     <div className="font-semibold text-gray-900 mb-1">
