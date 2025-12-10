@@ -5,7 +5,7 @@ import {availableTests} from "./data/availableTests";
 import {TestSelectionModal} from "./components/test/TestSelectionModal";
 import {TestQuestionModal} from "./components/test/TestQuestionModal";
 import {TestResultModal} from "./components/test/TestResultModal";
-import {ProfileSection} from "./components/ProfileSection";
+import {ProfileSection} from "./components/profile/ProfileSection";
 import {TopHeader} from "./components/layout/TopHeader";
 import {TabNavigation} from "./components/layout/TabNavigation";
 import InsightsSection from "./components/InsightsSection";

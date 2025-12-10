@@ -1,8 +1,8 @@
 // src/components/ProfileSection.jsx
 import React, {useEffect, useState} from "react";
-import {apiClient} from "../api/apiClient";
+import {apiClient} from "../../api/apiClient";
 import {AnimatePresence, motion} from "framer-motion";
-import {useTranslation} from "../i18n";
+import {useTranslation} from "../../i18n";
 
 export const ProfileSection = ({userId}) => {
     const {t, lang} = useTranslation();
@@ -281,23 +281,9 @@ export const ProfileSection = ({userId}) => {
                                 🧠
                             </div>
 
-                            <p className="text-sm text-gray-700 mb-4">
+                            <p className="text-sm text-gray-700 mb-4 whitespace-pre-line">
                                 {lastResult.description}
                             </p>
-
-                            {/* Заглушки под будущие "сильные стороны / риски" */}
-                            <div className="space-y-3 text-sm">
-                                <div>
-                                    <div className="font-semibold text-gray-900 mb-1">
-                                        {t("profile.modalWhatGives")}
-                                    </div>
-                                    <ul className="list-disc list-inside text-gray-700 space-y-1">
-                                        <li>{t("profile.modalBullet1")}</li>
-                                        <li>{t("profile.modalBullet2")}</li>
-                                        <li>{t("profile.modalBullet3")}</li>
-                                    </ul>
-                                </div>
-                            </div>
 
                             <button
                                 onClick={() => setShowTypeModal(false)}
