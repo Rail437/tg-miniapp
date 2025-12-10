@@ -13,6 +13,7 @@ export const ProfileSection = ({userId}) => {
     const [error, setError] = useState(false);
     const [showTypeModal, setShowTypeModal] = useState(false);
     const [showInvitedModal, setShowInvitedModal] = useState(false);
+    const [copied, setCopied] = useState(false);
 
     const locale = lang === "ru" ? "ru-RU" : "en-US";
 
@@ -49,7 +50,16 @@ export const ProfileSection = ({userId}) => {
 
     const copyToClipboard = () => {
         if (!referralLink) return;
-        navigator.clipboard.writeText(referralLink);
+
+        navigator.clipboard
+            .writeText(referralLink)
+            .then(() => {
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000); // через 2 секунды вернём кнопку в обычное состояние
+            })
+            .catch((e) => {
+                console.error("Clipboard copy error", e);
+            });
     };
 
     const hasReferrals = referrals && referrals.length > 0;
@@ -170,10 +180,24 @@ export const ProfileSection = ({userId}) => {
                                 />
                                 <button
                                     onClick={copyToClipboard}
-                                    className="px-3 py-2 rounded-xl bg-blue-600 text-white text-xs font-medium hover:bg-blue-700 transition-colors"
+                                    disabled={!referralLink || copied}
+                                    className={`px-3 py-2 rounded-xl text-xs font-medium transition-all
+                                    ${copied
+                                        ? "bg-emerald-500 text-white scale-95"
+                                        : "bg-blue-600 text-white hover:bg-blue-700"
+                                    }
+                                        disabled:opacity-70 disabled:cursor-default`}
                                 >
-                                    {t("profile.referralCopy")}
+                                    {copied ? (lang === "ru" ? "Скопировано ✓" : "Copied ✓") : t("profile.referralCopy")}
                                 </button>
+                                {copied && (
+                                    <p className="text-xs text-emerald-600 mt-1">
+                                        {lang === "ru"
+                                            ? "Ссылка скопирована в буфер обмена"
+                                            : "Link copied to clipboard"}
+                                    </p>
+                                )}
+
                             </div>
                             <p className="text-xs text-gray-500 mt-2">
                                 {t("profile.referralHint")}
@@ -249,7 +273,7 @@ export const ProfileSection = ({userId}) => {
                         exit={{opacity: 0}}
                     >
                         <motion.div
-                            className="bg-white/95 backdrop-blur-2xl rounded-3xl p-6 w-full max-w-md shadow-2xl border border-white/80"
+                            className="bg-white/95 backdrop-blur-2xl max-h-[80vh] overflow-y-auto rounded-3xl p-6 w-full max-w-md shadow-2xl border border-white/80"
                             initial={{scale: 0.9, opacity: 0, y: 20}}
                             animate={{scale: 1, opacity: 1, y: 0}}
                             exit={{scale: 0.9, opacity: 0, y: 20}}
