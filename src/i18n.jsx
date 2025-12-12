@@ -118,7 +118,7 @@ const translations = {
             button: "Отправить анонимно",
             successTitle: "Спасибо!",
             successText: "Ваша история отправлена анонимно.",
-            sending: "Ваша история отправлена анонимно.",
+            sending: "Отправляем…",
             error: "Не удалось отправить сообщение."
         },
         psychologist: {
@@ -255,7 +255,7 @@ const translations = {
                 "Describe your story, what you went through, what was the hardest part and what helped you cope...",
             button: "Send anonymously",
             success: "Thank you! Your story has been sent. It really matters.",
-            sending: "Thank you! Your story has been sent. It really matters.",
+            sending: "Sending…",
             error: "Send message failed."
         },
     },
