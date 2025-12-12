@@ -5,7 +5,7 @@ import { useTranslation } from "../i18n";
 import { PsychologistSection } from "./PsychologistSection";
 import { StoriesSection } from "./StoriesSection";
 
-export default function InsightsSection({ lastResult }) {
+export default function InsightsSection({ lastResult , userId }) {
     const { t, lang } = useTranslation();
 
     const [showCompatibilityModal, setShowCompatibilityModal] = useState(false);
