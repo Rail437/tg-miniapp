@@ -325,3 +325,8 @@ export async function getMyInvited(userId) {
 
     return invited;
 }
+
+export async function submitStory({userId, text}) {
+    console.log("userId:" + userId)
+    console.log("text:" + text)
+}

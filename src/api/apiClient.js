@@ -92,4 +92,7 @@ export const apiClient = {
     getMyReferral: impl.getMyReferral,
     registerReferralUse: impl.registerReferralUse,
     getMyInvited: impl.getMyInvited,
+
+    //история
+    submitStory: impl.submitStory,
 };

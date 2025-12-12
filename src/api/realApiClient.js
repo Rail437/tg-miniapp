@@ -152,3 +152,10 @@ export async function getMyInvited(userId) {
         method: "GET",
     });
 }
+//Историю отправляем
+export async function submitStory({ userId, text }) {
+    return request("/stories", {
+        method: "POST",
+        body: JSON.stringify({ userId, text }),
+    });
+}

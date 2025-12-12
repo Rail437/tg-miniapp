@@ -175,7 +175,7 @@ export default function InsightsSection({ lastResult }) {
                             </div>
 
                             <div className="flex-1 overflow-y-auto pt-2">
-                                <StoriesSection />
+                                <StoriesSection userId={userId} />
                             </div>
 
                             <button

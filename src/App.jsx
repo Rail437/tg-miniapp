@@ -241,7 +241,7 @@ function AppInner() {
                                     exit={{opacity: 0, y: -20}}
                                     transition={{duration: 0.3}}
                                 >
-                                    <InsightsSection lastResult={user?.lastResult}/>
+                                    <InsightsSection lastResult={user?.lastResult} userId={user?.userId} />
                                 </motion.div>
                             )}
                         </AnimatePresence>
