@@ -190,14 +190,6 @@ export const ProfileSection = ({userId}) => {
                                 >
                                     {copied ? (lang === "ru" ? "Скопировано ✓" : "Copied ✓") : t("profile.referralCopy")}
                                 </button>
-                                {copied && (
-                                    <p className="text-xs text-emerald-600 mt-1">
-                                        {lang === "ru"
-                                            ? "Ссылка скопирована в буфер обмена"
-                                            : "Link copied to clipboard"}
-                                    </p>
-                                )}
-
                             </div>
                             <p className="text-xs text-gray-500 mt-2">
                                 {t("profile.referralHint")}
