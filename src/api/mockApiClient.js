@@ -330,3 +330,42 @@ export async function submitStory({userId, text}) {
     console.log("userId:" + userId)
     console.log("text:" + text)
 }
+/**
+ * Профиль клиента (фиче-флаги)
+ */
+export async function getClientProfile(userId) {
+    await delay();
+
+    const params = new URLSearchParams(window.location.search);
+    // const liveEnabled = params.get("live") === "1";
+    const liveEnabled = true;
+
+    return {
+        userId,
+        flags: {
+            live: liveEnabled,
+        },
+    };
+}
+
+export async function submitLiveWheel(payload) {
+    await delay();
+    // просто сохраняем как "последняя отправка" — для отладки
+    try {
+        localStorage.setItem("innercode_mock_live_wheel_last_submit", JSON.stringify(payload));
+    } catch {}
+    return { ok: true };
+}
+
+export async function getLastLiveWheel(userId) {
+    await delay();
+    const raw = localStorage.getItem(`innercode_live_wheel_${userId}`);
+    if (!raw) return null;
+    return {
+        userId,
+        values: JSON.parse(raw),
+        createdAt: new Date().toISOString(),
+    };
+}
+
+

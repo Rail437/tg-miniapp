@@ -11,6 +11,7 @@ const translations = {
             tests: "Тесты",
             profile: "Кабинет",
             more: "Дополнительно",
+            live: "Live",
         },
         tests: {
             mainTitle: "Психологические тесты",
@@ -152,6 +153,7 @@ const translations = {
             tests: "Tests",
             profile: "Profile",
             more: "More",
+            live: "Live",
         },
         tests: {
             mainTitle: "Psychological tests",

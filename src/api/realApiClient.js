@@ -27,6 +27,8 @@ async function request(path, options = {}) {
 
     console.log("[API RESPONSE STATUS]", path, res.status);
 
+    if (res.status === 204) return null;
+
     if (!res.ok) {
         const text = await res.text().catch(() => "");
         console.error("[API ERROR BODY]", path, text);
@@ -152,10 +154,30 @@ export async function getMyInvited(userId) {
         method: "GET",
     });
 }
+
 //Историю отправляем
-export async function submitStory({ userId, text }) {
+export async function submitStory({userId, text}) {
     return request("/stories", {
         method: "POST",
-        body: JSON.stringify({ userId, text }),
+        body: JSON.stringify({userId, text}),
     });
 }
+
+// получение данных клиента
+export async function getClientProfile(userId) {
+    return request(`/client/profile?userId=${userId}`, {
+        method: "GET",
+    });
+}
+
+export async function submitLiveWheel(payload) {
+    return request("/live/wheel", {
+        method: "POST",
+        body: JSON.stringify(payload),
+    });
+}
+
+export async function getLastLiveWheel(userId) {
+    return request(`/live/wheel/last?userId=${userId}`, {method: "GET"});
+}
+

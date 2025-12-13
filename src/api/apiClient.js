@@ -1,5 +1,5 @@
 // src/api/apiClient.js
-import { API_MODE } from "../config/apiConfig";
+import {API_MODE} from "../config/apiConfig";
 import * as mockApi from "./mockApiClient";
 import * as realApi from "./realApiClient";
 import allTypes from "../data/allTypes.json";
@@ -63,10 +63,12 @@ function mapSocionicsResult(raw) {
         },
     };
 }
+
 // Экспортируем единый интерфейс
 export const apiClient = {
     // Установка токена (для realApi есть, для mock — просто заглушка)
-    setAuthToken: impl.setAuthToken ? impl.setAuthToken : () => {},
+    setAuthToken: impl.setAuthToken ? impl.setAuthToken : () => {
+    },
 
     // Авторизация через Telegram / получение юзера
     authTelegram: impl.authTelegram,
@@ -95,4 +97,11 @@ export const apiClient = {
 
     //история
     submitStory: impl.submitStory,
+
+    //данные клиента
+    getClientProfile: impl.getClientProfile,
+
+    //данные колеса баланса
+    submitLiveWheel: impl.submitLiveWheel,
+    getLastLiveWheel: impl.getLastLiveWheel,
 };
