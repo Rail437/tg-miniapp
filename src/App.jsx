@@ -12,11 +12,13 @@ import InsightsSection from "./components/InsightsSection";
 import {LanguageProvider, useTranslation} from "./i18n";
 import {apiClient} from "./api/apiClient";
 import {useSocionicsEngine} from "./hooks/useSocionicsEngine";
+import { LiveSection } from "./components/LiveSection";
 
 function AppInner() {
     const [activeTab, setActiveTab] = useState("tests");
     const [user, setUser] = useState(null);
     const {t, lang} = useTranslation();
+    const [clientProfile, setClientProfile] = useState(null);
 
     const {
         showTests,
@@ -71,6 +73,14 @@ function AppInner() {
                     lastResult: lastResult || null,
                 });
 
+                // 👇 получаем профиль клиента
+                try {
+                    const profile = await apiClient.getClientProfile(userId);
+                    setClientProfile(profile);
+                } catch (e) {
+                    console.error("getClientProfile error", e);
+                }
+
                 // 5. Проверяем реферальный код в URL и регистрируем использование
                 const params = new URLSearchParams(window.location.search);
                 const refCode = params.get("ref");
@@ -119,6 +129,7 @@ function AppInner() {
                     activeTab={activeTab}
                     setActiveTab={setActiveTab}
                     hasMore={!!user?.lastResult}
+                    hasLive={!!clientProfile?.flags?.live}
                 />
 
                 {/* MAIN SHELL — общая стеклянная карточка для контента табов */}
@@ -231,7 +242,17 @@ function AppInner() {
                                     <ProfileSection userId={user?.userId}/>
                                 </motion.div>
                             )}
-
+                            {activeTab === "live" && (
+                                <motion.div
+                                    key="live"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    transition={{ duration: 0.3 }}
+                                >
+                                    <LiveSection />
+                                </motion.div>
+                            )}
                             {/* ТАБ: ДОПОЛНИТЕЛЬНО */}
                             {activeTab === "more" && (
                                 <motion.div

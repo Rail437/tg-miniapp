@@ -330,3 +330,19 @@ export async function submitStory({userId, text}) {
     console.log("userId:" + userId)
     console.log("text:" + text)
 }
+/**
+ * Профиль клиента (фиче-флаги)
+ */
+export async function getClientProfile(userId) {
+    await delay();
+
+    const params = new URLSearchParams(window.location.search);
+    const liveEnabled = params.get("live") === "1";
+
+    return {
+        userId,
+        flags: {
+            live: liveEnabled,
+        },
+    };
+}

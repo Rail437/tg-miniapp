@@ -2,13 +2,17 @@
 import React from "react";
 import { useTranslation } from "../../i18n";
 
-export function TabNavigation({ activeTab, setActiveTab, hasMore }) {
+export function TabNavigation({ activeTab, setActiveTab, hasMore, hasLive }) {
     const { t } = useTranslation();
 
     const tabs = [
         { id: "tests", name: t("tabs.tests"), icon: "🧠" },
         { id: "profile", name: t("tabs.profile"), icon: "👤" },
     ];
+
+    if (hasLive) {
+        tabs.push({ id: "live", name: t("tabs.live"), icon: "🧬" });
+    }
 
     if (hasMore) {
         tabs.push({ id: "more", name: t("tabs.more"), icon: "✨" });

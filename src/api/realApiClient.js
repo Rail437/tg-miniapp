@@ -159,3 +159,10 @@ export async function submitStory({ userId, text }) {
         body: JSON.stringify({ userId, text }),
     });
 }
+
+// получение данных клиента
+export async function getClientProfile(userId) {
+    return request(`/client/profile?userId=${userId}`, {
+        method: "GET",
+    });
+}
