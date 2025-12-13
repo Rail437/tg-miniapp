@@ -337,7 +337,8 @@ export async function getClientProfile(userId) {
     await delay();
 
     const params = new URLSearchParams(window.location.search);
-    const liveEnabled = params.get("live") === "1";
+    // const liveEnabled = params.get("live") === "1";
+    const liveEnabled = true;
 
     return {
         userId,
@@ -346,3 +347,13 @@ export async function getClientProfile(userId) {
         },
     };
 }
+
+export async function submitLiveWheel(payload) {
+    await delay();
+    // просто сохраняем как "последняя отправка" — для отладки
+    try {
+        localStorage.setItem("innercode_mock_live_wheel_last_submit", JSON.stringify(payload));
+    } catch {}
+    return { ok: true };
+}
+

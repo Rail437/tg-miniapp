@@ -12,7 +12,7 @@ import InsightsSection from "./components/InsightsSection";
 import {LanguageProvider, useTranslation} from "./i18n";
 import {apiClient} from "./api/apiClient";
 import {useSocionicsEngine} from "./hooks/useSocionicsEngine";
-import { LiveSection } from "./components/LiveSection";
+import {LiveSection} from "./components/LiveSection";
 
 function AppInner() {
     const [activeTab, setActiveTab] = useState("tests");
@@ -245,12 +245,12 @@ function AppInner() {
                             {activeTab === "live" && (
                                 <motion.div
                                     key="live"
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -20 }}
-                                    transition={{ duration: 0.3 }}
+                                    initial={{opacity: 0, y: 20}}
+                                    animate={{opacity: 1, y: 0}}
+                                    exit={{opacity: 0, y: -20}}
+                                    transition={{duration: 0.3}}
                                 >
-                                    <LiveSection />
+                                    <LiveSection userId={user?.userId}/>
                                 </motion.div>
                             )}
                             {/* ТАБ: ДОПОЛНИТЕЛЬНО */}
@@ -262,7 +262,7 @@ function AppInner() {
                                     exit={{opacity: 0, y: -20}}
                                     transition={{duration: 0.3}}
                                 >
-                                    <InsightsSection lastResult={user?.lastResult} userId={user?.userId} />
+                                    <InsightsSection lastResult={user?.lastResult} userId={user?.userId}/>
                                 </motion.div>
                             )}
                         </AnimatePresence>

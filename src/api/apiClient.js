@@ -1,5 +1,5 @@
 // src/api/apiClient.js
-import { API_MODE } from "../config/apiConfig";
+import {API_MODE} from "../config/apiConfig";
 import * as mockApi from "./mockApiClient";
 import * as realApi from "./realApiClient";
 import allTypes from "../data/allTypes.json";
@@ -7,7 +7,7 @@ import typeDescriptionsRu from "../data/typeDescriptions_ru.json";
 import typeDescriptionsEn from "../data/typeDescriptions_en.json";
 
 // Выбираем реализацию в зависимости от режима
-const impl = API_MODE === "mock" ? realApi : mockApi;
+const impl = API_MODE === "real" ? realApi : mockApi;
 
 // Маппер сырых данных бэка → формат, который ждут компоненты
 function mapSocionicsResult(raw) {
@@ -63,10 +63,12 @@ function mapSocionicsResult(raw) {
         },
     };
 }
+
 // Экспортируем единый интерфейс
 export const apiClient = {
     // Установка токена (для realApi есть, для mock — просто заглушка)
-    setAuthToken: impl.setAuthToken ? impl.setAuthToken : () => {},
+    setAuthToken: impl.setAuthToken ? impl.setAuthToken : () => {
+    },
 
     // Авторизация через Telegram / получение юзера
     authTelegram: impl.authTelegram,
@@ -98,4 +100,7 @@ export const apiClient = {
 
     //данные клиента
     getClientProfile: impl.getClientProfile,
+
+    //данные колеса баланса
+    submitLiveWheel: impl.submitLiveWheel,
 };

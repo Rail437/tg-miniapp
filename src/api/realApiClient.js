@@ -166,3 +166,10 @@ export async function getClientProfile(userId) {
         method: "GET",
     });
 }
+
+export async function submitLiveWheel(payload) {
+    return request("/live/wheel", {
+        method: "POST",
+        body: JSON.stringify(payload),
+    });
+}
