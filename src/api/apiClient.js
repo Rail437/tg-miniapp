@@ -103,4 +103,5 @@ export const apiClient = {
 
     //данные колеса баланса
     submitLiveWheel: impl.submitLiveWheel,
+    getLastLiveWheel: impl.getLastLiveWheel,
 };

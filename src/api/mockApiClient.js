@@ -357,3 +357,15 @@ export async function submitLiveWheel(payload) {
     return { ok: true };
 }
 
+export async function getLastLiveWheel(userId) {
+    await delay();
+    const raw = localStorage.getItem(`innercode_live_wheel_${userId}`);
+    if (!raw) return null;
+    return {
+        userId,
+        values: JSON.parse(raw),
+        createdAt: new Date().toISOString(),
+    };
+}
+
+

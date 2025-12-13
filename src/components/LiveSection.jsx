@@ -350,6 +350,36 @@ export const LiveSection = ({userId}) => {
     const [sentOk, setSentOk] = useState(false);
     const [saveFx, setSaveFx] = useState(0); // триггер микро-анимации кнопки "Сохранить"
 
+    useEffect(() => {
+        let cancelled = false;
+
+        async function loadLast() {
+            if (!userId) return;
+
+            try {
+                const res = await apiClient.getLastLiveWheel(userId);
+
+                // mock может вернуть null
+                if (!res) return;
+
+                // real: если 204 — твой request() сейчас кинет ошибку (см. ниже)
+                if (cancelled) return;
+
+                if (res?.values && typeof res.values === "object") {
+                    setValues(res.values);
+                    setDone(true);      // сразу показываем колесо
+                    setSentOk(true);    // можно считать “сохранено”
+                }
+            } catch (e) {
+                // если 204 у тебя превращается в ошибку — просто игнорируем
+                // console.log(e)
+            }
+        }
+
+        loadLast();
+        return () => { cancelled = true; };
+    }, [userId]);
+
     // restore
     useEffect(() => {
         try {
