@@ -70,6 +70,7 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
     const t = compatibilityTexts[lang] || compatibilityTexts.ru;
 
     const [open, setOpen] = useState(false);
+    const [initialized, setInitialized] = useState(false);
     const [price, setPrice] = useState(null);
     const [priceError, setPriceError] = useState(false);
     const [invited, setInvited] = useState([]);
@@ -82,6 +83,12 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
     const [activeResult, setActiveResult] = useState(null);
     const [toast, setToast] = useState(null);
     const [purchaseError, setPurchaseError] = useState(null);
+
+    useEffect(() => {
+        if (!open) {
+            setInitialized(false);
+        }
+    }, [open]);
 
     const completedInvited = useMemo(
         () => invited.filter((item) => item?.completed),
@@ -125,18 +132,23 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
                     apiClient.getCompatibilityPurchases(userId),
                 ]);
 
-                const hasCompleted = invitedData?.some((i) => i.completed);
-
                 setPrice(priceData);
                 setInvited(invitedData || []);
                 setPurchases(purchasesData || []);
 
-                if (hasCompleted && !selectedTargetId) {
-                    const firstCompleted = invitedData.find((i) => i.completed);
-                    if (firstCompleted) setSelectedTargetId(firstCompleted.invitedUserId);
-                } else if (!hasCompleted) {
-                    setTargetMode("type");
-                    setSelectedTargetId(typeOptions[0]?.typeId || null);
+                if (!initialized) {
+                    const hasCompleted = invitedData?.some((i) => i.completed);
+                    if (hasCompleted && !selectedTargetId) {
+                        const firstCompleted = invitedData.find((i) => i.completed);
+                        if (firstCompleted) {
+                            setTargetMode("invited");
+                            setSelectedTargetId(firstCompleted.invitedUserId);
+                        }
+                    } else if (!hasCompleted) {
+                        setTargetMode("type");
+                        setSelectedTargetId(typeOptions[0]?.typeId || null);
+                    }
+                    setInitialized(true);
                 }
             } catch (e) {
                 console.error("load compatibility data error", e);
@@ -148,7 +160,7 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
         };
 
         load();
-    }, [open, compatibilityEnabled, userId, selectedTargetId]);
+    }, [open, compatibilityEnabled, userId, initialized]);
 
     const priceLabel = useMemo(() => {
         if (!price) return "";
