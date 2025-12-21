@@ -455,17 +455,20 @@ export async function createCompatibilityInvoice({userId, targetType, targetId})
     const price = await getCompatibilityPrice();
 
     let targetTypeId = targetType === "type" ? targetId : null;
-    let displayName = "";
+    let displayNameRu = "";
+    let displayNameEn = "";
 
     if (targetType === "invited") {
         const invitedResult = db.results.find((r) => r.userId === targetId);
         targetTypeId = invitedResult?.typeId || targetTypeId || "UNKNOWN";
         const invitedUser = db.users.find((u) => u.id === targetId);
-        displayName =
+        displayNameRu =
             invitedUser?.name ||
             `${targetId?.slice(0, 6) ?? "user"}…`;
+        displayNameEn = displayNameRu;
     } else {
-        displayName = formatTypeLabel(targetId, "ru");
+        displayNameRu = formatTypeLabel(targetId, "ru");
+        displayNameEn = formatTypeLabel(targetId, "en");
     }
 
     const invoiceId = generateId("invoice");
@@ -479,7 +482,9 @@ export async function createCompatibilityInvoice({userId, targetType, targetId})
         targetType,
         targetId,
         targetTypeId,
-        displayName,
+        displayName: displayNameRu,
+        displayNameRu,
+        displayNameEn,
         status: "created",
         createdAt: now,
         result: null,
@@ -510,7 +515,10 @@ export async function confirmCompatibilityPayment({invoiceId, paymentStatus}) {
         const result = buildCompatibilityResult({
             userTypeId,
             targetTypeId: purchase.targetTypeId || purchase.targetId,
-            targetLabel: {ru: purchase.displayName, en: purchase.displayName},
+            targetLabel: {
+                ru: purchase.displayNameRu || purchase.displayName,
+                en: purchase.displayNameEn || purchase.displayName || purchase.displayNameRu,
+            },
         });
         purchase.result = result;
     }
@@ -536,7 +544,10 @@ export async function getCompatibilityResult(purchaseId) {
         purchase.result = buildCompatibilityResult({
             userTypeId,
             targetTypeId: purchase.targetTypeId || purchase.targetId,
-            targetLabel: {ru: purchase.displayName, en: purchase.displayName},
+            targetLabel: {
+                ru: purchase.displayNameRu || purchase.displayName,
+                en: purchase.displayNameEn || purchase.displayName || purchase.displayNameRu,
+            },
         });
         saveDb(db);
     }
@@ -546,7 +557,9 @@ export async function getCompatibilityResult(purchaseId) {
         result: purchase.result,
         status: purchase.status,
         targetType: purchase.targetType,
-        displayName: purchase.displayName,
+        displayName: purchase.displayNameRu || purchase.displayName,
+        displayNameRu: purchase.displayNameRu || purchase.displayName,
+        displayNameEn: purchase.displayNameEn || purchase.displayName,
         createdAt: purchase.createdAt,
     };
 }

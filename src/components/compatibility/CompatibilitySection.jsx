@@ -60,7 +60,6 @@ function WheelPicker({lang, selectedId, onSelect}) {
                     );
                 })}
             </div>
-            <div className="pointer-events-none absolute inset-x-4 top-1/2 -translate-y-1/2 h-12 border border-blue-200/60 rounded-xl" />
         </div>
     );
 }
