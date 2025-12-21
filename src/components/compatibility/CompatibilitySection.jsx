@@ -236,7 +236,9 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
                     >
                         <div>
                             <div className="text-sm font-semibold text-gray-900">
-                                {p.displayName || p.targetId}
+                                {lang === "ru"
+                                    ? p.displayNameRu || p.displayName || p.targetId
+                                    : p.displayNameEn || p.displayName || p.targetId}
                             </div>
                             <div className="text-[11px] text-gray-500">
                                 {t.purchaseDate} {new Date(p.createdAt).toLocaleDateString()}
@@ -404,15 +406,6 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
                                                     : t.typePickerTitle}
                                             </div>
                                             {renderTargetSelector()}
-                                        </div>
-                                    </div>
-
-                                    <div className="rounded-2xl border border-gray-100 bg-gray-50 px-3 py-2 flex items-center justify-between">
-                                        <div className="text-sm text-gray-700">
-                                            {t.priceLabel}
-                                        </div>
-                                        <div className="text-sm font-semibold text-gray-900">
-                                            {priceError ? t.priceError : `${priceLabel} ⭐`}
                                         </div>
                                     </div>
 
