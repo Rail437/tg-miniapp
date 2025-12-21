@@ -1,5 +1,6 @@
 // src/api/mockApiClient.js
 // import {TYPE_RESULTS} from "../data/typeResults";
+import allTypes from "../data/allTypes.json";
 
 const STORAGE_KEY = "innercode_mock_db";
 
@@ -13,9 +14,14 @@ function loadDb() {
                 results: [],
                 referrals: [],
                 referralUses: [],
+                compatibilityPurchases: [],
             };
         }
-        return JSON.parse(raw);
+        const data = JSON.parse(raw);
+        if (!Array.isArray(data.compatibilityPurchases)) {
+            data.compatibilityPurchases = [];
+        }
+        return data;
     } catch {
         return {
             users: [],
@@ -23,6 +29,7 @@ function loadDb() {
             results: [],
             referrals: [],
             referralUses: [],
+            compatibilityPurchases: [],
         };
     }
 }
@@ -41,6 +48,59 @@ function generateId(prefix = "id") {
 
 // Количество вопросов в нашем единственном тесте
 const TOTAL_STEPS = 4;
+const DEFAULT_COMPAT_PRICE = 50;
+
+function formatTypeLabel(typeId, lang = "ru") {
+    const meta = allTypes[typeId] || {};
+    if (lang === "ru") {
+        return meta.nickname?.ru || meta.codeRu || typeId || "—";
+    }
+    return meta.nickname?.en || typeId || "—";
+}
+
+function buildCompatibilityResult({userTypeId, targetTypeId, targetLabel}) {
+    const userRu = formatTypeLabel(userTypeId, "ru");
+    const userEn = formatTypeLabel(userTypeId, "en");
+    const targetRu = targetLabel?.ru || formatTypeLabel(targetTypeId, "ru");
+    const targetEn = targetLabel?.en || formatTypeLabel(targetTypeId, "en");
+
+    return {
+        title: {
+            ru: `Совместимость: ${userRu} + ${targetRu}`,
+            en: `Compatibility: ${userEn} + ${targetEn}`,
+        },
+        summary: {
+            ru: `Как взаимодействуют ${userRu} и ${targetRu}.`,
+            en: `How ${userEn} and ${targetEn} interact.`,
+        },
+        strengths: [
+            {
+                ru: `Сильные стороны пары: ${userRu} усиливает ${targetRu} в ключевых решениях, а ${targetRu} добавляет гибкости.`,
+                en: `Strengths: ${userEn} brings structure while ${targetEn} adds flexibility.`,
+            },
+            {
+                ru: `Высокий потенциал доверия и обмена идеями.`,
+                en: `High potential for trust and idea exchange.`,
+            },
+        ],
+        risks: [
+            {
+                ru: `Возможны разные темпы и ожидания: важно договариваться о приоритетах.`,
+                en: `Different pace and expectations — align on priorities early.`,
+            },
+        ],
+        advice: [
+            {
+                ru: `Заранее обсуждайте, кто за что отвечает, чтобы снизить трение.`,
+                en: `Clarify responsibilities upfront to reduce friction.`,
+            },
+            {
+                ru: `Поддерживайте регулярную обратную связь и фиксируйте договорённости.`,
+                en: `Keep regular feedback loops and document agreements.`,
+            },
+        ],
+    };
+}
 
 /**
  * Мок-авторизация через Telegram
@@ -337,13 +397,15 @@ export async function getClientProfile(userId) {
     await delay();
 
     const params = new URLSearchParams(window.location.search);
-    // const liveEnabled = params.get("live") === "1";
     const liveEnabled = true;
+    const compatParam = params.get("compat");
+    const compatibilityEnabled = compatParam === null ? true : compatParam === "1";
 
     return {
         userId,
         flags: {
             live: liveEnabled,
+            compatibility: compatibilityEnabled,
         },
     };
 }
@@ -368,4 +430,123 @@ export async function getLastLiveWheel(userId) {
     };
 }
 
+// --- Совместимость: моковая реализация ---
 
+export async function getCompatibilityPrice() {
+    await delay();
+    return {
+        priceStars: DEFAULT_COMPAT_PRICE,
+        currency: "stars",
+        description: "Compatibility insight",
+    };
+}
+
+export async function getCompatibilityPurchases(userId) {
+    await delay();
+    const db = loadDb();
+    return (db.compatibilityPurchases || [])
+        .filter((p) => p.userId === userId)
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+}
+
+export async function createCompatibilityInvoice({userId, targetType, targetId}) {
+    await delay();
+    const db = loadDb();
+    const price = await getCompatibilityPrice();
+
+    let targetTypeId = targetType === "type" ? targetId : null;
+    let displayName = "";
+
+    if (targetType === "invited") {
+        const invitedResult = db.results.find((r) => r.userId === targetId);
+        targetTypeId = invitedResult?.typeId || targetTypeId || "UNKNOWN";
+        const invitedUser = db.users.find((u) => u.id === targetId);
+        displayName =
+            invitedUser?.name ||
+            `${targetId?.slice(0, 6) ?? "user"}…`;
+    } else {
+        displayName = formatTypeLabel(targetId, "ru");
+    }
+
+    const invoiceId = generateId("invoice");
+    const purchaseId = generateId("compat");
+    const now = new Date().toISOString();
+
+    db.compatibilityPurchases.push({
+        id: purchaseId,
+        invoiceId,
+        userId,
+        targetType,
+        targetId,
+        targetTypeId,
+        displayName,
+        status: "created",
+        createdAt: now,
+        result: null,
+    });
+
+    saveDb(db);
+
+    return {
+        invoiceId,
+        purchaseId,
+        status: "created",
+        priceStars: price.priceStars,
+    };
+}
+
+export async function confirmCompatibilityPayment({invoiceId, paymentStatus}) {
+    await delay();
+    const db = loadDb();
+    const purchase = (db.compatibilityPurchases || []).find((p) => p.invoiceId === invoiceId);
+    if (!purchase) throw new Error("invoice not found");
+
+    const status = paymentStatus === "paid" ? "paid" : "pending";
+    purchase.status = status;
+
+    if (status === "paid") {
+        const userResult = db.results.find((r) => r.userId === purchase.userId);
+        const userTypeId = userResult?.typeId || "UNKNOWN";
+        const result = buildCompatibilityResult({
+            userTypeId,
+            targetTypeId: purchase.targetTypeId || purchase.targetId,
+            targetLabel: {ru: purchase.displayName, en: purchase.displayName},
+        });
+        purchase.result = result;
+    }
+
+    saveDb(db);
+
+    return {
+        status: purchase.status,
+        purchaseId: purchase.id,
+        result: purchase.result || null,
+    };
+}
+
+export async function getCompatibilityResult(purchaseId) {
+    await delay();
+    const db = loadDb();
+    const purchase = (db.compatibilityPurchases || []).find((p) => p.id === purchaseId);
+    if (!purchase) throw new Error("purchase not found");
+
+    if (!purchase.result) {
+        const userResult = db.results.find((r) => r.userId === purchase.userId);
+        const userTypeId = userResult?.typeId || "UNKNOWN";
+        purchase.result = buildCompatibilityResult({
+            userTypeId,
+            targetTypeId: purchase.targetTypeId || purchase.targetId,
+            targetLabel: {ru: purchase.displayName, en: purchase.displayName},
+        });
+        saveDb(db);
+    }
+
+    return {
+        purchaseId: purchase.id,
+        result: purchase.result,
+        status: purchase.status,
+        targetType: purchase.targetType,
+        displayName: purchase.displayName,
+        createdAt: purchase.createdAt,
+    };
+}
