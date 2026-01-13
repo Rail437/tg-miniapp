@@ -181,3 +181,31 @@ export async function getLastLiveWheel(userId) {
     return request(`/live/wheel/last?userId=${userId}`, {method: "GET"});
 }
 
+// --- Совместимость ---
+export async function getCompatibilityPrice() {
+    return request("/compatibility/price", {method: "GET"});
+}
+
+export async function getCompatibilityPurchases(userId) {
+    return request(`/compatibility/purchases?userId=${userId}`, {method: "GET"});
+}
+
+export async function createCompatibilityInvoice(payload) {
+    return request("/compatibility/invoice", {
+        method: "POST",
+        body: JSON.stringify(payload),
+    });
+}
+
+export async function confirmCompatibilityPayment(payload) {
+    return request("/compatibility/confirm", {
+        method: "POST",
+        body: JSON.stringify(payload),
+    });
+}
+
+export async function getCompatibilityResult(purchaseId) {
+    return request(`/compatibility/result?purchaseId=${purchaseId}`, {
+        method: "GET",
+    });
+}

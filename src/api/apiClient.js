@@ -104,4 +104,11 @@ export const apiClient = {
     //данные колеса баланса
     submitLiveWheel: impl.submitLiveWheel,
     getLastLiveWheel: impl.getLastLiveWheel,
+
+    // совместимость
+    getCompatibilityPrice: impl.getCompatibilityPrice,
+    getCompatibilityPurchases: impl.getCompatibilityPurchases,
+    createCompatibilityInvoice: impl.createCompatibilityInvoice,
+    confirmCompatibilityPayment: impl.confirmCompatibilityPayment,
+    getCompatibilityResult: impl.getCompatibilityResult,
 };
