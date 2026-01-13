@@ -391,15 +391,12 @@ export async function submitStory({userId, text}) {
     console.log("text:" + text)
 }
 /**
- * Профиль клиента (фиче-флаги)
+ * Профиль клиента (фича-флаги)
  */
 export async function getClientProfile(userId) {
     await delay();
-
-    const params = new URLSearchParams(window.location.search);
     const liveEnabled = true;
-    const compatParam = params.get("compat");
-    const compatibilityEnabled = compatParam === null ? true : compatParam === "1";
+    const compatibilityEnabled = true;
 
     return {
         userId,
