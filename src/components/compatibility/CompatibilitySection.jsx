@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState, useCallback} from "react";
 import {AnimatePresence, motion} from "framer-motion";
 import {useTranslation} from "../../i18n";
 import {compatibilityTexts} from "../../i18n.compatibility";
@@ -82,10 +82,12 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
     const [activeResult, setActiveResult] = useState(null);
     const [toast, setToast] = useState(null);
     const [purchaseError, setPurchaseError] = useState(null);
+    const [purchaseRefresh, setPurchaseRefresh] = useState(0);
 
     useEffect(() => {
         if (!open) {
             setInitialized(false);
+            setPurchaseError(null);
         }
     }, [open]);
 
@@ -101,6 +103,66 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
         if (lastResult.en) return lastResult.en;
         return null;
     }, [lastResult, lang]);
+
+    const loadPurchases = useCallback(async () => {
+        if (!userId) return;
+
+        try {
+            setLoadingPurchases(true);
+            const purchasesData = await apiClient.getCompatibilityPurchases(userId);
+            setPurchases(purchasesData || []);
+        } catch (e) {
+            console.error("load purchases error", e);
+            setPurchaseError(t.purchaseLoadError || "Ошибка загрузки покупок");
+        } finally {
+            setLoadingPurchases(false);
+        }
+    }, [userId, t]);
+
+    useEffect(() => {
+        if (!open || !compatibilityEnabled || !userId) return;
+
+        const loadAllData = async () => {
+            try {
+                setPriceError(false);
+                setLoadingInvited(true);
+
+                // Загружаем параллельно только price и invited
+                const [priceData, invitedData] = await Promise.all([
+                    apiClient.getCompatibilityPrice(),
+                    apiClient.getMyInvited(userId),
+                ]);
+
+                setPrice(priceData);
+                setInvited(invitedData || []);
+
+                // Отдельно загружаем покупки
+                await loadPurchases();
+
+                if (!initialized) {
+                    const hasCompleted = invitedData?.some((i) => i.completed);
+                    if (hasCompleted && !selectedTargetId) {
+                        const firstCompleted = invitedData.find((i) => i.completed);
+                        if (firstCompleted) {
+                            setTargetMode("invited");
+                            setSelectedTargetId(firstCompleted.invitedUserId);
+                        }
+                    } else if (!hasCompleted) {
+                        setTargetMode("type");
+                        setSelectedTargetId(typeOptions[0]?.typeId || null);
+                    }
+                    setInitialized(true);
+                }
+            } catch (e) {
+                console.error("load compatibility data error", e);
+                setPriceError(true);
+            } finally {
+                setLoadingInvited(false);
+            }
+        };
+
+        loadAllData();
+    }, [open, compatibilityEnabled, userId, initialized, loadPurchases]); // Добавил loadPurchases в зависимости
 
     useEffect(() => {
         if (targetMode === "type") {
@@ -168,7 +230,8 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
     }, [price]);
 
     const handlePurchase = async () => {
-        if (!userId || !selectedTargetId) return;
+        if (!userId || !selectedTargetId || !price) return;
+
         setIsBuying(true);
         setPurchaseError(null);
 
@@ -176,32 +239,103 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
         const targetId = selectedTargetId;
 
         try {
+            // 1. Создаем инвойс в системе
             const invoice = await apiClient.createCompatibilityInvoice({
                 userId,
                 targetType,
                 targetId,
             });
 
-            const confirmation = await apiClient.confirmCompatibilityPayment({
-                invoiceId: invoice.invoiceId,
-                paymentStatus: "paid",
-            });
-
-            const updatedPurchases = await apiClient.getCompatibilityPurchases(userId);
-            setPurchases(updatedPurchases || []);
-
-            if (confirmation?.result) {
-                setActiveResult({
-                    purchaseId: confirmation.purchaseId,
-                    result: confirmation.result,
-                });
+            if (!invoice?.purchaseId || !invoice?.telegramInvoiceLink) {
+                throw new Error("Не удалось создать счет");
             }
 
-            setToast(t.toastPurchased);
-            setTimeout(() => setToast(null), 2200);
+            // Сохраняем purchaseId для проверки статуса
+            const currentPurchaseId = invoice.purchaseId;
+
+            // 2. Запускаем процесс оплаты через Telegram
+            if (window.Telegram && window.Telegram.WebApp) {
+                // Для Mini Apps - используем Telegram Payments
+                const result = await window.Telegram.WebApp.openInvoice({
+                    invoice_url: invoice.telegramInvoiceLink,
+                });
+
+                if (result.status === "paid") {
+                    // 3. Платеж прошел в Telegram, но нужно дождаться подтверждения от бекенда
+                    setToast(t.paymentProcessing || "Обработка платежа...");
+
+                    // 4. Опрашиваем статус покупки каждые 2 секунды (макс 30 секунд)
+                    let attempts = 0;
+                    const maxAttempts = 15; // 30 секунд максимум
+                    let purchaseConfirmed = false;
+
+                    while (attempts < maxAttempts && !purchaseConfirmed) {
+                        await new Promise(resolve => setTimeout(resolve, 2000)); // Ждем 2 сек
+
+                        try {
+                            // Проверяем статус покупки
+                            const updatedPurchases = await apiClient.getCompatibilityPurchases(userId);
+                            const currentPurchase = updatedPurchases?.find(p => p.id === currentPurchaseId);
+
+                            if (currentPurchase?.status === "paid" || currentPurchase?.resultReady) {
+                                purchaseConfirmed = true;
+
+                                // Обновляем список покупок
+                                setPurchases(updatedPurchases);
+
+                                // Пытаемся получить результат
+                                const resultData = await apiClient.getCompatibilityResult(currentPurchaseId);
+                                if (resultData?.result) {
+                                    setActiveResult({
+                                        purchaseId: currentPurchaseId,
+                                        result: resultData.result,
+                                    });
+                                }
+
+                                setToast(t.toastPurchased);
+                                setTimeout(() => setToast(null), 2200);
+                                break;
+                            }
+                        } catch (e) {
+                            console.warn("Проверка статуса покупки:", e);
+                        }
+
+                        attempts++;
+                    }
+
+                    if (!purchaseConfirmed) {
+                        // Если не подтвердилось, все равно обновляем список покупок
+                        await loadPurchases();
+                        setToast(t.paymentProcessingSlow || "Платеж обрабатывается, результат появится позже");
+                        setTimeout(() => setToast(null), 3000);
+                    }
+                } else {
+                    // Платеж отменен или не прошел в Telegram
+                    throw new Error("Платеж не прошел или был отменен");
+                }
+            } else {
+                // Для WebApp (если не в Telegram)
+                // Открываем стандартную страницу оплаты
+                window.open(invoice.telegramInvoiceLink, "_blank");
+
+                // Показываем инструкцию
+                setPurchaseError(t.paymentInstructions || "Перейдите на страницу оплаты. После оплаты результат появится в истории покупок.");
+
+                // Обновляем список покупок через 5 секунд на случай быстрой оплаты
+                setTimeout(() => loadPurchases(), 5000);
+            }
+
         } catch (e) {
             console.error("purchase compatibility error", e);
-            setPurchaseError(t.purchaseError);
+
+            // Определяем тип ошибки
+            if (e.message.includes("недостаточно") || e.message.includes("insufficient")) {
+                setPurchaseError(t.insufficientStars || "Недостаточно звезд");
+            } else if (e.message.includes("Платеж не прошел") || e.message.includes("payment failed") || e.message.includes("отменен")) {
+                setPurchaseError(t.paymentFailed || "Платеж не прошел. Попробуйте еще раз.");
+            } else {
+                setPurchaseError(e.message || t.purchaseError || "Ошибка при покупке");
+            }
         } finally {
             setIsBuying(false);
         }
@@ -212,15 +346,23 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
             const res = await apiClient.getCompatibilityResult(purchaseId);
             if (res?.result) {
                 setActiveResult({purchaseId, result: res.result});
+                // Обновляем список покупок после открытия
+                await loadPurchases();
             }
         } catch (e) {
             console.error("open result error", e);
+            setPurchaseError(t.resultLoadError || "Ошибка загрузки результата");
         }
     };
 
     const renderPurchaseList = () => {
-        if (loadingPurchases) {
-            return <div className="text-xs text-gray-500">{t.loading}</div>;
+        if (loadingPurchases && purchases.length === 0) {
+            return (
+                <div className="flex flex-col items-center justify-center py-4">
+                    <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mb-2"></div>
+                    <div className="text-xs text-gray-500">{t.loading}</div>
+                </div>
+            );
         }
 
         if (!purchases || purchases.length === 0) {
@@ -336,6 +478,11 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
                         <div className="text-xs text-gray-500">
                             {compatibilityEnabled ? t.subtitle : t.locked}
                         </div>
+                        {compatibilityEnabled && price && (
+                            <div className="text-xs text-blue-600 font-semibold mt-1">
+                                {priceLabel} ⭐
+                            </div>
+                        )}
                     </div>
                 </div>
             </button>
@@ -409,28 +556,75 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
                                         </div>
                                     </div>
 
+                                    {/* Сообщения об ошибках */}
                                     {purchaseError && (
-                                        <div className="text-xs text-red-500">{purchaseError}</div>
+                                        <div className="text-xs text-red-500 bg-red-50 p-2 rounded-lg">
+                                            {purchaseError}
+                                        </div>
                                     )}
 
-                                    <button
-                                        type="button"
-                                        disabled={disabled}
-                                        onClick={handlePurchase}
-                                        className={`w-full py-3 rounded-xl text-sm font-semibold transition-all ${
-                                            disabled
-                                                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                                                : "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md hover:shadow-lg"
-                                        }`}
-                                    >
-                                        {price
-                                            ? t.ctaBuy.replace("{{price}}", priceLabel)
-                                            : t.ctaDisabled}
-                                    </button>
+                                    {/* Кнопка покупки с информацией о цене */}
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between items-center text-sm">
+                                            <span className="text-gray-600">
+                                                {lang === "ru" ? "Стоимость:" : "Price:"}
+                                            </span>
+                                            <span className="font-semibold text-yellow-600">
+                                                {priceLabel} ⭐
+                                            </span>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            disabled={disabled}
+                                            onClick={handlePurchase}
+                                            className={`w-full py-3 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2 ${
+                                                disabled
+                                                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                                                    : "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md hover:shadow-lg hover:from-blue-700 hover:to-purple-700"
+                                            }`}
+                                        >
+                                            {isBuying ? (
+                                                <>
+                                                    <span
+                                                        className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                                                    {t.buying || "Покупка..."}
+                                                </>
+                                            ) : price ? (
+                                                t.ctaBuy.replace("{{price}}", priceLabel)
+                                            ) : (
+                                                t.ctaDisabled
+                                            )}
+                                        </button>
+                                        <p className="text-xs text-gray-500 text-center">
+                                            {lang === "ru"
+                                                ? "Оплата через Telegram Stars"
+                                                : "Payment via Telegram Stars"}
+                                        </p>
+                                    </div>
 
                                     <div className="border-t border-gray-100 pt-3 space-y-2">
-                                        <div className="text-sm font-semibold text-gray-800">
-                                            {t.purchasesTitle}
+                                        <div className="flex justify-between items-center">
+                                            <div className="text-sm font-semibold text-gray-800">
+                                                {t.purchasesTitle}
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={loadPurchases}
+                                                disabled={loadingPurchases}
+                                                className="text-xs text-blue-600 hover:text-blue-800 disabled:text-gray-400 flex items-center gap-1"
+                                            >
+                                                {loadingPurchases ? (
+                                                    <>
+                                                        <span
+                                                            className="w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></span>
+                                                        {t.loading}
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        ↻ {t.refresh || "Обновить"}
+                                                    </>
+                                                )}
+                                            </button>
                                         </div>
                                         {renderPurchaseList()}
                                     </div>
@@ -441,6 +635,7 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
                 )}
             </AnimatePresence>
 
+            {/* Модальное окно с результатом */}
             <AnimatePresence>
                 {activeResult && (
                     <motion.div
@@ -540,7 +735,7 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
                             <button
                                 type="button"
                                 onClick={() => setActiveResult(null)}
-                                className="mt-4 w-full py-2 rounded-xl bg-gray-200 font-semibold text-gray-800"
+                                className="mt-4 w-full py-2 rounded-xl bg-gray-200 font-semibold text-gray-800 hover:bg-gray-300 transition-colors"
                             >
                                 {t.close}
                             </button>
@@ -549,6 +744,7 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
                 )}
             </AnimatePresence>
 
+            {/* Toast уведомление */}
             <AnimatePresence>
                 {toast && (
                     <motion.div

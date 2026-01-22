@@ -106,9 +106,9 @@ export const apiClient = {
     getLastLiveWheel: impl.getLastLiveWheel,
 
     // совместимость
-    getCompatibilityPrice: impl.getCompatibilityPrice,
-    getCompatibilityPurchases: impl.getCompatibilityPurchases,
-    createCompatibilityInvoice: impl.createCompatibilityInvoice,
-    confirmCompatibilityPayment: impl.confirmCompatibilityPayment,
-    getCompatibilityResult: impl.getCompatibilityResult,
+    getCompatibilityPrice: impl.getCompatibilityPrice, //цена совместимости
+    getCompatibilityPurchases: impl.getCompatibilityPurchases, //получение списка покупок пользователя
+    createCompatibilityInvoice: impl.createCompatibilityInvoice, //запрос на создание покупки
+    confirmCompatibilityPayment: impl.confirmCompatibilityPayment, //подтвердить покупку после успеха на странице тг
+    getCompatibilityResult: impl.getCompatibilityResult, //получить результат покупки
 };
