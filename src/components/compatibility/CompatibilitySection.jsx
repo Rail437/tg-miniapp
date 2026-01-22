@@ -236,145 +236,119 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
         setPurchaseError(null);
 
         const targetType = targetMode === "invited" ? "invited" : "type";
-        const targetId = selectedTargetId;
+        let targetId = selectedTargetId;
 
         try {
+            // Если выбран тип личности, получаем его данные для передачи на бэкенд
+            if (targetType === "type") {
+                const selectedType = typeOptions.find(opt => opt.typeId === selectedTargetId);
+                if (!selectedType) {
+                    throw new Error("Выбранный тип не найден");
+                }
+                // Передаем тип личности (например, "INFJ", "ENFP" и т.д.)
+                targetId = selectedType.typeId;
+            }
+
             // 1. Создаем инвойс в системе
             const invoice = await apiClient.createCompatibilityInvoice({
                 userId,
                 targetType,
-                targetId,
+                targetId: targetId, // тип личности или ID приглашенного пользователя
             });
 
-            if (!invoice?.purchaseId || !invoice?.telegramInvoiceLink) {
+            if (!invoice?.purchaseId) {
                 throw new Error("Не удалось создать счет");
             }
 
-            // Сохраняем purchaseId для проверки статуса
             const currentPurchaseId = invoice.purchaseId;
 
-            // 2. Запускаем процесс оплаты через Telegram
-            // 2. Запускаем процесс оплаты через Telegram
-            if (window.Telegram && window.Telegram.WebApp) {
-                console.log("Telegram WebApp detected, invoice URL:", invoice.telegramInvoiceLink);
+            // 2. Проверяем, находимся ли мы в Telegram WebApp
+            const isTelegramWebApp = window.Telegram?.WebApp;
 
-                // Проверяем тип ссылки
-                const isInvoiceUrl = invoice.telegramInvoiceLink.includes('/invoice/') ||
-                    invoice.telegramInvoiceLink.includes('invoice.t.me');
-                const isDirectBotLink = invoice.telegramInvoiceLink.startsWith('https://t.me/$');
+            if (isTelegramWebApp) {
+                const webApp = window.Telegram.WebApp;
 
-                if (isInvoiceUrl) {
-                    // Это специальный invoice URL для openInvoice()
-                    try {
-                        console.log("Using openInvoice with invoice URL");
-                        const result = await window.Telegram.WebApp.openInvoice({
-                            invoice_url: invoice.telegramInvoiceLink,
-                        });
+                // Вариант 1: Если есть invoice_url для прямого открытия
+                if (invoice.invoice_url) {
+                    console.log("Using openInvoice with direct invoice_url");
 
-                        if (result.status === "paid") {
-                            await handleSuccessfulPayment(currentPurchaseId);
+                    // Обработчик закрытия инвойса
+                    const handleInvoiceClosed = (event) => {
+                        console.log("Invoice closed event:", event);
+
+                        // Удаляем обработчик после использования
+                        webApp.offEvent('invoiceClosed', handleInvoiceClosed);
+
+                        if (event.status === 'paid') {
+                            handleSuccessfulPayment(currentPurchaseId);
                         } else {
-                            throw new Error("Платеж не прошел или был отменен");
+                            setPurchaseError(t.paymentFailed || "Оплата отменена");
+                            setIsBuying(false);
                         }
+                    };
+
+                    // Добавляем обработчик события
+                    webApp.onEvent('invoiceClosed', handleInvoiceClosed);
+
+                    // Открываем инвойс
+                    try {
+                        webApp.openInvoice(invoice.invoice_url, (status) => {
+                            console.log("openInvoice callback status:", status);
+                            // Этот колбэк может не вызываться в некоторых версиях
+                        });
                     } catch (tgError) {
                         console.error("Telegram openInvoice error:", tgError);
-                        // Fallback: открываем как обычную ссылку
-                        window.open(invoice.telegramInvoiceLink, "_blank");
-                        showPaymentInstructions();
+                        fallbackPayment(invoice, currentPurchaseId);
                     }
-                } else if (isDirectBotLink) {
-                    // Это прямая ссылка на бота - открываем в новом окне/вкладке
-                    console.log("Opening direct bot link in new window");
-                    window.open(invoice.telegramInvoiceLink, "_blank");
-                    showPaymentInstructions();
 
-                    // Начинаем отслеживать статус покупки
-                    startPaymentPolling(currentPurchaseId);
-                } else {
-                    // Неизвестный формат - открываем как есть
-                    console.warn("Unknown URL format, opening as is:", invoice.telegramInvoiceLink);
-                    window.open(invoice.telegramInvoiceLink, "_blank");
-                    showPaymentInstructions();
-                    startPaymentPolling(currentPurchaseId);
                 }
+                // Вариант 2: Если есть telegramInvoiceLink (старый формат)
+                else if (invoice.telegramInvoiceLink) {
+                    console.log("Using telegramInvoiceLink");
+
+                    // Проверяем формат ссылки
+                    const isInvoiceLink = invoice.telegramInvoiceLink.includes('/invoice/');
+
+                    if (isInvoiceLink && webApp.openInvoice) {
+                        // Пробуем открыть как инвойс
+                        try {
+                            webApp.openInvoice(invoice.telegramInvoiceLink, (status) => {
+                                if (status === 'paid') {
+                                    handleSuccessfulPayment(currentPurchaseId);
+                                } else {
+                                    setPurchaseError(t.paymentFailed || "Оплата не завершена");
+                                    setIsBuying(false);
+                                }
+                            });
+                        } catch (error) {
+                            console.error("Failed to open invoice, falling back to link:", error);
+                            webApp.openLink(invoice.telegramInvoiceLink);
+                            startPaymentPolling(currentPurchaseId);
+                        }
+                    } else {
+                        // Открываем как обычную ссылку
+                        webApp.openLink(invoice.telegramInvoiceLink);
+                        startPaymentPolling(currentPurchaseId);
+                    }
+                } else {
+                    throw new Error("Нет доступного метода оплаты");
+                }
+
             } else {
                 // Не в Telegram - открываем в браузере
-                console.log("Not in Telegram, opening in browser");
-                window.open(invoice.telegramInvoiceLink, "_blank");
+                console.log("Not in Telegram WebApp, opening in browser");
+
+                if (invoice.telegramInvoiceLink) {
+                    window.open(invoice.telegramInvoiceLink, "_blank");
+                } else if (invoice.invoice_url) {
+                    window.open(invoice.invoice_url, "_blank");
+                } else {
+                    throw new Error("Нет ссылки для оплаты");
+                }
+
                 showPaymentInstructions();
                 startPaymentPolling(currentPurchaseId);
             }
-
-// Вспомогательные функции
-            const handleSuccessfulPayment = async (purchaseId) => {
-                setToast(t.paymentProcessing || "Обработка платежа...");
-                await pollPurchaseStatus(purchaseId);
-            };
-
-            const showPaymentInstructions = () => {
-                setPurchaseError(t.paymentInstructions ||
-                    "Перейдите на страницу оплаты. После оплаты результат появится в истории покупок.");
-            };
-
-            const startPaymentPolling = (purchaseId) => {
-                // Запускаем опрос статуса через 3 секунды (дадим время на оплату)
-                setTimeout(() => pollPurchaseStatus(purchaseId), 3000);
-            };
-
-            const pollPurchaseStatus = async (purchaseId) => {
-                let attempts = 0;
-                const maxAttempts = 20; // 40 секунд максимум (каждые 2 сек)
-                let purchaseConfirmed = false;
-
-                while (attempts < maxAttempts && !purchaseConfirmed) {
-                    await new Promise(resolve => setTimeout(resolve, 2000));
-                    attempts++;
-
-                    try {
-                        const updatedPurchases = await apiClient.getCompatibilityPurchases(userId);
-                        const currentPurchase = updatedPurchases?.find(p => p.id === purchaseId);
-
-                        if (currentPurchase?.status === "paid" || currentPurchase?.resultReady) {
-                            purchaseConfirmed = true;
-
-                            // Обновляем список покупок
-                            setPurchases(updatedPurchases);
-
-                            // Пытаемся получить результат
-                            try {
-                                const resultData = await apiClient.getCompatibilityResult(purchaseId);
-                                if (resultData?.result) {
-                                    setActiveResult({
-                                        purchaseId: purchaseId,
-                                        result: resultData.result,
-                                    });
-                                }
-                            } catch (resultError) {
-                                console.warn("Could not load result, but purchase is paid:", resultError);
-                            }
-
-                            setToast(t.toastPurchased);
-                            setTimeout(() => setToast(null), 2200);
-                            break;
-                        }
-
-                        // Прогресс для пользователя (каждые 10 секунд)
-                        if (attempts % 5 === 0) {
-                            setToast(`${t.paymentProcessing || "Обработка платежа..."} (${attempts * 2} сек)`);
-                        }
-
-                    } catch (e) {
-                        console.warn("Проверка статуса покупки:", e);
-                    }
-                }
-
-                if (!purchaseConfirmed) {
-                    await loadPurchases();
-                    setToast(t.paymentProcessingSlow ||
-                        "Платеж обрабатывается. Обновите историю покупок через несколько минут.");
-                    setTimeout(() => setToast(null), 4000);
-                }
-            };
 
         } catch (e) {
             console.error("purchase compatibility error", e);
@@ -382,14 +356,100 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
             // Определяем тип ошибки
             if (e.message.includes("недостаточно") || e.message.includes("insufficient")) {
                 setPurchaseError(t.insufficientStars || "Недостаточно звезд");
-            } else if (e.message.includes("Платеж не прошел") || e.message.includes("payment failed") || e.message.includes("отменен")) {
-                setPurchaseError(t.paymentFailed || "Платеж не прошел. Попробуйте еще раз.");
+            } else if (e.message.includes("уже куплено") || e.message.includes("already purchased")) {
+                setPurchaseError(t.alreadyPurchased || "Вы уже покупали эту совместимость");
             } else {
                 setPurchaseError(e.message || t.purchaseError || "Ошибка при покупке");
             }
-        } finally {
+
             setIsBuying(false);
         }
+    };
+
+    // Вспомогательные функции (вынести из handlePurchase для читаемости)
+    const handleSuccessfulPayment = async (purchaseId) => {
+        setToast(t.paymentProcessing || "Обработка платежа...");
+        await pollPurchaseStatus(purchaseId);
+    };
+
+    const showPaymentInstructions = () => {
+        setPurchaseError(t.paymentInstructions ||
+            "Откройте Telegram для завершения оплаты. После оплаты результат появится в истории покупок.");
+    };
+
+    const startPaymentPolling = (purchaseId) => {
+        // Запускаем опрос статуса через 3 секунды
+        setTimeout(() => pollPurchaseStatus(purchaseId), 3000);
+    };
+
+    const pollPurchaseStatus = async (purchaseId) => {
+        let attempts = 0;
+        const maxAttempts = 30; // 60 секунд максимум (каждые 2 сек)
+        let purchaseConfirmed = false;
+
+        while (attempts < maxAttempts && !purchaseConfirmed) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            attempts++;
+
+            try {
+                const updatedPurchases = await apiClient.getCompatibilityPurchases(userId);
+                const currentPurchase = updatedPurchases?.find(p => p.id === purchaseId);
+
+                if (currentPurchase?.status === "paid" || currentPurchase?.resultReady) {
+                    purchaseConfirmed = true;
+
+                    // Обновляем список покупок
+                    setPurchases(updatedPurchases);
+
+                    // Пытаемся получить результат
+                    try {
+                        const resultData = await apiClient.getCompatibilityResult(purchaseId);
+                        if (resultData?.result) {
+                            setActiveResult({
+                                purchaseId: purchaseId,
+                                result: resultData.result,
+                            });
+                            setToast(t.toastPurchased);
+                            setTimeout(() => setToast(null), 3000);
+                        }
+                    } catch (resultError) {
+                        console.warn("Could not load result, but purchase is paid:", resultError);
+                        setToast(t.purchaseSuccessNoResult || "Покупка завершена, результат готовится");
+                        setTimeout(() => setToast(null), 3000);
+                    }
+
+                    break;
+                }
+
+                // Прогресс для пользователя (каждые 10 секунд)
+                if (attempts % 5 === 0) {
+                    setToast(`${t.paymentProcessing || "Обработка платежа..."} (${attempts * 2} сек)`);
+                }
+
+            } catch (e) {
+                console.warn("Проверка статуса покупки:", e);
+            }
+        }
+
+        if (!purchaseConfirmed) {
+            await loadPurchases();
+            setToast(t.paymentProcessingSlow ||
+                "Платеж обрабатывается. Обновите историю покупок через несколько минут.");
+            setTimeout(() => setToast(null), 5000);
+        }
+
+        setIsBuying(false);
+    };
+
+    const fallbackPayment = async (invoice, purchaseId) => {
+        // Fallback метод оплаты
+        if (window.Telegram?.WebApp?.openLink) {
+            window.Telegram.WebApp.openLink(invoice.telegramInvoiceLink || invoice.invoice_url);
+        } else {
+            window.open(invoice.telegramInvoiceLink || invoice.invoice_url, "_blank");
+        }
+        showPaymentInstructions();
+        startPaymentPolling(purchaseId);
     };
 
     const openPurchaseResult = async (purchaseId) => {
@@ -416,13 +476,18 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
             );
         }
 
-        if (!purchases || purchases.length === 0) {
+        // Фильтруем только оплаченные или завершенные покупки
+        const validPurchases = (purchases || []).filter(p =>
+            p.status === "paid" || p.status === "completed" || p.resultReady
+        );
+
+        if (validPurchases.length === 0) {
             return <div className="text-xs text-gray-500">{t.purchaseNone}</div>;
         }
 
         return (
             <div className="space-y-2">
-                {purchases.map((p) => (
+                {validPurchases.map((p) => (
                     <div
                         key={p.id}
                         className="flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50 px-3 py-2"
@@ -435,19 +500,26 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
                             </div>
                             <div className="text-[11px] text-gray-500">
                                 {t.purchaseDate} {new Date(p.createdAt).toLocaleDateString()}
+                                {p.status && ` • ${p.status}`}
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
-                            <span className="text-[11px] px-2 py-1 rounded-full bg-emerald-50 text-emerald-600">
-                                {t.purchasePaid}
-                            </span>
-                            <button
-                                type="button"
-                                onClick={() => openPurchaseResult(p.id)}
-                                className="text-xs font-semibold text-blue-600 hover:underline"
-                            >
-                                {t.purchaseOpen}
-                            </button>
+                        <span className={`text-[11px] px-2 py-1 rounded-full ${
+                            (p.status === "paid" || p.status === "completed" || p.resultReady)
+                                ? "bg-emerald-50 text-emerald-600"
+                                : "bg-yellow-50 text-yellow-600"
+                        }`}>
+                            {p.status === "paid" || p.status === "completed" || p.resultReady ? t.purchasePaid : "Ожидание"}
+                        </span>
+                            {(p.status === "paid" || p.status === "completed" || p.resultReady) && (
+                                <button
+                                    type="button"
+                                    onClick={() => openPurchaseResult(p.id)}
+                                    className="text-xs font-semibold text-blue-600 hover:underline"
+                                >
+                                    {t.purchaseOpen}
+                                </button>
+                            )}
                         </div>
                     </div>
                 ))}
