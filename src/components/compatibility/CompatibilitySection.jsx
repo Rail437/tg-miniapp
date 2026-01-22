@@ -313,7 +313,16 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
                     const paymentUrl = invoice.telegramInvoiceLink || invoice.invoice_url;
 
                     // Открываем во встроенном браузере Telegram
-                    webApp.openLink(paymentUrl);
+                    if (webApp.openInvoice) {
+                        webApp.openInvoice(paymentUrl, (status) => {
+                            console.log("Invoice status:", status);
+                            if (status === "paid") {
+                                startPaymentPolling(currentPurchaseId);
+                            }
+                        });
+                    } else {
+                        webApp.openLink(paymentUrl);
+                    }
 
                     // Показываем инструкции
                     setToast(t.paymentOpened || "Открываем страницу оплаты...");
