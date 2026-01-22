@@ -110,7 +110,26 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
         try {
             setLoadingPurchases(true);
             const purchasesData = await apiClient.getCompatibilityPurchases(userId);
-            setPurchases(purchasesData || []);
+
+            console.log("Loaded purchases from API:", purchasesData); // Отладка
+
+            // Проверяем и нормализуем данные
+            const normalizedPurchases = Array.isArray(purchasesData)
+                ? purchasesData.map(p => ({
+                    id: p.id || p._id,
+                    userId: p.userId,
+                    targetType: p.targetType,
+                    targetId: p.targetId,
+                    status: p.status || 'pending',
+                    displayName: p.displayName,
+                    displayNameRu: p.displayNameRu,
+                    displayNameEn: p.displayNameEn,
+                    createdAt: p.createdAt || p.purchaseDate,
+                    resultReady: p.resultReady || false
+                }))
+                : [];
+
+            setPurchases(normalizedPurchases);
         } catch (e) {
             console.error("load purchases error", e);
             setPurchaseError(t.purchaseLoadError || "Ошибка загрузки покупок");
@@ -234,26 +253,23 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
 
         setIsBuying(true);
         setPurchaseError(null);
-
-        const targetType = targetMode === "invited" ? "invited" : "type";
         let targetId = selectedTargetId;
 
         try {
-            // Если выбран тип личности, получаем его данные для передачи на бэкенд
-            if (targetType === "type") {
+            // Если выбран тип личности, получаем его данные
+            if (targetMode === "type") {
                 const selectedType = typeOptions.find(opt => opt.typeId === selectedTargetId);
                 if (!selectedType) {
                     throw new Error("Выбранный тип не найден");
                 }
-                // Передаем тип личности (например, "INFJ", "ENFP" и т.д.)
                 targetId = selectedType.typeId;
             }
 
             // 1. Создаем инвойс в системе
             const invoice = await apiClient.createCompatibilityInvoice({
                 userId,
-                targetType,
-                targetId: targetId, // тип личности или ID приглашенного пользователя
+                selectedTargetId,
+                targetId: targetId,
             });
 
             if (!invoice?.purchaseId) {
@@ -264,90 +280,50 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
 
             // 2. Проверяем, находимся ли мы в Telegram WebApp
             const isTelegramWebApp = window.Telegram?.WebApp;
+            const webApp = window.Telegram?.WebApp;
 
-            if (isTelegramWebApp) {
-                const webApp = window.Telegram.WebApp;
+            if (isTelegramWebApp && webApp) {
+                console.log("В Telegram WebApp, используем встроенные методы");
 
-                // Вариант 1: Если есть invoice_url для прямого открытия
-                if (invoice.invoice_url) {
-                    console.log("Using openInvoice with direct invoice_url");
+                // Всегда используем openLink для открытия внутри Telegram
+                // openLink открывает ссылки во встроенном браузере Telegram
+                if (invoice.telegramInvoiceLink || invoice.invoice_url) {
+                    const paymentUrl = invoice.telegramInvoiceLink || invoice.invoice_url;
 
-                    // Обработчик закрытия инвойса
-                    const handleInvoiceClosed = (event) => {
-                        console.log("Invoice closed event:", event);
+                    // Открываем во встроенном браузере Telegram
+                    webApp.openLink(paymentUrl);
 
-                        // Удаляем обработчик после использования
-                        webApp.offEvent('invoiceClosed', handleInvoiceClosed);
+                    // Показываем инструкции
+                    setToast(t.paymentOpened || "Открываем страницу оплаты...");
 
-                        if (event.status === 'paid') {
-                            handleSuccessfulPayment(currentPurchaseId);
-                        } else {
-                            setPurchaseError(t.paymentFailed || "Оплата отменена");
-                            setIsBuying(false);
-                        }
-                    };
+                    // Начинаем отслеживать статус
+                    startPaymentPolling(currentPurchaseId);
 
-                    // Добавляем обработчик события
-                    webApp.onEvent('invoiceClosed', handleInvoiceClosed);
-
-                    // Открываем инвойс
-                    try {
-                        webApp.openInvoice(invoice.invoice_url, (status) => {
-                            console.log("openInvoice callback status:", status);
-                            // Этот колбэк может не вызываться в некоторых версиях
-                        });
-                    } catch (tgError) {
-                        console.error("Telegram openInvoice error:", tgError);
-                        fallbackPayment(invoice, currentPurchaseId);
-                    }
-
-                }
-                // Вариант 2: Если есть telegramInvoiceLink (старый формат)
-                else if (invoice.telegramInvoiceLink) {
-                    console.log("Using telegramInvoiceLink");
-
-                    // Проверяем формат ссылки
-                    const isInvoiceLink = invoice.telegramInvoiceLink.includes('/invoice/');
-
-                    if (isInvoiceLink && webApp.openInvoice) {
-                        // Пробуем открыть как инвойс
-                        try {
-                            webApp.openInvoice(invoice.telegramInvoiceLink, (status) => {
-                                if (status === 'paid') {
-                                    handleSuccessfulPayment(currentPurchaseId);
-                                } else {
-                                    setPurchaseError(t.paymentFailed || "Оплата не завершена");
-                                    setIsBuying(false);
-                                }
-                            });
-                        } catch (error) {
-                            console.error("Failed to open invoice, falling back to link:", error);
-                            webApp.openLink(invoice.telegramInvoiceLink);
-                            startPaymentPolling(currentPurchaseId);
-                        }
-                    } else {
-                        // Открываем как обычную ссылку
-                        webApp.openLink(invoice.telegramInvoiceLink);
-                        startPaymentPolling(currentPurchaseId);
-                    }
-                } else {
-                    throw new Error("Нет доступного метода оплаты");
-                }
-
-            } else {
-                // Не в Telegram - открываем в браузере
-                console.log("Not in Telegram WebApp, opening in browser");
-
-                if (invoice.telegramInvoiceLink) {
-                    window.open(invoice.telegramInvoiceLink, "_blank");
-                } else if (invoice.invoice_url) {
-                    window.open(invoice.invoice_url, "_blank");
                 } else {
                     throw new Error("Нет ссылки для оплаты");
                 }
 
-                showPaymentInstructions();
-                startPaymentPolling(currentPurchaseId);
+            } else {
+                // Не в Telegram - открываем в новом окне
+                console.log("Не в Telegram, открываем в новом окне");
+
+                const paymentUrl = invoice.telegramInvoiceLink || invoice.invoice_url;
+                if (paymentUrl) {
+                    // Открываем в новом окне
+                    const newWindow = window.open(paymentUrl, "_blank");
+                    if (!newWindow) {
+                        // Если блокировщик всплывающих окон заблокировал
+                        setPurchaseError(t.popupBlocked ||
+                            "Разрешите всплывающие окна для этого сайта или скопируйте ссылку: " + paymentUrl);
+                        setIsBuying(false);
+                        return;
+                    }
+
+                    showPaymentInstructions();
+                    startPaymentPolling(currentPurchaseId);
+                } else {
+                    throw new Error("Нет ссылки для оплаты");
+                }
             }
 
         } catch (e) {
@@ -476,55 +452,103 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
             );
         }
 
-        // Фильтруем только оплаченные или завершенные покупки
-        const validPurchases = (purchases || []).filter(p =>
-            p.status === "paid" || p.status === "completed" || p.resultReady
-        );
+        console.log("All purchases:", purchases); // Добавьте для отладки
+
+        // Фильтруем покупки - показываем все, но с разными статусами
+        const validPurchases = purchases || [];
 
         if (validPurchases.length === 0) {
             return <div className="text-xs text-gray-500">{t.purchaseNone}</div>;
         }
 
+        // Сортируем по дате (новые сверху)
+        const sortedPurchases = [...validPurchases].sort((a, b) =>
+            new Date(b.createdAt) - new Date(a.createdAt)
+        );
+
         return (
             <div className="space-y-2">
-                {validPurchases.map((p) => (
-                    <div
-                        key={p.id}
-                        className="flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50 px-3 py-2"
-                    >
-                        <div>
-                            <div className="text-sm font-semibold text-gray-900">
-                                {lang === "ru"
-                                    ? p.displayNameRu || p.displayName || p.targetId
-                                    : p.displayNameEn || p.displayName || p.targetId}
+                {sortedPurchases.map((p) => {
+                    // Определяем статус покупки
+                    const isPaid = p.status === "paid" || p.status === "completed" || p.resultReady;
+                    const isPending = p.status === "pending" || !p.status;
+                    const isFailed = p.status === "failed" || p.status === "canceled";
+
+                    // Получаем отображаемое имя
+                    let displayName = p.targetId;
+
+                    // Если это тип личности, находим его данные
+                    if (p.targetType === "type") {
+                        const typeData = typeOptions.find(opt => opt.typeId === p.targetId);
+                        if (typeData) {
+                            displayName = formatTypeLabel(typeData, lang);
+                        }
+                    }
+                    // Если это приглашенный пользователь
+                    else if (p.targetType === "invited" && p.displayName) {
+                        displayName = p.displayName;
+                    }
+
+                    return (
+                        <div
+                            key={p.id}
+                            className="flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50 px-3 py-2"
+                        >
+                            <div className="flex-1 min-w-0">
+                                <div className="text-sm font-semibold text-gray-900 truncate">
+                                    {displayName}
+                                    {p.targetType === "type" && (
+                                        <span className="text-xs text-gray-400 ml-1">
+                                        ({p.targetId})
+                                    </span>
+                                    )}
+                                </div>
+                                <div className="text-[11px] text-gray-500">
+                                    {new Date(p.createdAt).toLocaleDateString(lang === "ru" ? "ru-RU" : "en-US", {
+                                        day: 'numeric',
+                                        month: 'short',
+                                        year: 'numeric'
+                                    })}
+                                    {p.status && ` • ${getStatusText(p.status, t)}`}
+                                </div>
                             </div>
-                            <div className="text-[11px] text-gray-500">
-                                {t.purchaseDate} {new Date(p.createdAt).toLocaleDateString()}
-                                {p.status && ` • ${p.status}`}
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                            <span className={`text-[11px] px-2 py-1 rounded-full whitespace-nowrap ${
+                                isPaid ? "bg-emerald-50 text-emerald-600" :
+                                    isPending ? "bg-yellow-50 text-yellow-600" :
+                                        "bg-red-50 text-red-600"
+                            }`}>
+                                {isPaid ? t.purchasePaid :
+                                    isPending ? (t.purchasePending || "Ожидание") :
+                                        (t.purchaseFailed || "Ошибка")}
+                            </span>
+                                {isPaid && (
+                                    <button
+                                        type="button"
+                                        onClick={() => openPurchaseResult(p.id)}
+                                        className="text-xs font-semibold text-blue-600 hover:underline whitespace-nowrap"
+                                    >
+                                        {t.purchaseOpen}
+                                    </button>
+                                )}
                             </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                        <span className={`text-[11px] px-2 py-1 rounded-full ${
-                            (p.status === "paid" || p.status === "completed" || p.resultReady)
-                                ? "bg-emerald-50 text-emerald-600"
-                                : "bg-yellow-50 text-yellow-600"
-                        }`}>
-                            {p.status === "paid" || p.status === "completed" || p.resultReady ? t.purchasePaid : "Ожидание"}
-                        </span>
-                            {(p.status === "paid" || p.status === "completed" || p.resultReady) && (
-                                <button
-                                    type="button"
-                                    onClick={() => openPurchaseResult(p.id)}
-                                    className="text-xs font-semibold text-blue-600 hover:underline"
-                                >
-                                    {t.purchaseOpen}
-                                </button>
-                            )}
-                        </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         );
+    };
+
+// Вспомогательная функция для перевода статусов
+    const getStatusText = (status, t) => {
+        const statusMap = {
+            'pending': t.purchasePending || 'В ожидании',
+            'paid': t.purchasePaid || 'Оплачено',
+            'completed': t.purchaseCompleted || 'Завершено',
+            'failed': t.purchaseFailed || 'Ошибка',
+            'canceled': t.purchaseCanceled || 'Отменено'
+        };
+        return statusMap[status] || status;
     };
 
     const renderTargetSelector = () => {
