@@ -253,23 +253,46 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
 
         setIsBuying(true);
         setPurchaseError(null);
+
+        // Определяем targetType и targetId
+        const targetType = targetMode === "invited" ? "invited" : "type";
         let targetId = selectedTargetId;
 
-        try {
-            // Если выбран тип личности, получаем его данные
-            if (targetMode === "type") {
-                const selectedType = typeOptions.find(opt => opt.typeId === selectedTargetId);
-                if (!selectedType) {
-                    throw new Error("Выбранный тип не найден");
-                }
-                targetId = selectedType.typeId;
+        // Для типа личности получаем typeId
+        if (targetType === "type") {
+            const selectedType = typeOptions.find(opt => opt.typeId === selectedTargetId);
+            if (!selectedType) {
+                setPurchaseError("Выбранный тип не найден");
+                setIsBuying(false);
+                return;
             }
+            targetId = selectedType.typeId;
+        }
+        // Для приглашенного пользователя проверяем, что он существует
+        else if (targetType === "invited") {
+            const invitedUser = completedInvited.find(item => item.invitedUserId === selectedTargetId);
+            if (!invitedUser) {
+                setPurchaseError("Выбранный пользователь не найден");
+                setIsBuying(false);
+                return;
+            }
+            targetId = invitedUser.invitedUserId;
+        }
 
+        // Логируем отправляемые данные для отладки
+        console.log("Sending purchase request:", {
+            userId,
+            targetType,
+            targetId,
+            price: price.priceStars
+        });
+
+        try {
             // 1. Создаем инвойс в системе
             const invoice = await apiClient.createCompatibilityInvoice({
                 userId,
-                selectedTargetId,
-                targetId: targetId,
+                targetType, // Убедимся, что это не null
+                targetId,   // Убедимся, что это не null
             });
 
             if (!invoice?.purchaseId) {
@@ -286,7 +309,6 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
                 console.log("В Telegram WebApp, используем встроенные методы");
 
                 // Всегда используем openLink для открытия внутри Telegram
-                // openLink открывает ссылки во встроенном браузере Telegram
                 if (invoice.telegramInvoiceLink || invoice.invoice_url) {
                     const paymentUrl = invoice.telegramInvoiceLink || invoice.invoice_url;
 
@@ -312,7 +334,6 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
                     // Открываем в новом окне
                     const newWindow = window.open(paymentUrl, "_blank");
                     if (!newWindow) {
-                        // Если блокировщик всплывающих окон заблокировал
                         setPurchaseError(t.popupBlocked ||
                             "Разрешите всплывающие окна для этого сайта или скопируйте ссылку: " + paymentUrl);
                         setIsBuying(false);
@@ -334,6 +355,8 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
                 setPurchaseError(t.insufficientStars || "Недостаточно звезд");
             } else if (e.message.includes("уже куплено") || e.message.includes("already purchased")) {
                 setPurchaseError(t.alreadyPurchased || "Вы уже покупали эту совместимость");
+            } else if (e.message.includes("targetType") || e.message.includes("null")) {
+                setPurchaseError("Ошибка: тип цели не указан. Попробуйте еще раз.");
             } else {
                 setPurchaseError(e.message || t.purchaseError || "Ошибка при покупке");
             }
