@@ -254,76 +254,127 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
             const currentPurchaseId = invoice.purchaseId;
 
             // 2. Запускаем процесс оплаты через Telegram
+            // 2. Запускаем процесс оплаты через Telegram
             if (window.Telegram && window.Telegram.WebApp) {
-                // Для Mini Apps - используем Telegram Payments
-                const result = await window.Telegram.WebApp.openInvoice({
-                    invoice_url: invoice.telegramInvoiceLink,
-                });
+                console.log("Telegram WebApp detected, invoice URL:", invoice.telegramInvoiceLink);
 
-                if (result.status === "paid") {
-                    // 3. Платеж прошел в Telegram, но нужно дождаться подтверждения от бекенда
-                    setToast(t.paymentProcessing || "Обработка платежа...");
+                // Проверяем тип ссылки
+                const isInvoiceUrl = invoice.telegramInvoiceLink.includes('/invoice/') ||
+                    invoice.telegramInvoiceLink.includes('invoice.t.me');
+                const isDirectBotLink = invoice.telegramInvoiceLink.startsWith('https://t.me/$');
 
-                    // 4. Опрашиваем статус покупки каждые 2 секунды (макс 30 секунд)
-                    let attempts = 0;
-                    const maxAttempts = 15; // 30 секунд максимум
-                    let purchaseConfirmed = false;
+                if (isInvoiceUrl) {
+                    // Это специальный invoice URL для openInvoice()
+                    try {
+                        console.log("Using openInvoice with invoice URL");
+                        const result = await window.Telegram.WebApp.openInvoice({
+                            invoice_url: invoice.telegramInvoiceLink,
+                        });
 
-                    while (attempts < maxAttempts && !purchaseConfirmed) {
-                        await new Promise(resolve => setTimeout(resolve, 2000)); // Ждем 2 сек
+                        if (result.status === "paid") {
+                            await handleSuccessfulPayment(currentPurchaseId);
+                        } else {
+                            throw new Error("Платеж не прошел или был отменен");
+                        }
+                    } catch (tgError) {
+                        console.error("Telegram openInvoice error:", tgError);
+                        // Fallback: открываем как обычную ссылку
+                        window.open(invoice.telegramInvoiceLink, "_blank");
+                        showPaymentInstructions();
+                    }
+                } else if (isDirectBotLink) {
+                    // Это прямая ссылка на бота - открываем в новом окне/вкладке
+                    console.log("Opening direct bot link in new window");
+                    window.open(invoice.telegramInvoiceLink, "_blank");
+                    showPaymentInstructions();
 
-                        try {
-                            // Проверяем статус покупки
-                            const updatedPurchases = await apiClient.getCompatibilityPurchases(userId);
-                            const currentPurchase = updatedPurchases?.find(p => p.id === currentPurchaseId);
+                    // Начинаем отслеживать статус покупки
+                    startPaymentPolling(currentPurchaseId);
+                } else {
+                    // Неизвестный формат - открываем как есть
+                    console.warn("Unknown URL format, opening as is:", invoice.telegramInvoiceLink);
+                    window.open(invoice.telegramInvoiceLink, "_blank");
+                    showPaymentInstructions();
+                    startPaymentPolling(currentPurchaseId);
+                }
+            } else {
+                // Не в Telegram - открываем в браузере
+                console.log("Not in Telegram, opening in browser");
+                window.open(invoice.telegramInvoiceLink, "_blank");
+                showPaymentInstructions();
+                startPaymentPolling(currentPurchaseId);
+            }
 
-                            if (currentPurchase?.status === "paid" || currentPurchase?.resultReady) {
-                                purchaseConfirmed = true;
+// Вспомогательные функции
+            const handleSuccessfulPayment = async (purchaseId) => {
+                setToast(t.paymentProcessing || "Обработка платежа...");
+                await pollPurchaseStatus(purchaseId);
+            };
 
-                                // Обновляем список покупок
-                                setPurchases(updatedPurchases);
+            const showPaymentInstructions = () => {
+                setPurchaseError(t.paymentInstructions ||
+                    "Перейдите на страницу оплаты. После оплаты результат появится в истории покупок.");
+            };
 
-                                // Пытаемся получить результат
-                                const resultData = await apiClient.getCompatibilityResult(currentPurchaseId);
+            const startPaymentPolling = (purchaseId) => {
+                // Запускаем опрос статуса через 3 секунды (дадим время на оплату)
+                setTimeout(() => pollPurchaseStatus(purchaseId), 3000);
+            };
+
+            const pollPurchaseStatus = async (purchaseId) => {
+                let attempts = 0;
+                const maxAttempts = 20; // 40 секунд максимум (каждые 2 сек)
+                let purchaseConfirmed = false;
+
+                while (attempts < maxAttempts && !purchaseConfirmed) {
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    attempts++;
+
+                    try {
+                        const updatedPurchases = await apiClient.getCompatibilityPurchases(userId);
+                        const currentPurchase = updatedPurchases?.find(p => p.id === purchaseId);
+
+                        if (currentPurchase?.status === "paid" || currentPurchase?.resultReady) {
+                            purchaseConfirmed = true;
+
+                            // Обновляем список покупок
+                            setPurchases(updatedPurchases);
+
+                            // Пытаемся получить результат
+                            try {
+                                const resultData = await apiClient.getCompatibilityResult(purchaseId);
                                 if (resultData?.result) {
                                     setActiveResult({
-                                        purchaseId: currentPurchaseId,
+                                        purchaseId: purchaseId,
                                         result: resultData.result,
                                     });
                                 }
-
-                                setToast(t.toastPurchased);
-                                setTimeout(() => setToast(null), 2200);
-                                break;
+                            } catch (resultError) {
+                                console.warn("Could not load result, but purchase is paid:", resultError);
                             }
-                        } catch (e) {
-                            console.warn("Проверка статуса покупки:", e);
+
+                            setToast(t.toastPurchased);
+                            setTimeout(() => setToast(null), 2200);
+                            break;
                         }
 
-                        attempts++;
-                    }
+                        // Прогресс для пользователя (каждые 10 секунд)
+                        if (attempts % 5 === 0) {
+                            setToast(`${t.paymentProcessing || "Обработка платежа..."} (${attempts * 2} сек)`);
+                        }
 
-                    if (!purchaseConfirmed) {
-                        // Если не подтвердилось, все равно обновляем список покупок
-                        await loadPurchases();
-                        setToast(t.paymentProcessingSlow || "Платеж обрабатывается, результат появится позже");
-                        setTimeout(() => setToast(null), 3000);
+                    } catch (e) {
+                        console.warn("Проверка статуса покупки:", e);
                     }
-                } else {
-                    // Платеж отменен или не прошел в Telegram
-                    throw new Error("Платеж не прошел или был отменен");
                 }
-            } else {
-                // Для WebApp (если не в Telegram)
-                // Открываем стандартную страницу оплаты
-                window.open(invoice.telegramInvoiceLink, "_blank");
 
-                // Показываем инструкцию
-                setPurchaseError(t.paymentInstructions || "Перейдите на страницу оплаты. После оплаты результат появится в истории покупок.");
-
-                // Обновляем список покупок через 5 секунд на случай быстрой оплаты
-                setTimeout(() => loadPurchases(), 5000);
-            }
+                if (!purchaseConfirmed) {
+                    await loadPurchases();
+                    setToast(t.paymentProcessingSlow ||
+                        "Платеж обрабатывается. Обновите историю покупок через несколько минут.");
+                    setTimeout(() => setToast(null), 4000);
+                }
+            };
 
         } catch (e) {
             console.error("purchase compatibility error", e);
