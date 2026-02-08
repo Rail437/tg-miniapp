@@ -324,9 +324,6 @@ export function CompatibilitySection({userId, lastResult, compatibilityEnabled})
                         webApp.openLink(paymentUrl);
                     }
 
-                    // Показываем инструкции
-                    setToast(t.paymentOpened || "Открываем страницу оплаты...");
-
                     // Начинаем отслеживать статус
                     startPaymentPolling(currentPurchaseId);
 

@@ -170,15 +170,55 @@ export async function getClientProfile(userId) {
     });
 }
 
+// realApiClient.js - обновляем функции для работы с колесом баланса
+// realApiClient.js
 export async function submitLiveWheel(payload) {
+    // Формируем payload в правильном формате
+    const formattedPayload = {
+        userId: payload.userId,
+        values: payload.values,
+        spheres: payload.spheres || Object.keys(payload.values),
+        completedAt: payload.completedAt || new Date().toISOString(),
+        metadata: payload.metadata || {
+            lang: payload.metadata?.lang || 'ru',
+            version: '1.0',
+            platform: 'web'
+        }
+    };
+
     return request("/live/wheel", {
         method: "POST",
-        body: JSON.stringify(payload),
+        body: JSON.stringify(formattedPayload),
     });
 }
 
 export async function getLastLiveWheel(userId) {
-    return request(`/live/wheel/last?userId=${userId}`, {method: "GET"});
+    try {
+        const response = await request(`/live/wheel/last?userId=${encodeURIComponent(userId)}`, {
+            method: "GET",
+        });
+
+        // Если 204 No Content
+        if (!response) {
+            return null;
+        }
+
+        // Проверяем структуру ответа
+        if (response.success === false || !response.data) {
+            console.warn(`Invalid response format for userId: ${userId}`, response);
+            return null;
+        }
+
+        return response.data;
+
+    } catch (error) {
+        // Если 204 или 404 - это нормально (нет данных)
+        if (error.message.includes('204') || error.message.includes('404')) {
+            return null;
+        }
+        console.error(`Error fetching wheel data for userId: ${userId}`, error);
+        throw error;
+    }
 }
 
 // --- Совместимость ---

@@ -15,6 +15,7 @@ function loadDb() {
                 referrals: [],
                 referralUses: [],
                 compatibilityPurchases: [],
+                wheelResults: [],
             };
         }
         const data = JSON.parse(raw);
@@ -30,6 +31,7 @@ function loadDb() {
             referrals: [],
             referralUses: [],
             compatibilityPurchases: [],
+            wheelResults: [],
         };
     }
 }
@@ -407,23 +409,70 @@ export async function getClientProfile(userId) {
     };
 }
 
+// В mockApiClient.js ДОБАВЛЯЕМ/ОБНОВЛЯЕМ следующие функции:
 export async function submitLiveWheel(payload) {
     await delay();
-    // просто сохраняем как "последняя отправка" — для отладки
-    try {
-        localStorage.setItem("innercode_mock_live_wheel_last_submit", JSON.stringify(payload));
-    } catch {}
-    return { ok: true };
+
+    const db = loadDb();
+
+    // Сохраняем результат колеса
+    const wheelResult = {
+        id: generateId("wheel"),
+        userId: payload.userId,
+        values: payload.values,
+        spheres: payload.spheres || Object.keys(payload.values || {}),
+        metadata: payload.metadata || {},
+        completedAt: payload.completedAt || new Date().toISOString(),
+        createdAt: new Date().toISOString()
+    };
+
+    // Сохраняем в базу
+    if (!db.wheelResults) {
+        db.wheelResults = [];
+    }
+
+    // Удаляем старый результат пользователя, если есть
+    db.wheelResults = db.wheelResults.filter(w => w.userId !== payload.userId);
+    db.wheelResults.push(wheelResult);
+
+    saveDb(db);
+
+    return {
+        ok: true,
+        data: {
+            id: wheelResult.id,
+            values: wheelResult.values,
+            createdAt: wheelResult.createdAt
+        }
+    };
 }
 
 export async function getLastLiveWheel(userId) {
     await delay();
-    const raw = localStorage.getItem(`innercode_live_wheel_${userId}`);
-    if (!raw) return null;
+
+    const db = loadDb();
+
+    if (!db.wheelResults || !Array.isArray(db.wheelResults)) {
+        return null; // Нет данных
+    }
+
+    // Ищем последний результат пользователя
+    const lastResult = db.wheelResults
+        .filter(w => w.userId === userId)
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+
+    if (!lastResult) {
+        return null; // Нет результатов
+    }
+
     return {
-        userId,
-        values: JSON.parse(raw),
-        createdAt: new Date().toISOString(),
+        success: true,
+        data: {
+            id: lastResult.id,
+            values: lastResult.values,
+            createdAt: lastResult.createdAt,
+            spheres: lastResult.spheres
+        }
     };
 }
 
