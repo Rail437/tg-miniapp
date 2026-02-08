@@ -392,6 +392,7 @@ export async function submitStory({userId, text}) {
     console.log("userId:" + userId)
     console.log("text:" + text)
 }
+
 /**
  * Профиль клиента (фича-флаги)
  */
@@ -476,8 +477,137 @@ export async function getLastLiveWheel(userId) {
     };
 }
 
-// --- Совместимость: моковая реализация ---
+//ценности
 
+// Получение начальных ценностей
+// mockApiClient.js
+export async function getInitialValues() {
+    console.log("[MOCK] Getting initial values");
+
+    // Имитируем задержку сети
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    return {
+        success: true,
+        data: [] // Пустой массив, компонент будет использовать статические данные
+    };
+}
+
+// mockApiClient.js - добавим логирование автосохранения
+// mockApiClient.js - в функции saveFinalValues
+export async function saveFinalValues({ userId, values }) {
+    console.log("[MOCK] Saving values for userId:", userId);
+
+    // Имитируем задержку
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    try {
+        const key = `user_${userId}_values`;
+        const existingDataStr = localStorage.getItem(key);
+        let allValuesData = {};
+
+        if (existingDataStr) {
+            try {
+                allValuesData = JSON.parse(existingDataStr);
+            } catch (e) {
+                allValuesData = {};
+            }
+        }
+
+        const newEntry = {
+            id: Date.now(),
+            values: values,
+            savedAt: new Date().toISOString(),
+            version: "1.0",
+            saveMethod: "on_continue_button" // Добавляем метку
+        };
+
+        if (!allValuesData.history) {
+            allValuesData.history = [];
+        }
+
+        allValuesData.history.push(newEntry);
+        allValuesData.latest = newEntry;
+        allValuesData.userId = userId;
+        allValuesData.lastUpdated = newEntry.savedAt;
+        allValuesData.totalSaves = allValuesData.history.length;
+
+        localStorage.setItem(key, JSON.stringify(allValuesData));
+
+        console.log("[MOCK] Saved via continue button:", newEntry.savedAt);
+
+        return {
+            success: true,
+            message: 'Values saved successfully',
+            data: newEntry
+        };
+
+    } catch (error) {
+        console.error("[MOCK] Error saving values:", error);
+        return {
+            success: false,
+            error: 'Failed to save values'
+        };
+    }
+}
+
+// Дополнительный метод для получения сохраненных значений
+// mockApiClient.js - обновим getSavedValues
+export async function getSavedValues(userId) {
+    console.log("[MOCK] Getting saved values for userId:", userId);
+
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    try {
+        // Сначала проверяем основной ключ
+        const key = `user_${userId}_values`;
+        const dataStr = localStorage.getItem(key);
+
+        if (dataStr) {
+            const data = JSON.parse(dataStr);
+            const latestData = data.latest || (data.history && data.history[data.history.length - 1]);
+
+            if (latestData) {
+                return {
+                    success: true,
+                    data: latestData,
+                    fullData: data,
+                    message: 'Found saved values'
+                };
+            }
+        }
+
+        // Если нет в основном ключе, проверяем fallback
+        const fallbackKey = `user_${userId}_values_fallback`;
+        const fallbackStr = localStorage.getItem(fallbackKey);
+
+        if (fallbackStr) {
+            const fallbackData = JSON.parse(fallbackStr);
+            return {
+                success: true,
+                data: fallbackData,
+                message: 'Found fallback saved values'
+            };
+        }
+
+        // Если ничего не найдено
+        return {
+            success: true,
+            data: null,
+            message: 'No saved values found'
+        };
+
+    } catch (error) {
+        console.error("[MOCK] Error getting saved values:", error);
+        return {
+            success: false,
+            error: 'Failed to retrieve values',
+            data: null
+        };
+    }
+}
+
+// --- Совместимость: моковая реализация ---
 export async function getCompatibilityPrice() {
     await delay();
     return {

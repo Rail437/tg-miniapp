@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react";
 import {motion} from "framer-motion";
 import {useTranslation} from "../i18n";
 import {WheelOfLife} from "./live/WheelOfLife";
+import {ValuesSection} from "./live/ValuesSection";
 import {apiClient} from "../api/apiClient";
 
 export const LiveSection = ({userId}) => {
@@ -10,6 +11,7 @@ export const LiveSection = ({userId}) => {
     const [activeFeature, setActiveFeature] = useState(null);
     const [wheelData, setWheelData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [savedValues, setSavedValues] = useState(null);
 
     // Загружаем последние данные колеса баланса при открытии
     useEffect(() => {
@@ -56,15 +58,15 @@ export const LiveSection = ({userId}) => {
             hasData: !!wheelData
         },
         {
-            id: 'coming-soon-1',
+            id: 'values', // Изменено с 'coming-soon-1'
             title: lang === "ru" ? "Ценности" : "Values",
             description: lang === "ru"
                 ? "Определите свои жизненные ценности"
                 : "Define your life values",
             icon: "💎",
             color: "from-amber-500 to-orange-500",
-            stats: lang === "ru" ? "Скоро" : "Coming soon",
-            disabled: true
+            stats: lang === "ru" ? "Определите важное" : "Define what matters",
+            disabled: false // Изменено с true
         },
         {
             id: 'coming-soon-2',
@@ -93,6 +95,13 @@ export const LiveSection = ({userId}) => {
             userId={userId}
             onBack={() => setActiveFeature(null)}
             initialData={wheelData} // Передаем начальные данные
+        />;
+    }
+
+    if (activeFeature === 'values') {
+        return <ValuesSection
+            userId={userId}
+            onBack={() => setActiveFeature(null)}
         />;
     }
 

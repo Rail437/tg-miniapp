@@ -105,6 +105,12 @@ export const apiClient = {
     submitLiveWheel: impl.submitLiveWheel,
     getLastLiveWheel: impl.getLastLiveWheel,
 
+    // Методы для ценностей
+    getInitialValues: impl.getInitialValues,
+    saveFinalValues: impl.saveFinalValues,
+    getSavedValues: impl.getSavedValues || (async () => ({ success: false, data: null })),
+    // Fallback если не реализовано
+
     // совместимость
     getCompatibilityPrice: impl.getCompatibilityPrice, //цена совместимости
     getCompatibilityPurchases: impl.getCompatibilityPurchases, //получение списка покупок пользователя
