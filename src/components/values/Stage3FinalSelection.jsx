@@ -31,8 +31,13 @@ export const Stage3FinalSelection = ({
                             </h3>
                             <p className="text-sm text-gray-600">
                                 {lang === "ru"
-                                    ? "Нажмите 'Продолжить', чтобы сохранить результат и посмотреть рекомендации"
-                                    : "Click 'Continue' to save the results and view recommendations"}
+                                    ? `Порядок важности: 1. ${stepThreeValues.find(v => v.order === 1)?.text} 
+                                    → 2. ${stepThreeValues.find(v => v.order === 2)?.text} 
+                                    → 3. ${stepThreeValues.find(v => v.order === 3)?.text}`
+                                    : `Priority order: 1. ${stepThreeValues.find(v => v.order === 1)?.text} 
+                                    → 2. ${stepThreeValues.find(v => v.order === 2)?.text} 
+                                    → 3. ${stepThreeValues.find(v => v.order === 3)?.text}`
+                                }
                             </p>
                         </div>
                     </div>
@@ -78,9 +83,7 @@ export const Stage3FinalSelection = ({
                             {/* Индикатор выбора */}
                             {isSelected && (
                                 <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold">
-                                    {stepThreeValues
-                                        .filter(v => v.selected)
-                                        .findIndex(v => v.id === value.id) + 1}
+                                    {value.order} {/* ← ПРОСТО используем поле order */}
                                 </div>
                             )}
                         </motion.button>

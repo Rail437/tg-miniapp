@@ -36,19 +36,14 @@ export const ValuesSection = ({ userId, onBack }) => {
                 // Проверяем сохраненные значения
                 if (userId) {
                     try {
-                        const savedResponse = await apiClient.getSavedValues(userId);
-                        if (savedResponse?.success && savedResponse.data) {
+                        const savedData = await getSavedUserValues(userId, lang);
+                        if (savedData) {
                             setHasSavedValues(true);
-                            setSavedValuesData(savedResponse.data);
+                            setSavedValuesData(savedData);
 
-                            if (savedResponse.data.values && Array.isArray(savedResponse.data.values)) {
-                                const formattedValues = savedResponse.data.values.map(value => ({
-                                    ...value,
-                                    selected: true
-                                }));
-                                setStepThreeValues(formattedValues);
-                                setStep(4);
-                            }
+                            // Устанавливаем сохраненные значения
+                            setStepThreeValues(savedData.values);
+                            setStep(4);
                         }
                     } catch (savedError) {
                         console.log("No saved values found:", savedError);
@@ -113,40 +108,65 @@ export const ValuesSection = ({ userId, onBack }) => {
 
     const handleGoToStep3 = () => {
         if (stepTwoValues.length === 6) {
-            const valuesForStep3 = stepTwoValues.map(v => ({ ...v, selected: false }));
+            const valuesForStep3 = stepTwoValues.map(v => ({
+                ...v,
+                selected: false,
+                order: null
+            }));
             setStepThreeValues(valuesForStep3);
             setStep(3);
         }
     };
 
     // Этап 3: Выбор финальных 3 ценностей
-    const handleSelectFinalValue = (value) => {
-        const isAlreadySelected = value.selected;
-        const selectedCount = stepThreeValues.filter(v => v.selected).length;
+    // Этап 3: Выбор финальных 3 ценностей (с порядком важности)
+    const handleSelectFinalValue = (clickedValue) => {
+        const isAlreadySelected = clickedValue.selected;
+        const selectedValues = stepThreeValues.filter(v => v.selected);
+        const selectedCount = selectedValues.length;
 
+        // Если уже выбрано 3 и пытаемся выбрать новую - не разрешаем
         if (selectedCount >= 3 && !isAlreadySelected) return;
 
-        const updatedValues = stepThreeValues.map(v => {
-            if (v.id === value.id) {
-                return { ...v, selected: !isAlreadySelected };
-            }
-            return v;
-        });
+        let updatedValues;
+
+        if (isAlreadySelected) {
+            // УДАЛЯЕМ из выбранных
+            const removedOrder = clickedValue.order;
+
+            updatedValues = stepThreeValues.map(v => {
+                if (v.id === clickedValue.id) {
+                    // Снимаем выбор и очищаем порядок
+                    return { ...v, selected: false, order: null };
+                }
+                // Уменьшаем порядок у тех, кто был после удаленной
+                if (v.selected && v.order > removedOrder) {
+                    return { ...v, order: v.order - 1 };
+                }
+                return v;
+            });
+        } else {
+            // ДОБАВЛЯЕМ новую выбранную
+            const newOrder = selectedCount + 1;
+
+            updatedValues = stepThreeValues.map(v => {
+                if (v.id === clickedValue.id) {
+                    // Ставим выбор и присваиваем порядок
+                    return { ...v, selected: true, order: newOrder };
+                }
+                return v;
+            });
+        }
 
         setStepThreeValues(updatedValues);
     };
 
     // Сохранение и переход к этапу 4
     const handleSaveAndContinue = async () => {
+        // Сортируем выбранные ценности по порядку выбора (1, 2, 3)
         const finalValues = stepThreeValues
             .filter(v => v.selected)
-            .map(({ id, text, icon, actions }) => ({
-                id,
-                text,
-                icon,
-                actions,
-                savedAt: new Date().toISOString()
-            }));
+            .sort((a, b) => a.order - b.order); // ← ВАЖНО: сортируем по порядку!
 
         if (finalValues.length !== 3) {
             setSaveError(lang === "ru"
@@ -159,20 +179,30 @@ export const ValuesSection = ({ userId, onBack }) => {
             setIsSaving(true);
             setSaveError(null);
 
-            const response = await apiClient.saveFinalValues({
-                userId,
-                values: finalValues
-            });
+            // Форматируем данные
+            const valuesForSave = formatValuesForSave(finalValues, lang);
 
-            if (response?.success) {
-                // Обновляем состояние
-                setHasSavedValues(true);
-                setSavedValuesData(response.data);
+            // Session data для аналитики
+            const sessionData = {
+                stage1Selected: selectedValues.map(v => v.code || v.id),
+                stage2Removed: removedValues.map(v => v.code || v.id),
+                stage3Final: finalValues.map(v => v.code || v.id)
+            };
 
-                // Переходим к этапу 4
-                setStep(4);
+            // Сохраняем через новый API
+            const response = await saveUserValuesToApi(userId, valuesForSave, sessionData);
+
+            if (response.success) {
+                // Получаем обновленные данные
+                const savedData = await getSavedUserValues(userId, lang);
+                if (savedData) {
+                    setHasSavedValues(true);
+                    setSavedValuesData(savedData);
+                    setStepThreeValues(savedData.values);
+                    setStep(4);
+                }
             } else {
-                throw new Error(response?.error || 'Save failed');
+                throw new Error(response.error || 'Save failed');
             }
 
         } catch (error) {
@@ -181,23 +211,7 @@ export const ValuesSection = ({ userId, onBack }) => {
                 ? "Ошибка сохранения. Попробуйте еще раз."
                 : "Save error. Please try again.");
 
-            // Fallback: сохраняем в localStorage
-            try {
-                const fallbackData = {
-                    userId,
-                    values: finalValues,
-                    savedAt: new Date().toISOString(),
-                    savedViaFallback: true
-                };
-
-                localStorage.setItem(`user_${userId}_values_fallback`, JSON.stringify(fallbackData));
-                setHasSavedValues(true);
-                setSavedValuesData(fallbackData);
-                setStep(4); // Все равно переходим к рекомендациям
-
-            } catch (fallbackError) {
-                console.error("Fallback save also failed:", fallbackError);
-            }
+            // Fallback логика...
         } finally {
             setIsSaving(false);
         }

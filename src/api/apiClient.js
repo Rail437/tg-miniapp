@@ -106,10 +106,19 @@ export const apiClient = {
     getLastLiveWheel: impl.getLastLiveWheel,
 
     // Методы для ценностей
+    // Старые методы (оставляем для совместимости)
     getInitialValues: impl.getInitialValues,
     saveFinalValues: impl.saveFinalValues,
-    getSavedValues: impl.getSavedValues || (async () => ({ success: false, data: null })),
-    // Fallback если не реализовано
+    getSavedValues: impl.getSavedValues,
+
+    // Новые методы для работы с БД
+    getValues: impl.getValues || (async () => ({success: true, data: []})),
+    saveUserValues: impl.saveUserValues || (async () => ({success: false, error: 'Not implemented'})),
+    getUserValues: impl.getUserValues || (async () => ({success: true, data: null})),
+    // Хелпер для определения доступности новых методов
+    hasNewApi: () => {
+        return !!impl.getValues && !!impl.saveUserValues && !!impl.getUserValues;
+    },
 
     // совместимость
     getCompatibilityPrice: impl.getCompatibilityPrice, //цена совместимости

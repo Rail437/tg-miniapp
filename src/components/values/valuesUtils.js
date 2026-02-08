@@ -1,56 +1,155 @@
-// valuesUtils.js
-import { getValuesWithActions } from '../../data/valuesData';
+// values/valuesUtils.js
+import { apiClient } from "../../api/apiClient";
 
-// Функция для перемешивания массива
-export const shuffleArray = (array) => {
-    return [...array].sort(() => Math.random() - 0.5);
-};
+// Экспортируем ВСЕ функции которые использует ValuesSection.jsx
 
-// Получение инструкции для этапа
-export const getStageInstruction = (step, lang, data = {}) => {
-    switch(step) {
-        case 1:
-            return lang === "ru"
-                ? "Выберите 10 ценностей, которые наиболее важны для вас"
-                : "Choose 10 values that are most important to you";
-        case 2:
-            const toRemove = 4 - (data.removedCount || 0);
-            return lang === "ru"
-                ? `Уберите ${toRemove} ${getRussianWordForm(toRemove, ['ценность', 'ценности', 'ценностей'])} без которых вы могли бы прожить`
-                : `Remove ${toRemove} value${toRemove !== 1 ? 's' : ''} you could live without`;
-        case 3:
-            const selectedCount = data.selectedCount || 0;
-            const remaining = 3 - selectedCount;
-            return lang === "ru"
-                ? `Выберите ${remaining} ${getRussianWordForm(remaining, ['ценность', 'ценности', 'ценностей'])} без которых вам было бы очень тяжело`
-                : `Choose ${remaining} value${remaining !== 1 ? 's' : ''} you couldn't live without`;
-        case 4:
-            return lang === "ru"
-                ? "Ваши ключевые ценности и рекомендации для интеграции в жизнь"
-                : "Your key values and recommendations for integration into life";
-        default:
-            return "";
-    }
-};
-
-// Функция для правильного склонения русских слов
-const getRussianWordForm = (number, forms) => {
-    number = Math.abs(number) % 100;
-    const lastDigit = number % 10;
-
-    if (number > 10 && number < 20) return forms[2];
-    if (lastDigit === 1) return forms[0];
-    if (lastDigit >= 2 && lastDigit <= 4) return forms[1];
-    return forms[2];
-};
-
-// Загрузка начальных ценностей
+// 1. Функция загрузки начальных значений
 export const loadInitialValues = async (lang) => {
     try {
-        const valuesWithActions = getValuesWithActions(lang);
-        return shuffleArray(valuesWithActions);
+        // Пробуем получить данные из нового API
+        if (apiClient.hasNewApi && apiClient.hasNewApi()) {
+            const response = await apiClient.getValues(lang);
+
+            if (response.success && response.data) {
+                // Преобразуем ответ API в формат фронтенда
+                const values = response.data.map(item => ({
+                    id: item.id,
+                    code: item.code,
+                    text: lang === "ru" ? item.textRu : item.textEn,
+                    icon: item.icon,
+                    actions: lang === "ru" ? item.actionsRu : item.actionsEn,
+                    textRu: item.textRu,
+                    textEn: item.textEn,
+                    actionsRu: item.actionsRu,
+                    actionsEn: item.actionsEn
+                }));
+
+                return [...values].sort(() => Math.random() - 0.5);
+            }
+        }
+
+        // Fallback: статические данные
+        const { getValuesWithActions } = await import('../../data/valuesData');
+        return getValuesWithActions(lang);
+
     } catch (error) {
-        console.error("Error loading values:", error);
+        console.error('Error loading values:', error);
+        const { getValuesWithActions } = await import('../../data/valuesData');
         return getValuesWithActions(lang);
     }
+};
+
+// 2. Функция получения инструкции по этапу (ВАЖНО: её не было в новом коде!)
+export const getStageInstruction = (step, lang, data = {}) => {
+    const instructions = {
+        1: {
+            ru: "Просмотрите список ценностей и выберите 10, которые наиболее важны для вас. Не задумывайтесь слишком долго — доверьтесь первой реакции.",
+            en: "Browse the list of values and choose 10 that are most important to you. Don't overthink — trust your first reaction."
+        },
+        2: {
+            ru: `Из выбранных 10 ценностей удалите 4, без которых вы можете обойтись. Удалено: ${data.removedCount || 0}/4`,
+            en: `From the 10 selected values, remove 4 that you can live without. Removed: ${data.removedCount || 0}/4`
+        },
+        3: {
+            ru: `Выберите 3 самые важные ценности из оставшихся 6. Выбрано: ${data.selectedCount || 0}/3`,
+            en: `Choose the 3 most important values from the remaining 6. Selected: ${data.selectedCount || 0}/3`
+        }
+    };
+
+    return instructions[step]?.[lang] || "";
+};
+
+// 3. Форматирование значений для сохранения
+export const formatValuesForSave = (selectedValues, lang) => {
+    return selectedValues.map((value, index) => ({
+        valueCode: value.code || value.id.toString(),
+        priority: index + 1
+    }));
+};
+
+// 4. Сохранение через API
+export const saveUserValuesToApi = async (userId, values, sessionData = null) => {
+    if (apiClient.hasNewApi && apiClient.hasNewApi()) {
+        return await apiClient.saveUserValues(userId, values, sessionData);
+    }
+
+    // Fallback
+    const formattedValues = values.map(item => ({
+        id: item.valueCode,
+        text: item.valueCode,
+        icon: "⭐",
+        actions: [],
+        savedAt: new Date().toISOString()
+    }));
+
+    return await apiClient.saveFinalValues({
+        userId,
+        values: formattedValues
+    });
+};
+
+// 5. Получение сохраненных значений
+export const getSavedUserValues = async (userId, lang) => {
+    if (apiClient.hasNewApi && apiClient.hasNewApi()) {
+        const response = await apiClient.getUserValues(userId);
+        if (response.success && response.data) {
+            return transformApiResponse(response.data, lang);
+        }
+    }
+
+    // Fallback
+    const response = await apiClient.getSavedValues(userId);
+    if (response.success && response.data) {
+        return transformOldResponse(response.data, lang);
+    }
+
+    return null;
+};
+
+// 6. Вспомогательные функции (не экспортируем, используем внутри)
+const transformApiResponse = (apiData, lang) => {
+    if (!apiData || !apiData.savedValues) return null;
+
+    return {
+        sessionId: apiData.sessionId,
+        userId: apiData.userId,
+        savedAt: apiData.savedAt,
+        values: apiData.savedValues.map(item => ({
+            id: item.id,
+            code: item.valueCode,
+            text: lang === "ru" ? item.textRu : item.textEn,
+            icon: item.icon,
+            actions: lang === "ru" ? item.actionsRu : item.actionsEn,
+            priority: item.priority,
+            selected: true
+        }))
+    };
+};
+
+const transformOldResponse = (oldData, lang) => {
+    if (!oldData || !oldData.values) return null;
+
+    return {
+        sessionId: oldData.id || Date.now(),
+        userId: 'unknown',
+        savedAt: oldData.savedAt,
+        values: oldData.values.map((item, index) => ({
+            id: item.id,
+            code: item.id,
+            text: item.text,
+            icon: item.icon,
+            actions: item.actions || [],
+            priority: index + 1,
+            selected: true
+        }))
+    };
+};
+
+// 7. Экспорт по умолчанию (опционально)
+export default {
+    loadInitialValues,
+    getStageInstruction,
+    formatValuesForSave,
+    saveUserValuesToApi,
+    getSavedUserValues
 };

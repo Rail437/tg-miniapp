@@ -478,72 +478,101 @@ export async function getLastLiveWheel(userId) {
 }
 
 //ценности
+import { getValuesWithActions } from '../data/valuesData';
 
-// Получение начальных ценностей
-// mockApiClient.js
+// Старые методы (оставляем для совместимости)
 export async function getInitialValues() {
     console.log("[MOCK] Getting initial values");
-
-    // Имитируем задержку сети
     await new Promise(resolve => setTimeout(resolve, 500));
-
     return {
         success: true,
         data: [] // Пустой массив, компонент будет использовать статические данные
     };
 }
 
-// mockApiClient.js - добавим логирование автосохранения
-// mockApiClient.js - в функции saveFinalValues
-export async function saveFinalValues({ userId, values }) {
-    console.log("[MOCK] Saving values for userId:", userId);
+// НОВЫЙ МЕТОД: Получение всех ценностей из БД
+export async function getValues(lang = 'ru') {
+    console.log("[MOCK] Getting all values for lang:", lang);
 
-    // Имитируем задержку
-    await new Promise(resolve => setTimeout(resolve, 800));
+    await new Promise(resolve => setTimeout(resolve, 300));
 
     try {
-        const key = `user_${userId}_values`;
-        const existingDataStr = localStorage.getItem(key);
-        let allValuesData = {};
+        // Используем статические данные из valuesData.js
+        const staticValues = getValuesWithActions(lang);
 
-        if (existingDataStr) {
-            try {
-                allValuesData = JSON.parse(existingDataStr);
-            } catch (e) {
-                allValuesData = {};
-            }
-        }
-
-        const newEntry = {
-            id: Date.now(),
-            values: values,
-            savedAt: new Date().toISOString(),
-            version: "1.0",
-            saveMethod: "on_continue_button" // Добавляем метку
-        };
-
-        if (!allValuesData.history) {
-            allValuesData.history = [];
-        }
-
-        allValuesData.history.push(newEntry);
-        allValuesData.latest = newEntry;
-        allValuesData.userId = userId;
-        allValuesData.lastUpdated = newEntry.savedAt;
-        allValuesData.totalSaves = allValuesData.history.length;
-
-        localStorage.setItem(key, JSON.stringify(allValuesData));
-
-        console.log("[MOCK] Saved via continue button:", newEntry.savedAt);
+        // Преобразуем в формат, аналогичный API
+        const formattedValues = staticValues.map(value => ({
+            id: value.id,
+            code: value.text.toLowerCase().replace(/\s+/g, '_'), // генерируем code из текста
+            textRu: value.id <= 37 ? value.text : '', // только для русских названий
+            textEn: value.id <= 37 ? value.text : '', // для английских - такой же текст в моке
+            icon: value.icon,
+            actionsRu: lang === 'ru' ? value.actions : [],
+            actionsEn: lang !== 'ru' ? value.actions : []
+        }));
 
         return {
             success: true,
-            message: 'Values saved successfully',
-            data: newEntry
+            data: formattedValues
         };
 
     } catch (error) {
-        console.error("[MOCK] Error saving values:", error);
+        console.error("[MOCK] Error getting values:", error);
+        return {
+            success: false,
+            error: 'Failed to get values',
+            data: []
+        };
+    }
+}
+
+// НОВЫЙ МЕТОД: Сохранение пользовательских ценностей
+export async function saveUserValues(userId, values, sessionData = null) {
+    console.log("[MOCK] Saving user values:", { userId, values, sessionData });
+
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    try {
+        const key = `user_${userId}_values_new`; // Новый ключ для новой структуры
+        const now = new Date().toISOString();
+
+        // Форматируем данные в новом формате
+        const saveData = {
+            sessionId: Date.now(),
+            userId,
+            savedAt: now,
+            savedValues: values.map(item => ({
+                id: Date.now() + Math.random(),
+                valueCode: item.valueCode,
+                valueId: item.valueCode, // дублируем для совместимости
+                priority: item.priority,
+                savedAt: now,
+                // Добавляем фиктивные данные для отображения
+                textRu: getValueText(item.valueCode, 'ru'),
+                textEn: getValueText(item.valueCode, 'en'),
+                icon: getValueIcon(item.valueCode),
+                actionsRu: [],
+                actionsEn: []
+            })),
+            metadata: {
+                version: "2.0",
+                saveMethod: "api_save",
+                sessionData
+            }
+        };
+
+        // Сохраняем в localStorage
+        localStorage.setItem(key, JSON.stringify(saveData));
+
+        console.log("[MOCK] Saved via new API");
+
+        return {
+            success: true,
+            data: saveData
+        };
+
+    } catch (error) {
+        console.error("[MOCK] Error saving user values:", error);
         return {
             success: false,
             error: 'Failed to save values'
@@ -551,61 +580,140 @@ export async function saveFinalValues({ userId, values }) {
     }
 }
 
-// Дополнительный метод для получения сохраненных значений
-// mockApiClient.js - обновим getSavedValues
-export async function getSavedValues(userId) {
-    console.log("[MOCK] Getting saved values for userId:", userId);
+// Вспомогательная функция для получения текста значения
+function getValueText(code, lang) {
+    // Простая заглушка
+    const texts = {
+        'health': { ru: 'Здоровье', en: 'Health' },
+        'family': { ru: 'Семья', en: 'Family' },
+        'freedom': { ru: 'Свобода', en: 'Freedom' },
+        'growth': { ru: 'Развитие', en: 'Growth' },
+        'creativity': { ru: 'Творчество', en: 'Creativity' }
+    };
+    return texts[code]?.[lang] || code;
+}
+
+function getValueIcon(code) {
+    const icons = {
+        'health': '💪',
+        'family': '👨‍👩‍👧‍👦',
+        'freedom': '🕊️',
+        'growth': '📈',
+        'creativity': '🎨'
+    };
+    return icons[code] || '⭐';
+}
+
+// НОВЫЙ МЕТОД: Получение сохраненных ценностей пользователя
+export async function getUserValues(userId) {
+    console.log("[MOCK] Getting user values for:", userId);
 
     await new Promise(resolve => setTimeout(resolve, 300));
 
     try {
-        // Сначала проверяем основной ключ
-        const key = `user_${userId}_values`;
-        const dataStr = localStorage.getItem(key);
+        // Пробуем новую структуру
+        const newKey = `user_${userId}_values_new`;
+        const newDataStr = localStorage.getItem(newKey);
 
-        if (dataStr) {
-            const data = JSON.parse(dataStr);
-            const latestData = data.latest || (data.history && data.history[data.history.length - 1]);
+        if (newDataStr) {
+            const data = JSON.parse(newDataStr);
+            return {
+                success: true,
+                data
+            };
+        }
 
-            if (latestData) {
+        // Пробуем старую структуру
+        const oldKey = `user_${userId}_values`;
+        const oldDataStr = localStorage.getItem(oldKey);
+
+        if (oldDataStr) {
+            const oldData = JSON.parse(oldDataStr);
+            const latest = oldData.latest || (oldData.history && oldData.history[oldData.history.length - 1]);
+
+            if (latest) {
+                // Конвертируем старый формат в новый
+                const convertedData = convertOldToNewFormat(latest, userId);
                 return {
                     success: true,
-                    data: latestData,
-                    fullData: data,
-                    message: 'Found saved values'
+                    data: convertedData
                 };
             }
         }
 
-        // Если нет в основном ключе, проверяем fallback
-        const fallbackKey = `user_${userId}_values_fallback`;
-        const fallbackStr = localStorage.getItem(fallbackKey);
-
-        if (fallbackStr) {
-            const fallbackData = JSON.parse(fallbackStr);
-            return {
-                success: true,
-                data: fallbackData,
-                message: 'Found fallback saved values'
-            };
-        }
-
-        // Если ничего не найдено
+        // Ничего не найдено
         return {
             success: true,
-            data: null,
-            message: 'No saved values found'
+            data: null
         };
 
     } catch (error) {
-        console.error("[MOCK] Error getting saved values:", error);
+        console.error("[MOCK] Error getting user values:", error);
         return {
             success: false,
-            error: 'Failed to retrieve values',
+            error: 'Failed to get user values',
             data: null
         };
     }
 }
+
+// Конвертер из старого формата в новый
+function convertOldToNewFormat(oldData, userId) {
+    if (!oldData || !oldData.values) return null;
+
+    return {
+        sessionId: oldData.id || Date.now(),
+        userId,
+        savedAt: oldData.savedAt || new Date().toISOString(),
+        savedValues: oldData.values.map((value, index) => ({
+            id: value.id || Date.now() + index,
+            valueCode: value.id || `value_${index + 1}`,
+            valueId: value.id || `value_${index + 1}`,
+            priority: index + 1,
+            textRu: value.text || '',
+            textEn: value.text || '',
+            icon: value.icon || '⭐',
+            actionsRu: value.actions || [],
+            actionsEn: value.actions || []
+        }))
+    };
+}
+
+// Старые методы оставляем для совместимости
+export async function saveFinalValues({ userId, values }) {
+    console.log("[MOCK] Saving final values (legacy)");
+    return saveUserValues(userId,
+        values.map(v => ({ valueCode: v.id, priority: 1 })), // Дефолтный priority
+        null
+    );
+}
+
+export async function getSavedValues(userId) {
+    console.log("[MOCK] Getting saved values (legacy)");
+    const result = await getUserValues(userId);
+
+    if (result.success && result.data) {
+        // Конвертируем новый формат в старый для совместимости
+        return {
+            success: true,
+            data: {
+                values: result.data.savedValues.map(v => ({
+                    id: v.valueCode,
+                    text: v.textRu,
+                    icon: v.icon,
+                    actions: v.actionsRu,
+                    savedAt: v.savedAt
+                })),
+                savedAt: result.data.savedAt
+            }
+        };
+    }
+
+    return result;
+}
+
+
+
 
 // --- Совместимость: моковая реализация ---
 export async function getCompatibilityPrice() {
