@@ -170,7 +170,6 @@ export async function getClientProfile(userId) {
     });
 }
 
-// realApiClient.js - обновляем функции для работы с колесом баланса
 // realApiClient.js
 export async function submitLiveWheel(payload) {
     // Формируем payload в правильном формате

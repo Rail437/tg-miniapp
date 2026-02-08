@@ -102,7 +102,25 @@ export function WheelOfLife({userId, onBack, initialData}) {
         return false;
     });
     const [isSending, setIsSending] = useState(false);
-    const [sentOk, setSentOk] = useState(() => !!initialData); // Если есть initialData, значит уже сохранено
+    const [sentOk, setSentOk] = useState(() => {
+        // Если есть initialData, значит уже сохранено на бэкенде
+        if (initialData) return true;
+
+        // Проверим, есть ли данные в localStorage как fallback
+        try {
+            const raw = localStorage.getItem(storageKey);
+            if (!raw) return false;
+            const parsed = JSON.parse(raw);
+            // Если все сферы заполнены в localStorage, считаем сохранённым локально
+            if (parsed && typeof parsed === "object") {
+                const allFilled = spheres.every((s) => typeof parsed[s.key] === "number");
+                return allFilled;
+            }
+            return false;
+        } catch {
+            return false;
+        }
+    });
     const [wheelId, setWheelId] = useState(initialData?.id || null);
 
     // Загрузка из localStorage (fallback)
@@ -130,7 +148,10 @@ export function WheelOfLife({userId, onBack, initialData}) {
             if (firstKey && next[firstKey]) setCurrentPick(next[firstKey]);
 
             const allFilled = spheres.every((s) => typeof next[s.key] === "number");
-            if (allFilled) setDone(true);
+            if (allFilled) {
+                setDone(true);
+                setSentOk(true); // Если загрузили из localStorage, значит сохранено
+            }
         } catch {
             // ignore
         }
@@ -149,12 +170,13 @@ export function WheelOfLife({userId, onBack, initialData}) {
         setStep(0);
         setDirection(-1);
         setDone(false);
-        setSentOk(false);
         setIsSending(false);
         setCurrentPick(5);
         setWheelId(null);
+        // При сбросе ставим sentOk в false только если удаляем localStorage
         try {
             localStorage.removeItem(storageKey);
+            setSentOk(false);
         } catch {
         }
     };
@@ -162,6 +184,11 @@ export function WheelOfLife({userId, onBack, initialData}) {
     const saveLocal = (nextValues) => {
         try {
             localStorage.setItem(storageKey, JSON.stringify(nextValues));
+            // Проверим, все ли значения заполнены
+            const allFilled = spheres.every((s) => typeof nextValues[s.key] === "number");
+            if (allFilled) {
+                setSentOk(true); // Установим статус сохранения
+            }
         } catch {
         }
     };
@@ -189,41 +216,41 @@ export function WheelOfLife({userId, onBack, initialData}) {
             return;
         }
 
-        // Отправка на бэкенд
-        setIsSending(true);
-        setSentOk(false);
+        // Отправка на бэкенд (только если не было отправлено ранее)
+        if (!sentOk) {
+            setIsSending(true);
+            try {
+                const payload = {
+                    userId,
+                    values: nextValues,
+                    spheres: spheres.map(s => s.key),
+                    completedAt: new Date().toISOString(),
+                    metadata: {
+                        lang,
+                        version: '1.0'
+                    }
+                };
 
-        try {
-            const payload = {
-                userId,
-                values: nextValues,
-                spheres: spheres.map(s => s.key),
-                completedAt: new Date().toISOString(),
-                metadata: {
-                    lang,
-                    version: '1.0'
+                const response = await apiClient.submitLiveWheel(payload);
+
+                if (response?.ok && response.data?.id) {
+                    setWheelId(response.data.id);
+                    setSentOk(true);
+                } else {
+                    setSentOk(false);
                 }
-            };
 
-            const response = await apiClient.submitLiveWheel(payload);
-
-            // Ожидаем структуру { ok: true, data: { id, values, createdAt } }
-            if (response?.ok && response.data?.id) {
-                setWheelId(response.data.id);
-                setSentOk(true);
-            } else {
+                setDone(true);
+            } catch (error) {
+                console.error('Error saving wheel:', error);
                 setSentOk(false);
+                setDone(true);
+            } finally {
+                setIsSending(false);
             }
-
-            // Показываем колесо
+        } else {
+            // Если уже сохранено, просто показываем колесо
             setDone(true);
-
-        } catch (error) {
-            console.error('Error saving wheel:', error);
-            setSentOk(false);
-            setDone(true); // Все равно показываем результат
-        } finally {
-            setIsSending(false);
         }
     };
 
@@ -237,7 +264,6 @@ export function WheelOfLife({userId, onBack, initialData}) {
         return Math.round((filled / spheres.length) * 100);
     }, [values, spheres]);
 
-    // ДОБАВЛЯЕМ return здесь!
     return (
         <div className="space-y-4">
             {/* верх с кнопкой "Назад" */}
@@ -406,7 +432,8 @@ export function WheelOfLife({userId, onBack, initialData}) {
                     className="space-y-4"
                 >
                     <div className="bg-white/70 border border-white/80 rounded-3xl p-5 shadow-sm">
-                        <div className="flex items-center justify-between gap-3">
+                        {/* Заголовок и статус в одной строке */}
+                        <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
                             <div>
                                 <div className="text-xs uppercase tracking-wide text-gray-400">
                                     {lang === "ru" ? "Готово" : "Done"}
@@ -416,43 +443,43 @@ export function WheelOfLife({userId, onBack, initialData}) {
                                         ? "Ваше колесо баланса"
                                         : "Your wheel of life"}
                                 </div>
-                                <div className="text-sm text-gray-600 mt-1">
-                                    {lang === "ru"
-                                        ? "Посмотрите на общую картину — где сильные зоны, а где хочется усиления."
-                                        : "See the big picture: strong areas and where you may want to improve."}
-                                </div>
                             </div>
 
                             <div className="flex items-center gap-2">
                                 <span
                                     className={[
-                                        "px-2 py-1 rounded-full text-xs",
+                                        "px-2 py-1 rounded-full text-xs font-medium",
                                         sentOk
                                             ? "bg-emerald-50 text-emerald-700"
-                                            : "bg-gray-50 text-gray-500",
+                                            : "bg-amber-50 text-amber-700",
                                     ].join(" ")}
                                 >
                                     {sentOk
-                                        ? lang === "ru"
-                                            ? "сохранено"
-                                            : "saved"
-                                        : lang === "ru"
-                                            ? "не сохранено"
-                                            : "not saved"}
+                                        ? lang === "ru" ? "✓ Сохранено" : "✓ Saved"
+                                        : lang === "ru" ? "⚠ Не сохранено" : "⚠ Not saved"}
                                 </span>
-
-                                <motion.button
-                                    whileTap={{scale: 0.97}}
-                                    onClick={reset}
-                                    type="button"
-                                    className="shrink-0 px-3 py-2 rounded-2xl bg-white/70 border border-white/80 text-xs text-gray-700 shadow-sm"
-                                >
-                                    {lang === "ru" ? "Сбросить" : "Reset"}
-                                </motion.button>
                             </div>
                         </div>
-                    </div>
 
+                        {/* Описание */}
+                        <div className="text-sm text-gray-600 mb-4">
+                            {lang === "ru"
+                                ? "Посмотрите на общую картину — где сильные зоны, а где хочется усиления."
+                                : "See the big picture: strong areas and where you may want to improve."}
+                        </div>
+
+                        {/* Кнопка сброса отдельно */}
+                        <div className="flex justify-end">
+                            <motion.button
+                                whileTap={{scale: 0.97}}
+                                onClick={reset}
+                                type="button"
+                                className="px-4 py-2 rounded-xl bg-white border border-gray-200 text-sm text-gray-700 shadow-sm hover:bg-gray-50 transition-colors font-medium"
+                            >
+                                {lang === "ru" ? "Сбросить всё" : "Reset all"}
+                            </motion.button>
+                        </div>
+                    </div>
                     <WheelChart spheres={spheres} values={values}/>
                 </motion.div>
             )}
