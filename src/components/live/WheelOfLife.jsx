@@ -464,7 +464,7 @@ export function WheelOfLife({userId, onBack, initialData}) {
                         {/* Описание */}
                         <div className="text-sm text-gray-600 mb-4">
                             {lang === "ru"
-                                ? "Посмотрите на общую картину — где сильные зоны, а где хочется усиления."
+                                ? "Посмотрите на общую картину — где сильные зоны, а на что нужно обратить внимание."
                                 : "See the big picture: strong areas and where you may want to improve."}
                         </div>
 

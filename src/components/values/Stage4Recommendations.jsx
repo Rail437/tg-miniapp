@@ -208,7 +208,7 @@ const Stage4Recommendations = ({
                             <span className="text-purple-600 mt-1">•</span>
                             <span>
                                 {lang === "ru"
-                                    ? "Спросите: 'Какая из моих ценностей наиболее актуальна в этой ситуации?'"
+                                    ? "Спросите: \"Какая из моих ценностей наиболее актуальна в этой ситуации?\""
                                     : "Ask: 'Which of my values is most relevant in this situation?'"}
                             </span>
                         </li>
