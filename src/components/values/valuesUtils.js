@@ -4,38 +4,88 @@ import { apiClient } from "../../api/apiClient";
 // Экспортируем ВСЕ функции которые использует ValuesSection.jsx
 
 // 1. Функция загрузки начальных значений
+// values/valuesUtils.js - исправленная функция loadInitialValues
 export const loadInitialValues = async (lang) => {
     try {
-        // Пробуем получить данные из нового API
-        if (apiClient.hasNewApi && apiClient.hasNewApi()) {
-            const response = await apiClient.getValues(lang);
+        console.log(`Loading values for language: ${lang}`);
 
-            if (response.success && response.data) {
-                // Преобразуем ответ API в формат фронтенда
-                const values = response.data.map(item => ({
-                    id: item.id,
-                    code: item.code,
-                    text: lang === "ru" ? item.textRu : item.textEn,
-                    icon: item.icon,
-                    actions: lang === "ru" ? item.actionsRu : item.actionsEn,
-                    textRu: item.textRu,
-                    textEn: item.textEn,
-                    actionsRu: item.actionsRu,
-                    actionsEn: item.actionsEn
-                }));
+        // Получаем данные из API
+        const response = await apiClient.getValues(lang);
+        console.log('Full API response:', response);
 
-                return [...values].sort(() => Math.random() - 0.5);
-            }
+        let valuesData = null;
+
+        // Вариант 1: API возвращает просто массив (наш случай)
+        if (Array.isArray(response)) {
+            console.log(`Received ${response.length} values directly as array`);
+            valuesData = response;
+        }
+        // Вариант 2: Старый формат с оберткой {success, data}
+        else if (response && response.success === true && Array.isArray(response.data)) {
+            console.log('Using wrapped format (success/data)');
+            valuesData = response.data;
+        }
+        // Вариант 3: Объект с другим названием поля
+        else if (response && Array.isArray(response.values)) {
+            console.log('Using values property format');
+            valuesData = response.values;
+        }
+        else {
+            console.warn('Unexpected API response format:', response);
+            throw new Error('Unexpected API response format');
         }
 
-        // Fallback: статические данные
-        const { getValuesWithActions } = await import('../../data/valuesData');
-        return getValuesWithActions(lang);
+        if (valuesData && valuesData.length > 0) {
+            console.log(`Processing ${valuesData.length} values from API`);
+
+            // Преобразуем данные в формат фронтенда
+            const values = valuesData.map(item => {
+                // Дополнительная проверка структуры
+                if (!item.id && !item.code) {
+                    console.warn('Invalid value item:', item);
+                }
+
+                return {
+                    id: item.id || item.code || Date.now() + Math.random(),
+                    code: item.code || item.id || '',
+                    text: lang === "ru"
+                        ? (item.textRu || item.text || '')
+                        : (item.textEn || item.text || ''),
+                    icon: item.icon || '⭐',
+                    actions: lang === "ru"
+                        ? (item.actionsRu || item.actions || [])
+                        : (item.actionsEn || item.actions || []),
+                    textRu: item.textRu || item.text || '',
+                    textEn: item.textEn || item.text || '',
+                    actionsRu: item.actionsRu || item.actions || [],
+                    actionsEn: item.actionsEn || item.actions || []
+                };
+            });
+
+            console.log(`Successfully processed ${values.length} values`);
+
+            // Перемешиваем значения
+            const shuffledValues = [...values].sort(() => Math.random() - 0.5);
+            return shuffledValues;
+        } else {
+            console.warn('No valid data found in API response');
+            throw new Error('No data received from API');
+        }
 
     } catch (error) {
-        console.error('Error loading values:', error);
-        const { getValuesWithActions } = await import('../../data/valuesData');
-        return getValuesWithActions(lang);
+        console.error('Error loading values from API:', error);
+
+        // Fallback: статические данные
+        try {
+            console.log('Using fallback static data');
+            const valuesData = await import('../../data/valuesData');
+            const staticValues = valuesData.getValuesWithActions(lang);
+            console.log(`Loaded ${staticValues.length} static values`);
+            return [...staticValues].sort(() => Math.random() - 0.5);
+        } catch (fallbackError) {
+            console.error('Fallback also failed:', fallbackError);
+            return [];
+        }
     }
 };
 

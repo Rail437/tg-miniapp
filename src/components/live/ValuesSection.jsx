@@ -32,6 +32,8 @@ export const ValuesSection = ({userId, onBack}) => {
                 setIsLoading(true);
                 const values = await loadInitialValues(lang);
                 setAllValues(values);
+                console.log(`Loaded ${values.length} total values`);
+                console.log('Sample values:', values.slice(0, 3));
 
                 // Проверяем сохраненные значения
                 if (userId) {
