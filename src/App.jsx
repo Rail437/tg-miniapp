@@ -129,7 +129,7 @@ function AppInner() {
                     activeTab={activeTab}
                     setActiveTab={setActiveTab}
                     hasMore={!!user?.lastResult}
-                    hasLive={!!clientProfile?.flags?.live}
+                    hasLive={true}
                 />
 
                 {/* MAIN SHELL — общая стеклянная карточка для контента табов */}
