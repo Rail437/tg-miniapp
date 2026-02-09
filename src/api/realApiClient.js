@@ -1,5 +1,6 @@
 // src/api/realApiClient.js
 import {API_BASE_URL} from "../config/apiConfig";
+
 // Храним JWT-токен в модуле
 let authToken = null;
 
@@ -55,19 +56,17 @@ async function request(path, options = {}) {
     }
 }
 
-
 // ================== API-методы ==================
 
 // Авторизация через Telegram
 export async function authTelegram(initData) {
-    const isTelegram = !!window.Telegram?.WebApp;
     const data = await request("/auth/telegram", {
         method: "POST",
         body: JSON.stringify({initData}),
     });
 
     // Если бэк вернул токен — сохраняем его
-    if (data.token) {
+    if (data?.token) {
         console.log("[AUTH] got JWT token");
         setAuthToken(data.token);
     }
@@ -106,16 +105,12 @@ export async function completeMainTest(sessionId) {
     });
 }
 
+// Сохранить результат теста
 export async function saveTestResult(userId, result) {
-    // result здесь — твой "богатый" объект из finalize:
-    // { typeId, ru, en, createdAt }
-
     const payload = {
         userId,
         typeId: result.typeId,
-        // сюда можно потом положить что-то важное:
-        // пути по дереву, сырые ответы, JP/Base/IE и т.п.
-        result: {}, // пока пусто, но поле уже есть в контракте
+        result: {},
         createdAt: result.createdAt,
     };
 
@@ -126,7 +121,6 @@ export async function saveTestResult(userId, result) {
 }
 
 // Получить последний результат пользователя
-
 export async function getLastResult(userId) {
     return request(`/tests/main/last-result?userId=${userId}`, {
         method: "GET",
@@ -155,7 +149,7 @@ export async function getMyInvited(userId) {
     });
 }
 
-//Историю отправляем
+// Отправить историю
 export async function submitStory({userId, text}) {
     return request("/stories", {
         method: "POST",
@@ -163,16 +157,15 @@ export async function submitStory({userId, text}) {
     });
 }
 
-// получение данных клиента
+// Получение данных клиента
 export async function getClientProfile(userId) {
     return request(`/client/profile?userId=${userId}`, {
         method: "GET",
     });
 }
 
-// realApiClient.js
+// Отправить колесо жизненного баланса
 export async function submitLiveWheel(payload) {
-    // Формируем payload в правильном формате
     const formattedPayload = {
         userId: payload.userId,
         values: payload.values,
@@ -191,6 +184,7 @@ export async function submitLiveWheel(payload) {
     });
 }
 
+// Получить последнее колесо жизненного баланса
 export async function getLastLiveWheel(userId) {
     try {
         const response = await request(`/live/wheel/last?userId=${encodeURIComponent(userId)}`, {
@@ -220,111 +214,85 @@ export async function getLastLiveWheel(userId) {
     }
 }
 
-//ценности
-// Старые методы (если нужны для совместимости)
+// ================== ЦЕННОСТИ ==================
+
+// Получение всех ценностей
+export async function getValues(lang = 'ru') {
+    return request(`/values`, {
+        method: "GET",
+    });
+}
+
+// Старый метод для совместимости
 export async function getInitialValues() {
-    // Делегируем новому методу
     return getValues('ru');
 }
 
-// НОВЫЙ МЕТОД: Получение всех ценностей
-export async function getValues(lang = 'ru') {
-    try {
-        const response = await fetch(`/api/values?lang=${lang}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        return {
-            success: true,
-            data: data
-        };
-
-    } catch (error) {
-        console.error('[REAL] Error getting values:', error);
-        return {
-            success: false,
-            error: error.message,
-            data: []
-        };
-    }
-}
-
-// НОВЫЙ МЕТОД: Сохранение пользовательских ценностей
+// Сохранение пользовательских ценностей
 export async function saveUserValues(userId, values, sessionData = null) {
-    try {
-        const payload = {
-            userId,
-            values: values.map(item => ({
-                valueCode: item.valueCode,
-                priority: item.priority
-            })),
-            sessionData,
-            totalTimeSeconds: Math.floor(Math.random() * 600) + 120
-        };
+    const payload = {
+        userId,
+        values: values.map(item => ({
+            valueId: item.valueId,
+            priority: item.priority
+        })),
+        sessionData,
+        totalTimeSeconds: Math.floor(Math.random() * 600) + 120
+    };
 
-        const response = await fetch('/api/user/values', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        return {
-            success: true,
-            data
-        };
-
-    } catch (error) {
-        console.error('[REAL] Error saving user values:', error);
-        return {
-            success: false,
-            error: error.message
-        };
-    }
+    return request("/user/values", {
+        method: "POST",
+        body: JSON.stringify(payload),
+    });
 }
 
-// НОВЫЙ МЕТОД: Получение сохраненных ценностей пользователя
+// Получение сохраненных ценностей пользователя
 export async function getUserValues(userId) {
-    try {
-        const response = await fetch(`/api/user/values/${userId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+    return request(`/user/values/${userId}`, {
+        method: "GET",
+    });
+}
 
-        if (!response.ok) {
-            if (response.status === 404) {
-                return {
-                    success: true,
-                    data: null
-                };
-            }
-            throw new Error(`HTTP error! status: ${response.status}`);
+// Старый метод для совместимости
+export async function saveFinalValues({userId, values}) {
+    const newValues = values.map((value, index) => ({
+        valueId: value.id,
+        priority: index + 1
+    }));
+
+    return saveUserValues(userId, newValues, null);
+}
+
+// Старый метод для совместимости
+export async function getSavedValues(userId) {
+    try {
+        const result = await getUserValues(userId);
+
+        if (result && result.savedValues) {
+            return {
+                success: true,
+                data: {
+                    values: result.savedValues.map(v => ({
+                        id: v.valueCode,
+                        text: v.textRu,
+                        icon: v.icon,
+                        actions: v.actionsRu,
+                        savedAt: v.savedAt
+                    })),
+                    savedAt: result.savedAt
+                }
+            };
         }
 
-        const data = await response.json();
         return {
             success: true,
-            data
+            data: {
+                values: [],
+                savedAt: null
+            }
         };
-
     } catch (error) {
-        console.error('[REAL] Error getting user values:', error);
+        console.error('[REAL] Error getting saved values:', error);
         return {
             success: false,
             error: error.message,
@@ -333,42 +301,8 @@ export async function getUserValues(userId) {
     }
 }
 
-// Старые методы для совместимости
-export async function saveFinalValues({userId, values}) {
-    // Конвертируем старый формат в новый
-    const newValues = values.map((value, index) => ({
-        valueCode: value.id,
-        priority: index + 1
-    }));
+// ================== СОВМЕСТИМОСТЬ ==================
 
-    return saveUserValues(userId, newValues, null);
-}
-
-export async function getSavedValues(userId) {
-    const result = await getUserValues(userId);
-
-    if (result.success && result.data) {
-        // Конвертируем новый формат в старый для совместимости
-        return {
-            success: true,
-            data: {
-                values: result.data.savedValues?.map(v => ({
-                    id: v.valueCode,
-                    text: v.textRu,
-                    icon: v.icon,
-                    actions: v.actionsRu,
-                    savedAt: v.savedAt
-                })) || [],
-                savedAt: result.data.savedAt
-            }
-        };
-    }
-
-    return result;
-}
-
-
-// --- Совместимость ---
 export async function getCompatibilityPrice() {
     return request("/compatibility/price", {method: "GET"});
 }
